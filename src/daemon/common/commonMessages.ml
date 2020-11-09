@@ -859,6 +859,7 @@ td.pr {
   padding-left: 5px;
   padding-right: 5px;
   cursor: pointer;
+  color: @color_general_text@;
   }
 tr.dl-1 {
   background: @color_dl1_back@;
@@ -1871,7 +1872,7 @@ let styles = Array.of_list [
     color_big_buttons_and_border_highlight = "#616569"; 
     color_input_text = "#e9b312"; 
     color_input_button = "#e9b312"; 
-    color_foreground_text_for_top_buttons = "#e9b312";
+    color_foreground_text_for_top_buttons = "#ff0000";
     color_fbig_background = "#e9b311"; 
     color_bbig_background = "#232629"; 
     color_bsmall_back = "#e9b312"; 
