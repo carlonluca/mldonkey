@@ -376,6 +376,7 @@ td.srb {
   border-top: @color_general_border@ solid 0px;
   padding-left: 3px;
   padding-right: 3px;
+  color: @color_general_text@;
   }
 td.act {
   font-size: 10px;
