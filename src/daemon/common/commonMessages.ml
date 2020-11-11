@@ -176,6 +176,12 @@ a:hover {
 .bbig3 {
   background: @color_scrollbar_face@;
   }
+.header2 {
+  color: @color_header2_text@;
+  }
+.header3 {
+  color: @color_header3_text@;
+  }
 .b1 {
   border-left: @color_border_of_top_buttons@ solid 1px;
   border-top: @color_border_of_top_buttons@ solid 1px;
@@ -238,6 +244,9 @@ a:hover {
   margin-left: auto;
   margin-right: auto;
 }
+td.txt {
+  color: @color_general_text@;
+  }
 td.fbig {
   color: @color_general_text@;
   cursor: pointer;
@@ -1537,6 +1546,8 @@ type style_type = {
   color_some_scrollbar: string;
   color_some_border: string;
   color_one_td_text: string;
+  color_header2_text: string;
+  color_header3_text: string;
   frame_height: int
 }
 
@@ -1579,6 +1590,8 @@ let dummy_style = {
   color_some_scrollbar = "#000";
   color_some_border = "#000";
   color_one_td_text = "#000";
+  color_header2_text = "#000";
+  color_header3_text = "#000";
   frame_height = 0;
 }
 
@@ -1622,6 +1635,8 @@ let styles = Array.of_list [
     color_some_scrollbar = "#000"; 
     color_some_border = "#FFF"; 
     color_one_td_text = "#555";
+    color_header2_text = "#000";
+    color_header3_text = "#000";
     frame_height = 46; };
   
   { style_name = "Orange Tang";
@@ -1662,6 +1677,8 @@ let styles = Array.of_list [
     color_some_scrollbar = "#000"; 
     color_some_border = "#FFF"; 
     color_one_td_text = "#555";
+    color_header2_text = "#000";
+    color_header3_text = "#000";
     frame_height = 46; };
 
   { style_name = "Light blue";
@@ -1702,6 +1719,8 @@ let styles = Array.of_list [
     color_some_scrollbar = "#000"; 
     color_some_border = "#FFF"; 
     color_one_td_text = "#555";
+    color_header2_text = "#000";
+    color_header3_text = "#000";
     frame_height = 46; };
   
   { style_name = "Light purple";
@@ -1742,6 +1761,8 @@ let styles = Array.of_list [
     color_some_scrollbar = "#000"; 
     color_some_border = "#FFF"; 
     color_one_td_text = "#555";
+    color_header2_text = "#000";
+    color_header3_text = "#000";
     frame_height = 46; };
   
   { style_name = "Monochrome";
@@ -1782,6 +1803,8 @@ let styles = Array.of_list [
     color_some_scrollbar = "#000"; 
     color_some_border = "#FFF"; 
     color_one_td_text = "#555";
+    color_header2_text = "#000";
+    color_header3_text = "#000";
     frame_height = 46; };
 
   { style_name = "Corona";
@@ -1822,6 +1845,8 @@ let styles = Array.of_list [
     color_some_scrollbar = "#000"; 
     color_some_border = "#FFF"; 
     color_one_td_text = "#555";
+    color_header2_text = "#000";
+    color_header3_text = "#000";
     frame_height = 46; };
 
   { style_name = "Coronax";
@@ -1862,6 +1887,8 @@ let styles = Array.of_list [
     color_some_scrollbar = "#000"; 
     color_some_border = "#8195D6"; 
     color_one_td_text = "#555";
+    color_header2_text = "#D4C9B7";
+    color_header3_text = "#D4C9B7";
     frame_height = 46; };
   
   { style_name = "Warm Colors Dark";
@@ -1902,6 +1929,8 @@ let styles = Array.of_list [
     color_some_scrollbar = "#e9b312"; 
     color_some_border = "#616569"; 
     color_one_td_text = "#e9b311";
+    color_header2_text = "#ffffff";
+    color_header3_text = "#ffffff";
     frame_height = 46; };
 
   { style_name = "Construction";
@@ -1942,6 +1971,8 @@ let styles = Array.of_list [
     color_some_scrollbar = "#000"; 
     color_some_border = "#8195D6"; 
     color_one_td_text = "#555";
+    color_header2_text = "#D4C9B7";
+    color_header3_text = "#D4C9B7";
     frame_height = 46; } ]
 
 let style_codes = [
@@ -1982,6 +2013,8 @@ let style_codes = [
   "@color_some_scrollbar@";
   "@color_some_border@";
   "@color_one_td_text@";
+  "@color_header2_text@";
+  "@color_header3_text@";
 
 (* legacy values *)
   "@C0@";"@C1@";"@C2@";"@C3@";
@@ -1993,7 +2026,7 @@ let style_codes = [
   "@C24@";"@C25@";"@C26@";"@C27@";
   "@C28@";"@C29@";"@C30@";"@C31@";
   "@C32@";"@C33@";"@C34@";"@C35@";
-  "@C36@"]
+  "@C36@";"@C37@";"@C38@"]
 
 (* code substitutions *)
 let color_from_style stylenum code = 
@@ -2036,6 +2069,8 @@ let color_from_style stylenum code =
   | "@color_some_scrollbar@" | "@C34@" -> style.color_some_scrollbar
   | "@color_some_border@" | "@C35@" -> style.color_some_border
   | "@color_one_td_text@" | "@C36@" -> style.color_one_td_text
+  | "@color_header2_text@" | "@C37@" -> style.color_header2_text
+  | "@color_header3_text@" | "@C38@" -> style.color_header3_text
   | _ -> assert false
 
 
