@@ -92,6 +92,7 @@ input.txt2 {
   }
 input.but2 {
   background: @color_bsmall3@;
+  color: @color_general_text@;
   border: 0px;
   padding: 0px;
   font: bold 10px verdana;
