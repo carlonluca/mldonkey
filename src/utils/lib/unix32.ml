@@ -318,7 +318,7 @@ module FDCache = struct
         file_pos
         len
         string_pos
-        (String.length string)
+        (Bytes.length string)
         (Printexc2.to_string e);
       raise e
 
@@ -327,7 +327,7 @@ module FDCache = struct
       check_destroyed t2;
       let buffer_len = 128 * 1024 in
       let buffer_len64 = Int64.of_int buffer_len in
-      let buffer = String.make buffer_len '\001' in
+      let buffer = Bytes.make buffer_len '\001' in
       let rec iter remaining pos1 pos2 =
         let len64 = min remaining buffer_len64 in
         let len = Int64.to_int len64 in
@@ -363,8 +363,8 @@ module type File =   sig
     val mtime64 : t -> float
     val exists : t -> bool
     val remove : t -> unit
-    val read : t -> int64 -> string -> int -> int -> unit
-    val write : t -> int64 -> string -> int -> int -> unit
+    val read : t -> int64 -> bytes -> int -> int -> unit
+    val write : t -> int64 -> bytes -> int -> int -> unit
     val destroy : t -> unit
     val is_closed : t -> bool
   end
@@ -1110,7 +1110,7 @@ type file = {
     mutable filename : string;
     mutable writable : bool;
     mutable error : exn option;
-    mutable buffers : (string * int * int * int64 * int64) list;
+    mutable buffers : (bytes * int * int * int64 * int64) list;
   }
   
 module H = Weak.Make(struct
@@ -1221,9 +1221,9 @@ let buffer = Buffer.create 65000
 
 let flush_buffer t offset =
   if !verbose then lprintf_nl "flush_buffer";
-  let s = Buffer.contents buffer in
+  let s = Buffer.to_bytes buffer in
   Buffer.reset buffer;
-  let len = String.length s in
+  let len = Bytes.length s in
   try
     if !verbose then lprintf_nl "seek64 %Ld" offset;
     if len > 0 then write t offset s 0 len;
@@ -1258,7 +1258,7 @@ let flush_fd t =
           | [] -> ()
           | (s, pos_s, len_s, offset, len) :: tail ->
               Buffer.reset buffer;
-              Buffer.add_substring buffer s pos_s len_s;
+              Buffer.add_subbytes buffer s pos_s len_s;
               t.buffers <- tail;
               iter_in offset len
 
@@ -1268,7 +1268,7 @@ let flush_fd t =
           | (s, pos_s, len_s, offset2, len2) :: tail ->
               let in_offset = offset ++ len -- offset2 in
               if in_offset = Int64.zero then begin
-                Buffer.add_substring buffer s pos_s len_s;
+                Buffer.add_subbytes buffer s pos_s len_s;
                 t.buffers <- tail;
                 iter_in offset (len ++ len2);
               end else
@@ -1284,7 +1284,7 @@ let flush_fd t =
                     iter_in offset len
                   end else begin
                     let new_pos = len2 -- keep_len in
-                    Buffer.add_substring buffer s
+                    Buffer.add_subbytes buffer s
                       (pos_s + Int64.to_int new_pos) (Int64.to_int keep_len);
                     buffered_bytes := !buffered_bytes -- new_pos;
                     iter_in offset (len ++ keep_len)
@@ -1343,13 +1343,13 @@ let buffered_write t offset s pos_s len_s =
       raise e
 
 let buffered_write_copy t offset s pos_s len_s =
-  buffered_write t offset (String.sub s pos_s len_s) 0 len_s
+  buffered_write t offset (Bytes.sub s pos_s len_s) 0 len_s
 
 let copy_chunk t1 t2 pos1 pos2 len =
   flush_fd t1;
   flush_fd t2;
   let buffer_size = 128 * 1024 in
-  let buffer = String.make buffer_size '\001' in
+  let buffer = Bytes.make buffer_size '\001' in
   let rec iter remaining pos1 pos2 =
     let len = mini remaining buffer_size in
     if len > 0 then begin

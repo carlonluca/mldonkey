@@ -464,7 +464,7 @@ let user_reader o telnet sock nread =
   let b = TcpBufferedSocket.buf sock in
   let rec iter () =
     if b.len > 0 then
-      let c = b.buf.[b.pos] in
+      let c = Bytes.get b.buf b.pos in
       buf_used b 1;
 (*      lprintf "char %d\n" (int_of_char c); *)
       if c = '\255' && not telnet.telnet_iac then begin
@@ -766,9 +766,9 @@ let read_theme_page page =
   let theme_page = get_theme_page page in
   Unix2.tryopen_read theme_page (fun file ->
     let size = (Unix.stat theme_page).Unix.st_size in
-    let s = String.make size ' ' in
+    let s = Bytes.make size ' ' in
     really_input file s 0 size;
-    s)
+    (Bytes.to_string s))
 
 let http_add_gen_header r =
   add_reply_header r "Server" ("MLdonkey/"^Autoconf.current_version);
@@ -928,7 +928,7 @@ let send_preview r file fd size filename exten =
   add_reply_header r "Content-Disposition"
   (Printf.sprintf "inline;filename=\"%s\"" (Filename.basename filename)); 
   let s = String.create 200000 in
-  set_max_output_buffer r.sock (String.length s);
+  set_max_output_buffer r.sock (Bytes.length s);
   set_rtimeout r.sock 10000.;
   let rec stream_file file pos sock =
     let max = (max_refill sock) - 1 in
@@ -1565,7 +1565,7 @@ let http_handler o t r =
   in
   r.reply_content <- 
     if !http_file_type <> BIN && !!html_use_gzip then 
-      Zlib2.gzip_string s 
+      Bytes.to_string (Zlib2.gzip_string s)
     else s
 
 let http_options = {

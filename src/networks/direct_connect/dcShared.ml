@@ -100,7 +100,7 @@ let file_to_che3_to_string filename =
       let npos = Int64.add pos (Int64.of_int rlen) in
       let str = String.create slen in
       Unix32.read file_fd pos str 0 rlen;
-      Buffer.add_string buf str;
+      Buffer.add_bytes buf str;
       if npos < flen then read npos
     in
     read Int64.zero;
@@ -125,7 +125,7 @@ let string_to_che3_to_file str filename =
         else wlen
       in
       let npos = pos + len in
-      Unix32.write file_fd (Int64.of_int pos) s pos len;
+      Unix32.write file_fd (Int64.of_int pos) (Bytes.of_string s) pos len;
       if npos < slen then write npos
     in 
     write 0;
@@ -147,11 +147,11 @@ let file_to_bz2_to_buffer filename =
     in getchar ();*)
     let rec decompress () =
       let str = String.create 4096 in 
-      let n = Bzip2.input ic str 0 (String.length str) in
+      let n = Bzip2.input ic str 0 (Bytes.length str) in
       if n = 0 then ()
       else begin 
         (*let ss = (String.sub str 0 n) in*)
-        Buffer.add_string buf (String.sub str 0 n);
+        Buffer.add_bytes buf (Bytes.sub str 0 n);
         (*lprintf_nl "(%s)" ss;*)
         decompress ()
       end
@@ -180,7 +180,7 @@ let buffer_to_bz2_to_file buf filename =
         else slen
       in
       let npos = pos + len in
-      let str = Buffer.sub buf pos len in      
+      let str = Bytes.of_string (Buffer.sub buf pos len) in
       Bzip2.output oc str 0 len;
       if npos < blen then compress npos 
     in compress 0;

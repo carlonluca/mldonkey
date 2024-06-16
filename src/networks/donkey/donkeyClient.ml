@@ -1617,10 +1617,10 @@ is checked for the file.
           assert (pos = comp.comp_len);
             let s = Zlib2.uncompress_string2 s in
             if !verbose_download then
-        lprintf_nl "Decompressed: %d/%d" (String.length s) comp.comp_len;
+        lprintf_nl "Decompressed: %d/%d" (Bytes.length s) comp.comp_len;
             
             DonkeyOneFile.block_received c comp.comp_md4
-              comp.comp_pos s 0 (String.length s);
+              comp.comp_pos s 0 (Bytes.length s);
           
           c.client_comp <- None;
         end else
@@ -1931,7 +1931,7 @@ end else *)
       log_chat_message cip (client_num c) c.client_name s;
 
   | M.EmuleCaptchaReq t ->
-      let b64data = Base64.encode t in
+      let b64data = Base64.encode_to_string t in
       let cip = string_of_client_addr c in
       log_chat_message cip (client_num c) c.client_name ("data:image/bmp;base64," ^ b64data)
 
@@ -2375,7 +2375,8 @@ let read_first_message overnet server cc m sock =
       porttest_sock := Some sock;
       set_closer sock (fun _ _ -> porttest_sock := None);
       set_lifetime sock 30.;
-      write_string sock (client_msg_to_string (emule_proto ()) m);
+      let buff = client_msg_to_string (emule_proto ()) m in
+      write sock buff 0 (Bytes.length buff);
       None
 
   | _ -> 

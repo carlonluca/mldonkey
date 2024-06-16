@@ -1394,7 +1394,7 @@ let _ =
                     while true do
                       let nread = Unix.read pipe_out buffer 0 buffersize in
                       if nread = 0 then raise End_of_file;
-                      Buffer.add_substring output buffer 0 nread
+                      Buffer.add_subbytes output buffer 0 nread
                     done
                   with 
                   | End_of_file -> ()
@@ -1677,12 +1677,12 @@ let _ =
                 if use_html_mods o then
                   custom_commands := !custom_commands @ [ ( "bu bbig",
                   name,
-                  Printf.sprintf "mSub('output','custom=%s')" (Url.encode name),
+                  Printf.sprintf "mSub('output','custom=%s')" (Url.encode_to_string name),
                   name ) ; ]
                 else
                   Printf.bprintf buf
                     "\\<a href=\\\"submit\\?custom=%s\\\" $O\\> %s \\</a\\>\n"
-                    (Url.encode name) name;
+                    (Url.encode_to_string name) name;
               end
             else
 
@@ -2295,14 +2295,14 @@ action=\\\"javascript:submitHtmlModsStyle();\\\"\\>";
         onClick=\\\'javascript:{
         parent.fstatus.location.href=\\\"submit?q=urlremove+\\\\\\\"%s\\\\\\\"\\\"
         setTimeout(\\\"window.location.reload()\\\",1000);}'
-        class=\\\"srb\\\"\\>Remove\\</td\\>" (Url.encode w.url);
+        class=\\\"srb\\\"\\>Remove\\</td\\>" (Url.encode_to_string w.url);
                 Printf.bprintf buf "
         \\<td title=\\\"Download now\\\"
         onMouseOver=\\\"mOvr(this);\\\"
         onMouseOut=\\\"mOut(this);\\\"
         onClick=\\\'javascript:{
         parent.fstatus.location.href=\\\"submit?q=force_web_infos+\\\\\\\"%s\\\\\\\"\\\";}'
-        class=\\\"srb\\\"\\>DL\\</td\\>" (Url.encode w.url);
+        class=\\\"srb\\\"\\>DL\\</td\\>" (Url.encode_to_string w.url);
           Printf.bprintf buf "
               \\<td title=\\\"%s\\\" class=\\\"sr\\\"\\>%s\\</td\\>
               \\<td class=\\\"sr\\\"\\>%d\\</td\\>"  w.url w.kind w.period;
@@ -2563,7 +2563,7 @@ let _ =
         \\<td class=\\\"sr ar\\\"\\>%s\\</td\\>
         \\<td class=\\\"sr\\\"\\>%s\\</td\\>\\</tr\\>"
                 (html_mods_cntr ())
-                (Url.encode dir)
+                (Url.encode_to_string dir)
                 shared_dir.shdir_priority
                 dir
                 shared_dir.shdir_strategy
@@ -3897,7 +3897,7 @@ let _ =
            let downloaded = CommonSwarming.get_swarmer_block_verified swarmer in
            pr "\\<code\\>";
            pr "priorities: ";
-           String.iter (fun c ->
+           Bytes.iter (fun c ->
              let c = max 0 (min 9 (Char.code c)) in
              let c = Char.chr (c + Char.code '0') in 
              Buffer.add_char buf c) prio;
@@ -4158,15 +4158,15 @@ let _ =
                         (title, "sr", "\\<a href=\\\"" ^ link ^ "\\\"\\>" ^ title ^ "\\</a\\>");
                         (title, "sr", 
                           "\\<a href=\\\"submit?q=dllink+"
-                          ^ (Url.encode link)
+                          ^ (Url.encode_to_string link)
                           ^ "\\\"\\ title=\\\"\\dllink\\\"\\>dllink\\</a\\>"
                           ^
                           " \\<a href=\\\"submit?q=http+"
-                          ^ (Url.encode link)
+                          ^ (Url.encode_to_string link)
                           ^ "\\\"\\ title=\\\"\\http\\\"\\>http\\</a\\>"
                           ^
                           " \\<a href=\\\"submit?q=startbt+"
-                          ^ (Url.encode link)
+                          ^ (Url.encode_to_string link)
                           ^ "\\\"\\ title=\\\"\\startbt\\\"\\>startbt\\</a\\>"
                         )
                       ];

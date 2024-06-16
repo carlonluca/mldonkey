@@ -465,9 +465,10 @@ let import_config dirname =
 
   import_temp !temp_dir
 
+let newline = Bytes.of_string "\n"
 let broadcast msg =
-  let s = msg ^ "\n" in
-  let len = String.length s in
+  let s = Bytes.cat msg newline in
+  let len = Bytes.length s in
   List.iter (fun sock ->
       TcpBufferedSocket.write sock s 0 len
   ) !user_socks
