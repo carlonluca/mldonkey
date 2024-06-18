@@ -340,7 +340,7 @@ let send_sysinfo_data gui =
     ("buildinfo_version_build_machine", Autoconf.build_system);
     ("buildinfo_version_build_machine_glibc", Autoconf.glibc_version);
     ("buildinfo_version_runtime_glibc", MlUnix.glibc_version_num ());
-    ("buildinfo_version_zlib", Zlib2.zlib_version_num ());
+    ("buildinfo_version_zlib", Zlib.zlib_version_num ());
     ("buildinfo_version_bzip2", if Autoconf.bzip2 then Misc2.bzlib_version_num () else "");
     ("buildinfo_net_donkey", bool_to_string (Autoconf.donkey = "yes"));
     ("buildinfo_net_bt", bool_to_string (Autoconf.bittorrent = "yes"));
@@ -364,7 +364,7 @@ let send_sysinfo_data gui =
     ("buildinfo_threads", bool_to_string (BasicSocket.has_threads ()));
     ("runinfo_user", gui.gui_conn.conn_user.ui_user.user_name);
     ("runinfo_user_emptypwd", bool_to_string (has_empty_password gui.gui_conn.conn_user.ui_user));
-    ("runinfo_core_start_time", string_of_int (int_of_float (Float.round startup_time)));
+    ("runinfo_core_start_time", string_of_int (int_of_float (floor (startup_time +. 0.5))));
     ("runinfo_core_uptime", string_of_int (last_time () - start_time));
     ("runinfo_core_user", try (Unix.getpwuid (Unix.getuid ())).Unix.pw_name with | _ -> "");
     ("runinfo_core_group", try (Unix.getgrgid (Unix.getgid())).Unix.gr_name with | _ -> "");
@@ -422,7 +422,7 @@ let send_sysinfo_data gui =
     in
     let percentfree = match Unix32.percentfree dir with
     | None -> ""
-    | Some p -> Int.to_string p
+    | Some p -> string_of_int p
     in
     let filesystem = Unix32.filesystem dir in
     ref_pair_list := !ref_pair_list @ [
