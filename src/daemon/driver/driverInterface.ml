@@ -340,7 +340,7 @@ let send_sysinfo_data gui =
     ("buildinfo_version_build_machine", Autoconf.build_system);
     ("buildinfo_version_build_machine_glibc", Autoconf.glibc_version);
     ("buildinfo_version_runtime_glibc", MlUnix.glibc_version_num ());
-    ("buildinfo_version_zlib", Zlib.zlib_version_num ());
+    ("buildinfo_version_zlib", Zlib2.zlib_version_num ());
     ("buildinfo_version_bzip2", if Autoconf.bzip2 then Misc2.bzlib_version_num () else "");
     ("buildinfo_net_donkey", bool_to_string (Autoconf.donkey = "yes"));
     ("buildinfo_net_bt", bool_to_string (Autoconf.bittorrent = "yes"));
