@@ -74,8 +74,8 @@ let udp_handler sock event =
             in
 (*            lprintf "Gnutella: calling udp_client_handler %s:%d\n"
               (Ip.to_string ip) port; *)
-            let buf = Bytes.to_string p.UdpSocket.udp_content in
-            GnutellaHandler.udp_client_handler ip port buf 
+            let buf = p.UdpSocket.udp_content in
+            GnutellaHandler.udp_client_handler ip port (Bytes.unsafe_to_string buf)
           with e ->
               lprintf "Error %s in udp_handler\n"
                 (Printexc2.to_string e); 
