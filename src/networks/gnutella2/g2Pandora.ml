@@ -76,7 +76,7 @@ let new_packet t (n : int) ip1 port1 ip2 port2 s =
 (* lprintf "Could not parse: %s\n" (Printexc2.to_string e) *) ()
 
 let hescaped s =
-  String2.replace_char s '\r' ' ';s
+  String2.replace_char s '\r' ' '
 
 let rec iter s pos =
   if pos < String.length s then
@@ -144,17 +144,17 @@ dump encoded;
   iter 0
 
 let piter s1 deflate h msgs = 
-  let len = String.length s1 in
+  let len = Bytes.length s1 in
   try
     if len > 0 then
       if deflate then
         let z = Zlib.inflate_init true in
         let _ =  
-          let s2 = String.make 100000 '\000' in
+          let s2 = Bytes.make 100000 '\000' in
           let f = Zlib.Z_SYNC_FLUSH in
           let (_,used_in, used_out) = Zlib.inflate z s1 0 len s2 0 100000 f in
           lprintf "decompressed %d/%d\n" used_out len;
-          String.sub s2 0 used_out
+          Bytes.sub_string s2 0 used_out
         in
         begin
 (* First of all, deflate in one pass *)
@@ -162,12 +162,12 @@ let piter s1 deflate h msgs =
 (*                lprintf "PARSE ONE BEGIN...\n%s\n" (String.escaped s1); *)
             let z = Zlib.inflate_init true in
             let s =  
-              let s2 = String.make 1000000 '\000' in
+              let s2 = Bytes.make 1000000 '\000' in
               let f = Zlib.Z_SYNC_FLUSH in
-              let len = String.length s1 in
+              let len = Bytes.length s1 in
               let (_,used_in, used_out) = Zlib.inflate z s1 0 len s2
                   0 1000000 f in
-              String.sub s2 0 used_out
+              Bytes.sub_string s2 0 used_out
             in
             ignore (parse_string s);
 (*                lprintf "...PARSE ONE END\n"; *)
@@ -184,12 +184,12 @@ let piter s1 deflate h msgs =
               let m = if offset > 0 then String.sub m offset (len - offset) else m in
               let rem = rem ^ m in
               let len = String.length rem in
-              let s2 = String.make 100000 '\000' in
+              let s2 = Bytes.make 100000 '\000' in
               let f = Zlib.Z_SYNC_FLUSH in
 (*                  lprintf "deflating %d bytes\n" len; *)
-              let (_,used_in, used_out) = Zlib.inflate z rem 0 len s2 0 100000 f in
+              let (_,used_in, used_out) = Zlib.inflate z (Bytes.unsafe_of_string rem) 0 len s2 0 100000 f in
 (*                  lprintf "decompressed %d/%d[%d]\n" used_out len used_in; *)
-              let m = buf ^ (String.sub s2 0 used_out) in
+              let m = buf ^ (Bytes.sub_string s2 0 used_out) in
               
               let buf =
                 try
@@ -207,10 +207,10 @@ let piter s1 deflate h msgs =
         in
         iter msgs h "" ""
       else
-        ignore (parse_string s1)
+        ignore (parse_string (Bytes.unsafe_to_string s1))
   with e ->
       lprintf "Exception %s while deflating \n O\nCUT:%s\n"
-        (Printexc2.to_string e) (String.escaped s1)
+      (Printexc2.to_string e) (String.escaped (Bytes.unsafe_to_string s1))
 
 let commit () =  
   Hashtbl.iter (fun _ cnx ->
@@ -228,20 +228,20 @@ let commit () =
           if String2.starts_with s "GNUTELLA CONNECT" then begin
               let h1 = iter s 0 in
               let h2 = iter s h1 in
-              let s1 = (String.sub s h2 (len-h2)) in
-              let s2 = (String.sub s h1 (h2-h1)) in
+              let s1 = Bytes.unsafe_of_string (String.sub s h2 (len-h2)) in
+              let s2 = Bytes.unsafe_of_string (String.sub s h1 (h2-h1)) in
               lprintf "Header 1: \n%s\n" (hescaped (String.sub s 0 h1));
-              lprintf "Header 2: \n%s\n" (hescaped s2);
-              let deflate = try ignore (String2.search_from s2 0 "deflate");
+              lprintf "Header 2: \n%s\n" (hescaped (Bytes.unsafe_to_string s2));
+              let deflate = try ignore (String2.search_from (Bytes.unsafe_to_string s2) 0 "deflate");
                   lprintf "deflate\n"; true with _ -> false in
               piter s1 deflate h2 cnx.buf
             end else 
           if String2.starts_with s "GNUTELLA" then begin
               let h1 = iter s 0 in
-              let s1 = (String.sub s h1 (len-h1)) in
-              let s2 = (String.sub s 0 h1) in
-              lprintf "Header 1: \n%s\n" (hescaped s2);
-              let deflate = try ignore (String2.search_from s2 0 "deflate");
+              let s1 = Bytes.unsafe_of_string (String.sub s h1 (len-h1)) in
+              let s2 = Bytes.unsafe_of_string (String.sub s 0 h1) in
+              lprintf "Header 1: \n%s\n" (hescaped (Bytes.unsafe_to_string s2));
+              let deflate = try ignore (String2.search_from (Bytes.unsafe_to_string s2) 0 "deflate");
                   lprintf "deflate\n"; true with _ -> false in
               piter s1 deflate h1 cnx.buf;
             end else 

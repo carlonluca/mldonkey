@@ -89,6 +89,9 @@ let get_md4 s pos =
 (*    lprintf "exception in get_md4 %d s=%s\n" pos (String.escaped s); *)
     raise e
 
+let get_md4_bytes s pos =
+  get_md4 (Bytes.unsafe_to_string s) pos
+
 let buf_string8 buf s =
   buf_int8 buf (String.length s);
   Buffer.add_string buf s
