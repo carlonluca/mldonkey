@@ -4507,13 +4507,14 @@ fi
   SUB_VERSION3="git"
   if test "$ac_cv_prog_GIT" = "yes"; then
     GIT_BRANCH=`git symbolic-ref -q --short HEAD`
-    GIT_COMMIT=`git describe --always --tags`
+    GIT_TAG=`git describe --tags --abbrev=0`
+    GIT_COMMIT=`git rev-parse HEAD`
     case "$GIT_BRANCH" in
     ""|"master")
-      SCM_VERSION="${GIT_COMMIT}"
+      SCM_VERSION="${GIT_TAG}-${GIT_COMMIT}"
       ;;
     *)
-      SCM_VERSION="${GIT_COMMIT}-${GIT_BRANCH}"
+      SCM_VERSION="${GIT_TAG}-${GIT_COMMIT}-${GIT_BRANCH}"
       ;;
     esac
   else
