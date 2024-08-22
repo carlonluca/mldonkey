@@ -4508,7 +4508,7 @@ fi
   if test "$ac_cv_prog_GIT" = "yes"; then
     GIT_BRANCH=`git symbolic-ref -q --short HEAD`
     GIT_TAG=`git describe --tags --abbrev=0`
-    GIT_COMMIT=`git rev-parse --short=7 HEAD`
+    GIT_COMMIT=`git rev-parse HEAD`
     case "$GIT_BRANCH" in
     ""|"master")
       SCM_VERSION="${GIT_TAG}-${GIT_COMMIT}"
