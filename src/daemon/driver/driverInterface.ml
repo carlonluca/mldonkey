@@ -361,7 +361,7 @@ let send_sysinfo_data gui =
     ("buildinfo_machine_endianness", Unix2.endianness ());
     ("buildinfo_configure_args", Autoconf.configure_arguments);
     ("buildinfo_patches", !patches_string);
-    ("buildinfo_threads", bool_to_string (BasicSocket.has_threads ()));
+    ("buildinfo_threads", bool_to_string (true));
     ("runinfo_user", gui.gui_conn.conn_user.ui_user.user_name);
     ("runinfo_user_emptypwd", bool_to_string (has_empty_password gui.gui_conn.conn_user.ui_user));
     ("runinfo_core_start_time", string_of_int (int_of_float (floor (startup_time +. 0.5))));
