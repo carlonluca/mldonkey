@@ -144,7 +144,7 @@ dump encoded;
   iter 0
 
 let piter s1 deflate h msgs = 
-  let len = Bytes.length s1 in
+  let len = String.length s1 in
   try
     if len > 0 then
       if deflate then
@@ -152,7 +152,7 @@ let piter s1 deflate h msgs =
         let _ =  
           let s2 = Bytes.make 100000 '\000' in
           let f = Zlib.Z_SYNC_FLUSH in
-          let (_,used_in, used_out) = Zlib.inflate z s1 0 len s2 0 100000 f in
+          let (_,used_in, used_out) = Zlib.inflate z (Bytes.unsafe_of_string s1) 0 len s2 0 100000 f in
           lprintf "decompressed %d/%d\n" used_out len;
           Bytes.sub_string s2 0 used_out
         in
@@ -164,8 +164,8 @@ let piter s1 deflate h msgs =
             let s =  
               let s2 = Bytes.make 1000000 '\000' in
               let f = Zlib.Z_SYNC_FLUSH in
-              let len = Bytes.length s1 in
-              let (_,used_in, used_out) = Zlib.inflate z s1 0 len s2
+              let len = String.length s1 in
+              let (_,used_in, used_out) = Zlib.inflate z (Bytes.unsafe_of_string s1) 0 len s2
                   0 1000000 f in
               Bytes.sub_string s2 0 used_out
             in
