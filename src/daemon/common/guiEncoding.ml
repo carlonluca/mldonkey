@@ -1055,6 +1055,20 @@ let rec to_gui (proto : int array) buf t =
         buf_string buf s1; buf_string buf s2
         ) list
 
+    | BwUpDown (timeflag, step, upload_list, download_list) ->
+      buf_opcode buf 61;
+      buf_float buf timeflag;
+      buf_int buf step;
+      buf_list buf (fun buf i -> buf_int buf i) upload_list;
+      buf_list buf (fun buf i -> buf_int buf i) download_list
+
+    | BwHUpDown (timeflag, step, upload_list, download_list) ->
+      buf_opcode buf 62;
+      buf_float buf timeflag;
+      buf_int buf step;
+      buf_list buf (fun buf i -> buf_int buf i) upload_list;
+      buf_list buf (fun buf i -> buf_int buf i) download_list
+
   with e ->
       lprintf "GuiEncoding.to_gui: Exception %s\n"
         (Printexc2.to_string e)
@@ -1272,8 +1286,10 @@ protocol version. Do not send them ? *)
         buf_opcode buf 68;
         buf_int buf n
 
-    (* introduced with protocol 34 *)
+    (* introduced with protocol 42 *)
     | GetSysInfo -> buf_opcode buf 69
+    | GetBwUpDown -> buf_opcode buf 70
+    | GetBwHUpDown -> buf_opcode buf 71
 
   with e ->
       lprintf "GuiEncoding.from_gui: Exception %s\n"

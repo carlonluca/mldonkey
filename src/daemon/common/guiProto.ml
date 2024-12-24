@@ -31,7 +31,7 @@ let gui_extension_poll = 1
   
 let to_gui_last_opcode = 60
 let from_gui_last_opcode = 69
-let best_gui_version = 41
+let best_gui_version = 42
   
 (* I will try to report all changes to the protocol here: send me patches
 if I don't !
@@ -66,7 +66,7 @@ Version 32:
 Version 33:
   CORE -> GUI: message 15 [CLIENT_INFO] encoding and decoding of the field client_release 
 
-Version 34:
+Version 42:
   GUI -> CORE: message GetSysInfo
   CORE -> GUI: message SysInfo
   *)
@@ -173,6 +173,8 @@ the messages (it will use the version specified in CoreProtocol instead
 
 (* Understood by core protocol 34 *)
 | GetSysInfo
+| GetBwUpDown
+| GetBwHUpDown
 
 type to_gui =
 (* This message is the first message sent by the core *)
@@ -243,6 +245,8 @@ type to_gui =
 | Stats of int * (string * int * network_stat_info list) list  
 
 | SysInfo of (string * string) list
+| BwUpDown of float * int * int list * int list
+| BwHUpDown of float * int * int list * int list
   
 let string_of_from_gui t = 
   match t with
@@ -323,6 +327,8 @@ let string_of_from_gui t =
   | GetStats _ -> "GetStats"
 
   | GetSysInfo -> "GetSysInfo"
+  | GetBwUpDown -> "GetBwUpDown"
+  | GetBwHUpDown -> "GetBwHUpDown"
 
 let string_of_to_gui t =
   match t with
@@ -395,6 +401,8 @@ let string_of_to_gui t =
   | Stats _ -> "Stats"
 
   | SysInfo _ -> "SysInfo"
+  | BwUpDown _ -> "BwUpDown"
+  | BwHUpDown _ -> "BwHUpDown"
       
 type gui_record = {
     mutable gui_num : int;

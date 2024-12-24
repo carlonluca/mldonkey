@@ -1329,6 +1329,10 @@ let from_gui (proto : int array) opcode s =
     (* introduced with protocol 34 *)
     | 69 ->
       GetSysInfo
+    | 70 ->
+      GetBwUpDown
+    | 71 ->
+      GetBwHUpDown
 
     | _ -> 
         lprintf_nl "FROM GUI:Unknown message %d" opcode; 

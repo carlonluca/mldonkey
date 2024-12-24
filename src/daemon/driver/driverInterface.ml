@@ -431,6 +431,16 @@ let send_sysinfo_data gui =
   ) !ref_dir_list;
   gui_send gui (P.SysInfo !ref_pair_list)
 
+let send_bw_updown gui =
+  let upload_history_list = Fifo.to_list upload_history in
+  let download_history_list = Fifo.to_list download_history in
+  gui_send gui (P.BwUpDown (!history_timeflag, history_step, upload_history_list, download_history_list))
+
+let send_bw_h_updown gui =
+  let upload_history_list = Fifo.to_list upload_h_history in
+  let download_history_list = Fifo.to_list download_h_history in
+  gui_send gui (P.BwHUpDown (!history_h_timeflag, !history_h_step, upload_history_list, download_history_list))
+
 let connecting_writer gui _ =
   try
     let rec iter list =
@@ -1182,6 +1192,10 @@ let gui_reader (gui: gui_record) t _ =
               gui_send gui (P.Stats (num, l))
           | P.GetSysInfo ->
             send_sysinfo_data gui
+          | P.GetBwUpDown ->
+            send_bw_updown gui
+          | P.GetBwHUpDown ->
+            send_bw_h_updown gui
 
           | P.GiftAttach (profile, version, client) ->
               let user, pass =
