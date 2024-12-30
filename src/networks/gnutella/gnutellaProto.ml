@@ -583,7 +583,7 @@ let server_msg_to_string pkt =
   a hops = 0 *)
   buf_int buf 0;
   write buf pkt.pkt_payload;
-  let s = Bytes.unsafe_of_string @@ Buffer.contents buf in
+  let s = Buffer.to_bytes buf in
   let len = Bytes.length s - 23 in
   str_int s 19 len;
   Bytes.unsafe_to_string s
@@ -653,16 +653,15 @@ let server_send_new s t =
 
 let gnutella_handler parse f handler sock =
   let b = TcpBufferedSocket.buf sock in
-  let bbuf = Bytes.unsafe_to_string b.buf in
 (*  lprintf "GNUTELLA HANDLER\n"; 
   dump (String.sub b.buf b.pos b.len); *)
   try
     while b.len >= 23 do
-      let msg_len = get_int bbuf (b.pos+19) in
+      let msg_len = get_int_bytes b.buf (b.pos+19) in
       if b.len >= 23 + msg_len then
         begin
-          let pkt_uid = get_md4 bbuf b.pos in
-          let pkt_type = match get_uint8 bbuf (b.pos+16) with
+          let pkt_uid = get_md4_bytes b.buf b.pos in
+          let pkt_type = match get_uint8_bytes b.buf (b.pos+16) with
               0 -> PING
             | 1 -> PONG
             | 2 -> BYE
@@ -673,9 +672,9 @@ let gnutella_handler parse f handler sock =
             | 129 -> QUERY_REPLY
             | n -> UNKNOWN n
           in
-          let pkt_ttl = get_uint8 bbuf  (b.pos+17) in
-          let pkt_hops = get_uint8 bbuf  (b.pos+18) in
-          let data = String.sub bbuf (b.pos+23) msg_len in
+          let pkt_ttl = get_uint8_bytes b.buf  (b.pos+17) in
+          let pkt_hops = get_uint8_bytes b.buf  (b.pos+18) in
+          let data = Bytes.sub_string b.buf (b.pos+23) msg_len in
           buf_used b (msg_len + 23);
           let pkt = {
               pkt_uid = pkt_uid;

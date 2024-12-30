@@ -993,8 +993,8 @@ let g2_handler f gconn sock  =
       if b.len < msg_len then raise Not_found;
       
       (* if !verbose then lprintf_nl "One gnutella2 packet received";  *)
-      let name = String.sub s (b.pos + pos) name_len in
-      let packet = String.sub s (b.pos + pos + name_len) len in
+      let name = Bytes.sub_string b.buf (b.pos + pos) name_len in
+      let packet = Bytes.sub_string b.buf (b.pos + pos + name_len) len in
       let has_children = cb land 4 <> 0 in
       TcpBufferedSocket.buf_used b msg_len;
       f gconn (g2_parse [name] has_children be packet)
@@ -1484,7 +1484,7 @@ let bitv_to_string bitv =
       let pos = i / 8 in
       let bit = 7 - (i mod 8) in
       let x = (1 lsl bit) in
-      Bytes.set s pos (char_of_int ( (int_of_char @@ Bytes.get s pos) lor x ));
+      s.[pos] <- char_of_int ( (int_of_char (Bytes.get s pos)) lor x );
   ) bitv;
   Bytes.unsafe_to_string s
     
