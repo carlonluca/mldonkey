@@ -19,7 +19,6 @@
 
 type http_request =
   GET
-| POST
 | HEAD
 | PUT
 | DELETE

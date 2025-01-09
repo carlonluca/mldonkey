@@ -28,10 +28,8 @@ open Url
 open TcpBufferedSocket
 open Int64ops
 
-
 type http_request =
   GET
-| POST
 | HEAD
 | PUT
 | DELETE
@@ -89,15 +87,24 @@ let basic_request = {
     req_filter_ip = (fun _ -> true);
   }
 
+let file_size filename =
+  try
+    let stats = Unix.stat filename in
+    stats.Unix.st_size
+  with
+  | Unix.Unix_error (err, _, _) ->
+      lprintf_nl "Error checking file size: %s" (Unix.error_message err);
+      -1
+
+let is_file_empty filename =
+  let filesize = file_size filename in
+  filesize <= 0
+
 let make_full_request r =
   let url = r.req_url in
   let args = url.args in
   let res = Buffer.create 80 in
-  let is_real_post = r.req_request = POST && args <> [] in
-  if is_real_post
-  then Buffer.add_string res "POST "
-  else 
-    Buffer.add_string res (if r.req_request = HEAD then "HEAD " else "GET ");
+  Buffer.add_string res (if r.req_request = HEAD then "HEAD " else "GET ");
   Buffer.add_string res (
     let url = 
       if r.req_proxy <> None
@@ -106,10 +113,8 @@ let make_full_request r =
     in
   (* I get a lot more bittorrent urls with this line: *)
   let url = (Str.global_replace (Str.regexp " ") "%20" url) in
-    let url = if is_real_post then url else
-        Url.put_args url args
-    in
-    url);
+  let url = Url.put_args url args in
+  url);
   Printf.bprintf res " HTTP/1.0\r\nHost: %s%s\r\n" url.server (if url.port != 80 then Printf.sprintf ":%d" url.port else "");
   List.iter (fun (a,b) ->
       Printf.bprintf res "%s: %s\r\n" a b
@@ -131,21 +136,7 @@ let make_full_request r =
     let userpass = Printf.sprintf "%s:%s" url.user url.passwd in
     Printf.bprintf res "Authorization: Basic %s\r\n" (Base64.encode userpass)
   end;
-  if is_real_post then begin
-      let post = Buffer.create 80 in
-      let rec make_post = function
-          | [] -> assert false
-        | [a, b] ->
-            Printf.bprintf post "%s%c%s" (Url.encode a) '=' (Url.encode b)
-        | (a,b)::l ->
-            Printf.bprintf post "%s%c%s%c" 
-              (Url.encode a) '=' (Url.encode b) '&';
-            make_post l in
-      make_post args;
-      Printf.bprintf res "Content-Type: application/x-www-form-urlencoded\r\nContent-Length: %d\r\n\r\n%s"
-        (Buffer.length post) (Buffer.contents post)
-    end else
-    Buffer.add_string res "\r\n";
+  Buffer.add_string res "\r\n";
   let s = Buffer.contents res in
   if !verbose then
     lprintf_nl "make_full_request on URL: %s" (String.escaped s);
@@ -400,7 +391,119 @@ let io_copy input output =
     done
   with IO.No_more_input -> ()
 
-let wget r f = 
+let wget r f =
+  try
+    lprintf_nl "lcarlon: wget %s" (Url.to_string r.req_url);
+
+    let webinfos_dir = "web_infos" in
+    Unix2.safe_mkdir webinfos_dir;
+    Unix2.can_write_to_directory webinfos_dir;
+
+    let base = Filename.basename r.req_url.Url.short_file in
+    (* Base could be "." for http://site.com/ *)
+    let base = if base = "." 
+      then begin
+        let prng = Random.State.make_self_init () in
+        let rnd = (Random.State.bits prng) land 0xFFFFFF in
+        Printf.sprintf "http_%06x.tmp" rnd 
+      end else base 
+    in
+    let tmp_file = Filename.concat webinfos_dir base in
+    let oc = open_out_bin tmp_file in
+
+    (* Helper to handle retries *)
+    let rec perform_request retries_left =
+      seek_out oc 0;
+      let curl = Curl.init () in
+      try
+        (* TODO: TEST *)
+        Curl.set_url curl (Url.to_string r.req_url);
+        let headers = 
+          ("User-Agent", r.req_user_agent) ::
+          ("Accept", r.req_accept) ::
+          r.req_headers
+        in
+        Curl.set_followlocation curl true;
+        Curl.set_httpheader curl (List.map (fun (k, v) -> k ^ ": " ^ v) headers);
+        if r.req_gzip then
+          Curl.set_encoding curl Curl.CURL_ENCODING_GZIP;
+
+        (* TODO: TEST *)
+        (match r.req_request with
+        | GET -> ()
+        | HEAD -> Curl.set_nobody curl true);
+
+        (* TODO: TEST *)
+        (match r.req_referer with
+        | Some ref_url -> Curl.set_referer curl (Url.to_string_no_args ref_url)
+        | None -> ());
+
+        (* TODO: TEST *)
+        (match r.req_proxy with
+        | Some (host, port, Some (username, password)) ->
+            Curl.set_proxy curl host;
+            Curl.set_proxyport curl port;
+            Curl.set_proxyuserpwd curl (username ^ ":" ^ password)
+        | Some (host, port, None) ->
+            Curl.set_proxy curl host;
+            Curl.set_proxyport curl port
+        | None -> ());
+
+        (* TODO: TEST *)
+        if (int_of_float r.req_max_total_time) <> (int_of_float infinite_timeout) then
+          Curl.set_timeout curl (int_of_float r.req_max_total_time);
+
+        Curl.set_writefunction curl (fun data ->
+          lprintf_nl "lcarlon: downloaded %d" (String.length data);
+          output_string oc data;
+          String.length data
+        );
+        Curl.perform curl;
+        lprintf_nl "lcarlon: done";
+        Curl.cleanup curl;
+        close_out oc;
+        Ok tmp_file
+      with
+      | Curl.CurlException (code, _, _) ->
+        lprintf_nl "Request failed with code %s, retrying (%d left)...\n"
+          (Curl.strerror code) (retries_left - 1);
+        if retries_left > 0 then
+          perform_request (retries_left - 1)
+        else begin
+          Curl.cleanup curl;
+          Error "No more retry left"
+        end
+      | ex ->
+        close_out oc;
+        Sys.remove tmp_file;
+        lprintf_nl "Failed to download file: %s" (Printexc.to_string ex);
+        Curl.cleanup curl;
+        Error ""
+    in
+
+    (* Perform the request with retries *)
+    match perform_request r.req_retry with
+    | Ok file ->
+        try
+          let size = file_size file in
+          if size = 0 then
+            lprintf_nl "Downloaded file %s is empty" file
+          else
+            lprintf_nl "Downloaded file %s size is %d" file size;
+          if r.req_save_to_file_time <> 0. then
+            Unix.utimes file r.req_save_to_file_time r.req_save_to_file_time;
+          (f file : unit);
+          (* if not r.req_save then Sys.remove file *)
+        with e ->  
+          lprintf_nl "Exception %s in loading downloaded file %s" (Printexc2.to_string e) file;
+          (* Sys.remove file; *)
+          raise Not_found
+    | Failure s -> lprintf_nl "lcarlon: failure"
+  with
+  | ex ->
+    lprintf_nl "Exception occurred during wget: %s" (Printexc2.to_string ex)
+
+let wget2 r f = 
 
   let file_buf = Buffer.create 1000 in
   let file_size = ref 0L in
