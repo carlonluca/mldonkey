@@ -19,7 +19,7 @@
 
 
 (* HTTP Requests:
-  GET, POST, HEAD, PUT, DELETE, TRACE, OPTIONS, CONNECT
+  GET, HEAD
 *)
 
 open Printf2
@@ -31,9 +31,6 @@ open Int64ops
 type http_request =
   GET
 | HEAD
-| PUT
-| DELETE
-| TRACE
 
 type error = [ `HTTP of int | `RST of BasicSocket.close_reason | `DNS | `Block of Ip.t ]
 

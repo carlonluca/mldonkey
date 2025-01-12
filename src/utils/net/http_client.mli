@@ -20,9 +20,6 @@
 type http_request =
   GET
 | HEAD
-| PUT
-| DELETE
-| TRACE
 
 (*
 | OPTIONS of url option (* None = '*' *)
