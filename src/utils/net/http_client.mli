@@ -23,8 +23,8 @@ type http_request =
 | PUT
 | DELETE
 | TRACE
-  
-  (*
+
+(*
 | OPTIONS of url option (* None = '*' *)
 | CONNECT of string * int
 *)
@@ -61,7 +61,6 @@ val basic_request : request
 type error = [ `HTTP of int | `RST of BasicSocket.close_reason | `DNS | `Block of Ip.t ]
 val show_error : error -> string
 
-val get_page : request -> content_handler -> (unit -> unit) -> (error -> unit) -> unit
 val wget : request -> (string -> unit) -> unit
 val whead : request -> ( (string * string) list -> unit) -> unit
 val whead2 : request -> ( (string * string) list -> unit) -> (error -> unit) -> unit
@@ -71,4 +70,3 @@ val wget_string : request -> (string -> unit) -> ?ferr:(error -> unit) ->
 
 val split_header : string -> string list
 val cut_headers : string list -> (string * (string * string)) list
-
