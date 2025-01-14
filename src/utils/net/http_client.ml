@@ -32,13 +32,20 @@ type http_request =
   GET
 | HEAD
 
-type error = [ `HTTP of int | `RST of BasicSocket.close_reason | `DNS | `Block of Ip.t ]
+type error = [
+  `HTTP of int
+  | `RST of BasicSocket.close_reason
+  | `DNS
+  | `Block of Ip.t
+  | `CurlCode of Curl.curlCode
+]
 
 let show_error = function
 | `HTTP code -> Printf.sprintf "HTTP error code %d" code
 | `RST reason -> Printf.sprintf "Connection closed : %s" (BasicSocket.string_of_reason reason)
 | `DNS -> Printf.sprintf "DNS resolution failed"
 | `Block ip -> Printf.sprintf "Blocked connection to %s" (Ip.to_string ip)
+| `CurlCode curlCode -> Printf.sprintf "Curl error: %s" (Curl.strerror curlCode)
 
 let verbose = ref false
 
@@ -376,81 +383,78 @@ let rec get_page r content_handler f ferr =
   in
   get_url 0 r
 
+let rec http_call_internal r write_f fok fko fretry retries_left =
+  fretry ();
+  let curl = Curl.init () in
+  try
+    (* TODO: TEST *)
+    Curl.set_url curl (Url.to_string r.req_url);
+    let headers = 
+      ("User-Agent", r.req_user_agent) ::
+      ("Accept", r.req_accept) ::
+      r.req_headers
+    in
+    Curl.set_followlocation curl true;
+    Curl.set_httpheader curl (List.map (fun (k, v) -> k ^ ": " ^ v) headers);
+    if r.req_gzip then
+      Curl.set_encoding curl Curl.CURL_ENCODING_GZIP;
+
+    (* TODO: TEST *)
+    (match r.req_request with
+    | GET -> ()
+    | HEAD -> Curl.set_nobody curl true);
+
+    (* TODO: TEST *)
+    (match r.req_referer with
+    | Some ref_url -> Curl.set_referer curl (Url.to_string_no_args ref_url)
+    | None -> ());
+
+    (* TODO: TEST *)
+    (match r.req_proxy with
+    | Some (host, port, Some (username, password)) ->
+        Curl.set_proxy curl host;
+        Curl.set_proxyport curl port;
+        Curl.set_proxyuserpwd curl (username ^ ":" ^ password)
+    | Some (host, port, None) ->
+        Curl.set_proxy curl host;
+        Curl.set_proxyport curl port
+    | None -> ());
+
+    (* TODO: TEST *)
+    if (int_of_float r.req_max_total_time) <> (int_of_float infinite_timeout) then
+      Curl.set_timeout curl (int_of_float r.req_max_total_time);
+
+    Curl.set_writefunction curl write_f;
+    Curl.perform curl;
+    match Curl.getinfo curl Curl.CURLINFO_HTTP_CODE with
+    | Curl.CURLINFO_Long code -> match code with
+      | 200 ->
+        Curl.cleanup curl;
+        Ok ""
+      | code ->
+        lprintf_nl "HTTP error occurred: %d" code;
+        Curl.cleanup curl;
+        Error (`HTTP code)
+  with
+  | Curl.CurlException (code, i, s) ->
+    lprintf_nl "Request failed with code %s - %d - %s, retrying (%d left)...\n"
+      (Curl.strerror code) i s (retries_left - 1);
+    if retries_left > 0 then
+      http_call_internal r write_f fok fko fretry (retries_left - 1)
+    else begin
+      Curl.cleanup curl;
+      Error (`CurlError Curl.errno)
+    end
+  | ex ->
+    lprintf_nl "Failed to download file: %s" (Printexc.to_string ex);
+    Curl.cleanup curl;
+    Error (`CurlError Curl.errno)
+
 (* Call an endpoint *)
 let http_call r write_f fok fko fretry =
-  (* Helper to handle retries *)
-  let rec perform_request retries_left =
-    lprintf_nl "perform request";
-    fretry ();
-    let curl = Curl.init () in
-    try
-      (* TODO: TEST *)
-      Curl.set_url curl (Url.to_string r.req_url);
-      let headers = 
-        ("User-Agent", r.req_user_agent) ::
-        ("Accept", r.req_accept) ::
-        r.req_headers
-      in
-      Curl.set_followlocation curl true;
-      Curl.set_httpheader curl (List.map (fun (k, v) -> k ^ ": " ^ v) headers);
-      if r.req_gzip then
-        Curl.set_encoding curl Curl.CURL_ENCODING_GZIP;
-
-      (* TODO: TEST *)
-      (match r.req_request with
-      | GET -> ()
-      | HEAD -> Curl.set_nobody curl true);
-
-      (* TODO: TEST *)
-      (match r.req_referer with
-      | Some ref_url -> Curl.set_referer curl (Url.to_string_no_args ref_url)
-      | None -> ());
-
-      (* TODO: TEST *)
-      (match r.req_proxy with
-      | Some (host, port, Some (username, password)) ->
-          Curl.set_proxy curl host;
-          Curl.set_proxyport curl port;
-          Curl.set_proxyuserpwd curl (username ^ ":" ^ password)
-      | Some (host, port, None) ->
-          Curl.set_proxy curl host;
-          Curl.set_proxyport curl port
-      | None -> ());
-
-      (* TODO: TEST *)
-      if (int_of_float r.req_max_total_time) <> (int_of_float infinite_timeout) then
-        Curl.set_timeout curl (int_of_float r.req_max_total_time);
-
-      Curl.set_writefunction curl write_f;
-      Curl.perform curl;
-      lprintf_nl "lcarlon: done";
-      Curl.cleanup curl;
-      Ok ""
-    with
-    | Curl.CurlException (code, _, _) ->
-      lprintf_nl "Request failed with code %s, retrying (%d left)...\n"
-        (Curl.strerror code) (retries_left - 1);
-      if retries_left > 0 then
-        perform_request (retries_left - 1)
-      else begin
-        Curl.cleanup curl;
-        Error "No more retry left";
-      end
-    | ex ->
-      lprintf_nl "Failed to download file: %s" (Printexc.to_string ex);
-      Curl.cleanup curl;
-      Error ""
-  in
-  try
-    (* Perform the request with retries *)
-    lprintf_nl "perform request";
-    match perform_request r.req_retry with
-    | Ok file -> fok ()
-    | Error s -> fko ()
-  with
-  | ex ->
-    lprintf_nl "Exception occurred during wget: %s" (Printexc2.to_string ex);
-    fko ()
+  match http_call_internal r write_f fok fko fretry r.req_retry with
+  | Ok _ -> fok ()
+  | Error code -> fko code
 
 (* Download a file *)
 let wget r f =
@@ -489,7 +493,7 @@ let wget r f =
     with e ->  
       lprintf_nl "Exception %s in loading downloaded file %s" (Printexc2.to_string e) tmp_file
   in
-  let fko () =
+  let fko err =
     close_out oc;
     Sys.remove tmp_file;
   in
@@ -508,6 +512,10 @@ let whead2 r f ferr =
   ferr
 
 let whead r f = whead2 r f def_ferr
+
+(* let wget_string r f ?(ferr=def_ferr) progress =
+  let file_buf = Buffer.create 1000 in
+  let file_size = ref 0L in *)
 
 let wget_string r f ?(ferr=def_ferr) progress =
     

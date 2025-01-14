@@ -55,7 +55,7 @@ type content_handler =
 val basic_request : request
 
 (** either HTTP error code or low-level network error or DNS *)
-type error = [ `HTTP of int | `RST of BasicSocket.close_reason | `DNS | `Block of Ip.t ]
+type error = [ `HTTP of int | `RST of BasicSocket.close_reason | `DNS | `Block of Ip.t | `CurlCode of Curl.curlCode ]
 val show_error : error -> string
 
 val wget : request -> (string -> unit) -> unit
