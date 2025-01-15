@@ -17,10 +17,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *)
 
-
-(* HTTP Requests:
-  GET, HEAD
-*)
+(* HTTP Requests: GET, HEAD *)
 
 open Printf2
 open BasicSocket
@@ -106,285 +103,9 @@ let is_file_empty filename =
   let filesize = file_size filename in
   filesize <= 0
 
-let make_full_request r =
-  let url = r.req_url in
-  let args = url.args in
-  let res = Buffer.create 80 in
-  Buffer.add_string res (if r.req_request = HEAD then "HEAD " else "GET ");
-  Buffer.add_string res (
-    let url = 
-      if r.req_proxy <> None
-      then  Url.to_string_no_args url
-      else url.short_file
-    in
-  (* I get a lot more bittorrent urls with this line: *)
-  let url = (Str.global_replace (Str.regexp " ") "%20" url) in
-  let url = Url.put_args url args in
-  url);
-  Printf.bprintf res " HTTP/1.0\r\nHost: %s%s\r\n" url.server (if url.port != 80 then Printf.sprintf ":%d" url.port else "");
-  List.iter (fun (a,b) ->
-      Printf.bprintf res "%s: %s\r\n" a b
-  ) r.req_headers;
-  Printf.bprintf res "Accept-Encoding: gzip\r\n";
-  Printf.bprintf res "User-Agent: %s\r\n" r.req_user_agent;
-  Printf.bprintf res "Accept: %s\r\n" r.req_accept;
-  Printf.bprintf res "Connection: close\r\n";
-  begin match r.req_referer with 
-  | None -> ()
-  | Some url -> Printf.bprintf res "Referer: %s\r\n" (Url.to_string_no_args url)
-  end;
-  begin match r.req_proxy with
-  | Some (_,_,Some (login,password)) ->
-      Printf.bprintf res "Proxy-Authorization: Basic %s\n" (Base64.encode (login ^ ":" ^ password))
-  | _ -> ()
-  end;
-  if url.user <> "" then begin
-    let userpass = Printf.sprintf "%s:%s" url.user url.passwd in
-    Printf.bprintf res "Authorization: Basic %s\r\n" (Base64.encode userpass)
-  end;
-  Buffer.add_string res "\r\n";
-  let s = Buffer.contents res in
-  if !verbose then
-    lprintf_nl "make_full_request on URL: %s" (String.escaped s);
-  s
-
-let split_head s =
-  let rec iter pos1 res =
-    try
-      let pos3 = String.index_from s pos1 '\n' in
-      let pos2 = if pos3 > 0 && s.[pos3 - 1] = '\r' then pos3 - 1 else pos3 in
-      let line = String.sub s pos1 (pos2 - pos1) in
-      if line = "" then List.rev res else
-      iter (pos3+1) (line :: res)
-    with _ -> 
-        let last_line = String.sub s pos1 (String.length s - pos1) in
-        List.rev (if last_line = "" then res else last_line :: res)
-  in
-  iter 0 []
-
-let parse_header headers_handler sock header =
-  let headers = split_head header in
-  match headers with 
-    [] -> failwith "Ill formed reply"
-  | ans :: headers ->
-      if !verbose then lprintf_nl "parse_header: ANSWER %s" ans;
-      let ans_code = int_of_string (String.sub ans 9 3) in
-      let headers = List.map (fun s ->
-            let sep = String.index s ':' in
-            (* TODO: we should lowercase the names here!
-               The header-names are case-insensitive,
-               therefore we only use lowercased names. *)
-            let name_head = String.sub s 0 sep in
-            let size = String.length s in
-            let content_head = String.sub s (sep+2) (size-sep-2) in
-            (name_head, content_head)
-        ) headers in
-      try
-        headers_handler sock ans_code headers;
-      with _ -> 
-          TcpBufferedSocket.close sock (Closed_for_error "bad header")
-
-let read_header header_handler sock nread =  
-  let b = TcpBufferedSocket.buf sock in
-  let end_pos = b.pos + b.len in
-  let new_pos = end_pos - nread in
-  let new_pos = max 0 (new_pos - 1) in
-  (*
-  lprintf "received [%s]" (String.escaped
-      (String.sub b.buf new_pos nread));
-  *)
-  let rec iter i =
-    let end_pos = b.pos + b.len in
-    if i < end_pos then
-      if Bytes.get b.buf i = '\n' && i <= end_pos - 2 then
-        let c = (Bytes.get b.buf (i+1)) in
-        if c = '\n' then
-          let len = i + 2 - b.pos in
-          let header = Bytes.sub_string b.buf b.pos len in
-          buf_used b len;
-          header_handler sock header
-        else
-        if c = '\r' && i <= end_pos - 3 && (Bytes.get b.buf (i+2)) = '\n' then
-          let len = i + 3 - b.pos in
-          let header = Bytes.sub_string b.buf b.pos len in
-          buf_used b len;
-          header_handler sock header
-        else 
-          iter (i+1)
-      else
-        iter (i+1)
-    else
-      ()
-  in
-  iter new_pos
-
-let http_reply_handler nr headers_handler sock nread =
-(*  lprintf "http_reply_handler\n"; *)
-  nr := true;
-  read_header (parse_header headers_handler) sock nread
-  
-
 let def_ferr = (fun _ -> ())
 
-let rec get_page r content_handler f ferr =
-  let ok = ref false in
-  let ferr =
-    let err_done = ref false in (* call not more than once *)
-    fun c -> if not !err_done then begin err_done := true; ferr c; end 
-  in
-  let rec get_url level r =
-  try
-    let url = r.req_url in
-    let level = r.req_retry in
-    let request = make_full_request r in
-    let server, port =
-      match r.req_proxy with
-      | None -> url.server, url.port
-      | Some (s, p, _) -> s, p
-    in
-(*    lprintf "async_ip ...\n"; *)
-    Ip.async_ip server (fun ip ->
-        match r.req_filter_ip ip with
-        | false -> ferr (`Block ip)
-        | true ->
-(*         lprintf "IP done %s:%d\n" (Ip.to_string ip) port;*)
-        let token = create_token unlimited_connection_manager in
-        let sock = TcpBufferedSocket.connect token "http client connecting"
-          (try Ip.to_inet_addr ip with e -> raise Not_found) port
-          (fun sock e -> 
-(*             if !verbose then lprintf_nl "Event %s" (string_of_event e); *)
-            match e with (* FIXME content-length check *)
-            | BASIC_EVENT (CLOSED (Closed_by_user | Closed_by_peer)) when !ok -> f ()
-            | BASIC_EVENT (CLOSED reason) -> ferr (`RST reason)
-            | BASIC_EVENT LTIMEOUT -> close sock Closed_for_lifetime
-            | _ -> ())
-        in
-
-        let nread = ref false in
-        if !verbose then 
-          lprintf_nl "get_page: %s" (String.escaped request);
-        TcpBufferedSocket.write_string sock request;
-        TcpBufferedSocket.set_reader sock (http_reply_handler nread
-            (default_headers_handler url level));
-        set_rtimeout sock 5.;
-        set_lifetime sock r.req_max_total_time;
-    )
-    (fun () -> ferr `DNS);
-  with e -> 
-    lprintf_nl "error in get_url"; 
-    raise Not_found
-
-  and default_headers_handler old_url level sock ans_code headers =
-    let print_headers () =
-      List.iter (fun (name, value) ->
-          lprintf_nl "[%s]=[%s]" name value;
-        ) headers;
-    in
-    if !verbose then print_headers ();
-    match ans_code with
-    | 200 ->
-        ok := true;
-        let content_length = ref (-1L) in
-        List.iter (fun (name, content) ->
-            match String.lowercase name with
-            | "content-length" ->
-                (try
-                  content_length := Int64.of_string content
-                with _ ->
-                  lprintf_nl "bad content length [%s]" content)
-            | "content-encoding" ->
-                if String.lowercase content = "gzip" then r.req_gzip <- true
-            | _ -> ()
-        ) headers;
-        let location = "Location", Url.to_string old_url in
-        let content_handler = content_handler !content_length (location::headers) in
-        set_reader sock content_handler;
-        let buf = TcpBufferedSocket.buf sock in
-        if buf.len > 0 then
-          content_handler sock buf.len
-
-    | 301 | 302 | 304 ->
-        if !verbose then lprintf_nl "%d: Redirect" ans_code;
-  let retrynum = r.req_retry in
-        if retrynum < r.req_max_retry then begin
-            try
-              let url = ref "" in
-            List.iter (fun (name, content) ->
-                  if String.lowercase name = "location" then
-                    url := content;
-                ) headers;
-            if !verbose then print_headers ();
-              let url =
-                if String2.check_prefix !url "." then url := String2.after !url 1;
-              if String.length !url > 0 && !url.[0] <> '/' 
-                then !url
-                else Printf.sprintf "http://%s%s%s"
-                    old_url.Url.server
-                    (if old_url.Url.port = 80 then "" else Printf.sprintf ":%d" old_url.Url.port)
-                    !url
-              in
-
-              if !verbose then lprintf_nl "Redirected to %s" url;
-              r.req_url <- (Url.of_string url);
-              let r = { r with
-      req_url = Url.of_string url;
-              req_retry = retrynum+1 
-            } in
-            get_page r content_handler f ferr
-            
-            with e ->
-                lprintf_nl "error understanding redirect response %d" ans_code;
-                print_headers ();
-                raise Not_found
-                
-          end
-        else begin
-          lprintf_nl "more than %d redirections, aborting." r.req_max_retry;
-          raise Not_found
-        end
-          
-    | 400 when r.req_request = HEAD ->
-        lprintf_nl "Error 400 received for HEAD %s, re-try GET" (Url.to_string_no_args r.req_url);
-        let r2 = {
-          r with
-          req_request = GET;
-        } in
-        get_page r2 content_handler f ferr
-
-    | 404 ->
-        lprintf_nl "404: Not found for: %s" (Url.to_string_no_args r.req_url);
-        close sock (Closed_for_error "bad reply");
-        ferr (`HTTP ans_code);
-        raise Not_found
-
-    | 502 | 503 | 504 ->
-        if !verbose then lprintf_nl "%d: Unavailable" ans_code;
-  let retrynum = r.req_retry in
-        if retrynum < r.req_max_retry then begin
-          if !verbose then print_headers ();
-      let seconds = (retrynum+1)*10 in
-              lprintf_nl "retry %d/%d in %d seconds for %s"
-          (retrynum+1) r.req_max_retry seconds (Url.to_string_no_args r.req_url);
-          let r = { r with 
-            req_retry = retrynum+1 
-          } in
-          add_timer (float(seconds)) (fun t -> get_page r content_handler f ferr)
-    end
-        else begin
-          lprintf_nl "more than %d retries, aborting." r.req_max_retry;
-          ferr (`HTTP ans_code);
-          raise Not_found
-        end
-          
-    | _ ->
-        lprintf_nl "%d: bad reply for: %s"
-          ans_code (Url.to_string_no_args r.req_url);
-        close sock (Closed_for_error "bad reply");
-        ferr (`HTTP ans_code);
-        raise Not_found
-  in
-  get_url 0 r
-
+(** Internal HTTP call implementation *)
 let rec http_call_internal r write_f fretry retries_left progress =
   fretry ();
   let curl = Curl.init () in
@@ -459,13 +180,13 @@ let rec http_call_internal r write_f fretry retries_left progress =
     Curl.cleanup curl;
     Error (`CurlCode Curl.CURLE_FAILED_INIT)
 
-(* Call an endpoint *)
+(** Call an endpoint *)
 let http_call r write_f fok fko fretry progress =
   match http_call_internal r write_f fretry r.req_retry progress with
   | Ok _ -> fok ()
   | Error code -> fko code
 
-(* Download a file *)
+(** Download to file *)
 let wget r f =
   lprintf_nl "lcarlon: wget %s" (Url.to_string r.req_url);
   let webinfos_dir = "web_infos" in
@@ -510,16 +231,7 @@ let wget r f =
   let fretry () = seek_out oc 0 in
   http_call r write_f fok fko fretry (fun _ _ -> ())
 
-let whead3 r f ferr = 
-  get_page r
-    (fun maxlen headers ->
-      (try f headers with _ -> ());
-      fun sock nread -> 
-        close sock Closed_by_user
-    )
-  (fun _ ->  ())
-  ferr
-
+(** GET request to buffer *)
 let wget_string r f ?(ferr=def_ferr) progress =
   let buffer = Buffer.create 1000 in
   let write_f = (fun data ->
@@ -536,6 +248,7 @@ let wget_string r f ?(ferr=def_ferr) progress =
   let fretry () = () in
   http_call r write_f fok fko fretry progress
 
+(** HEAD request with error callback *)
 let whead2 r f ferr =
   lprintf_nl "lcarlon: whead %s" (Url.to_string r.req_url);
   let f_headers = fun data ->
@@ -551,45 +264,8 @@ let whead2 r f ferr =
   in
   wget_string r f_headers ~ferr:ferr (fun _ _ -> ())
 
+(** HEAD request *)
 let whead r f = whead2 r f def_ferr
-
-let wget_string2 r f ?(ferr=def_ferr) progress =
-    
-  let file_buf = Buffer.create 1000 in
-  let file_size = ref 0L in
-
-  get_page r
-    (fun maxlen headers sock nread ->
-        let buf = TcpBufferedSocket.buf sock in
-        
-        if nread > 0 then begin
-            let left = 
-              if maxlen >= 0L then
-                min (Int64.to_int (maxlen -- !file_size)) nread
-              else nread
-          in
-          Buffer.add_bytes file_buf (Bytes.sub buf.buf buf.pos left);
-          progress left maxlen;
-          buf_used buf left;
-          file_size := !file_size ++ (Int64.of_int left);
-          if nread > left then
-            TcpBufferedSocket.close sock Closed_by_user
-        end)
-  (fun _ ->
-      let content = 
-        if r.req_gzip then
-          try
-            let io = Gzip.input_io (IO.input_string (Buffer.contents file_buf)) in
-            IO.read_all io
-          with e -> 
-            lprintf_nl "Exception %s while uncompressing content from %s" (Printexc2.to_string e) (Url.to_string r.req_url);
-            raise Not_found
-        else
-          Buffer.contents file_buf
-      in
-      f content
-  ) ferr
-
 
 let split_header header =
   let len = String.length header in
