@@ -34,10 +34,11 @@ type http_request =
 
 type error = [
   `HTTP of int
-  | `RST of BasicSocket.close_reason
-  | `DNS
-  | `Block of Ip.t
-  | `CurlCode of Curl.curlCode
+| `RST of BasicSocket.close_reason
+| `DNS
+| `Block of Ip.t
+| `CurlCode of Curl.curlCode
+| `UnknownError
 ]
 
 let show_error = function
@@ -46,6 +47,7 @@ let show_error = function
 | `DNS -> Printf.sprintf "DNS resolution failed"
 | `Block ip -> Printf.sprintf "Blocked connection to %s" (Ip.to_string ip)
 | `CurlCode curlCode -> Printf.sprintf "Curl error: %s" (Curl.strerror curlCode)
+| `UnknownError -> Printf.sprintf "Unknown error occurred"
 
 let verbose = ref false
 
@@ -97,8 +99,8 @@ let file_size filename =
     stats.Unix.st_size
   with
   | Unix.Unix_error (err, _, _) ->
-      lprintf_nl "Error checking file size: %s" (Unix.error_message err);
-      -1
+    lprintf_nl "Error checking file size: %s" (Unix.error_message err);
+    -1
 
 let is_file_empty filename =
   let filesize = file_size filename in
@@ -383,7 +385,7 @@ let rec get_page r content_handler f ferr =
   in
   get_url 0 r
 
-let rec http_call_internal r write_f fok fko fretry retries_left =
+let rec http_call_internal r write_f fretry retries_left progress =
   fretry ();
   let curl = Curl.init () in
   try
@@ -395,6 +397,10 @@ let rec http_call_internal r write_f fok fko fretry retries_left =
       r.req_headers
     in
     Curl.set_followlocation curl true;
+    Curl.set_progressfunction curl (fun dltotal dlnow _ _ ->
+      progress (int_of_float dlnow) (Int64.of_float dltotal);
+      false
+    );
     Curl.set_httpheader curl (List.map (fun (k, v) -> k ^ ": " ^ v) headers);
     if r.req_gzip then
       Curl.set_encoding curl Curl.CURL_ENCODING_GZIP;
@@ -402,7 +408,10 @@ let rec http_call_internal r write_f fok fko fretry retries_left =
     (* TODO: TEST *)
     (match r.req_request with
     | GET -> ()
-    | HEAD -> Curl.set_nobody curl true);
+    | HEAD ->
+      Curl.set_nobody curl true;
+      Curl.set_header curl true;
+    );
 
     (* TODO: TEST *)
     (match r.req_referer with
@@ -437,22 +446,22 @@ let rec http_call_internal r write_f fok fko fretry retries_left =
         Error (`HTTP code)
   with
   | Curl.CurlException (code, i, s) ->
-    lprintf_nl "Request failed with code %s - %d - %s, retrying (%d left)...\n"
+    lprintf_nl "Request failed with code %s - %d - %s, retrying (%d left)..."
       (Curl.strerror code) i s (retries_left - 1);
     if retries_left > 0 then
-      http_call_internal r write_f fok fko fretry (retries_left - 1)
+      http_call_internal r write_f fretry (retries_left - 1) progress
     else begin
       Curl.cleanup curl;
-      Error (`CurlError Curl.errno)
+      Error (`CurlCode code)
     end
   | ex ->
     lprintf_nl "Failed to download file: %s" (Printexc.to_string ex);
     Curl.cleanup curl;
-    Error (`CurlError Curl.errno)
+    Error (`CurlCode Curl.CURLE_FAILED_INIT)
 
 (* Call an endpoint *)
-let http_call r write_f fok fko fretry =
-  match http_call_internal r write_f fok fko fretry r.req_retry with
+let http_call r write_f fok fko fretry progress =
+  match http_call_internal r write_f fretry r.req_retry progress with
   | Ok _ -> fok ()
   | Error code -> fko code
 
@@ -488,8 +497,8 @@ let wget r f =
         lprintf_nl "Downloaded file %s size is %d" tmp_file size;
       if r.req_save_to_file_time <> 0. then
         Unix.utimes tmp_file r.req_save_to_file_time r.req_save_to_file_time;
-      (f tmp_file : unit)
-      (* if not r.req_save then Sys.remove tmp_file *)
+      (f tmp_file : unit);
+      if not r.req_save then Sys.remove tmp_file
     with e ->  
       lprintf_nl "Exception %s in loading downloaded file %s" (Printexc2.to_string e) tmp_file
   in
@@ -497,11 +506,11 @@ let wget r f =
     close_out oc;
     Sys.remove tmp_file;
   in
-  lprintf_nl "api_call";
+  lprintf_nl "wget";
   let fretry () = seek_out oc 0 in
-  http_call r write_f fok fko fretry
+  http_call r write_f fok fko fretry (fun _ _ -> ())
 
-let whead2 r f ferr = 
+let whead3 r f ferr = 
   get_page r
     (fun maxlen headers ->
       (try f headers with _ -> ());
@@ -511,13 +520,40 @@ let whead2 r f ferr =
   (fun _ ->  ())
   ferr
 
+let wget_string r f ?(ferr=def_ferr) progress =
+  let buffer = Buffer.create 1000 in
+  let write_f = (fun data ->
+    Buffer.add_string buffer data;
+    String.length data
+  ) in
+  let fok () =
+    f (Buffer.contents buffer)
+  in
+  let fko err =
+    ferr err
+  in
+  lprintf_nl "wget_string";
+  let fretry () = () in
+  http_call r write_f fok fko fretry progress
+
+let whead2 r f ferr =
+  lprintf_nl "lcarlon: whead %s" (Url.to_string r.req_url);
+  let f_headers = fun data ->
+    let lines = String.split_on_char '\n' data in
+    f (List.filter_map (fun line ->
+      match String.index_opt line ':' with
+      | Some idx ->
+          let key = String.sub line 0 idx |> String.trim in
+          let value = String.sub line (idx + 1) (String.length line - idx - 1) |> String.trim in
+          Some (key, value)
+      | None -> None;
+    ) lines)
+  in
+  wget_string r f_headers ~ferr:ferr (fun _ _ -> ())
+
 let whead r f = whead2 r f def_ferr
 
-(* let wget_string r f ?(ferr=def_ferr) progress =
-  let file_buf = Buffer.create 1000 in
-  let file_size = ref 0L in *)
-
-let wget_string r f ?(ferr=def_ferr) progress =
+let wget_string2 r f ?(ferr=def_ferr) progress =
     
   let file_buf = Buffer.create 1000 in
   let file_size = ref 0L in
