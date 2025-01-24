@@ -49,9 +49,6 @@ type request = {
     req_filter_ip : (Ip.t -> bool);
   }
 
-type content_handler = 
-  int64 -> (string * string) list -> TcpBufferedSocket.t -> int -> unit
-
 val basic_request : request
 
 (** either HTTP error code or low-level network error or DNS *)

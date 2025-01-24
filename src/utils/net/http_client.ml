@@ -22,8 +22,6 @@
 open Printf2
 open BasicSocket
 open Url
-open TcpBufferedSocket
-open Int64ops
 
 type http_request =
   GET
@@ -65,9 +63,6 @@ type request = {
     req_filter_ip : (Ip.t -> bool);
   }
 
-type content_handler = 
-  int64 -> (string * string) list -> TcpBufferedSocket.t -> int -> unit
-
 let log_prefix = "[HTTPcl]"
 
 let lprintf_nl fmt =
@@ -104,6 +99,15 @@ let is_file_empty filename =
   filesize <= 0
 
 let def_ferr = (fun _ -> ())
+
+let safe_call f write_log =
+  try
+    Some (f ())
+  with
+  | e ->
+    if write_log then
+      lprintf_nl "Exception occurred: %s" (Printexc.to_string e);
+    None
 
 (** Internal HTTP call implementation *)
 let rec http_call_internal r write_f fretry retries_left progress =
@@ -165,29 +169,33 @@ let rec http_call_internal r write_f fretry retries_left progress =
         lprintf_nl "HTTP error occurred: %d" code;
         Curl.cleanup curl;
         Error (`HTTP code)
+    | _ ->
+      lprintf_nl "HTTP error unknown";
+      Curl.cleanup curl;
+      Error `UnknownError
   with
   | Curl.CurlException (code, i, s) ->
-    lprintf_nl "Request failed with code %s - %d - %s, retrying (%d left)..."
-      (Curl.strerror code) i s (retries_left - 1);
-    if retries_left > 0 then
+    if retries_left > 0 then begin
+      lprintf_nl "Request failed with code %s - %d - %s, retrying (%d left)..."
+        (Curl.strerror code) i s (retries_left - 1);
       http_call_internal r write_f fretry (retries_left - 1) progress
-    else begin
+    end else begin
       Curl.cleanup curl;
       Error (`CurlCode code)
     end
   | ex ->
     lprintf_nl "Failed to download file: %s" (Printexc.to_string ex);
     Curl.cleanup curl;
-    Error (`CurlCode Curl.CURLE_FAILED_INIT)
+    Error `UnknownError
 
 (** Call an endpoint *)
 let http_call r write_f fok fko fretry progress =
   match http_call_internal r write_f fretry r.req_retry progress with
-  | Ok _ -> fok ()
-  | Error code -> fko code
+  | Ok _ -> safe_call (fun () -> fok ()) true
+  | Error code -> safe_call (fun () -> fko code) true
 
 (** Download to file *)
-let wget r f =
+let wget_sync r f =
   lprintf_nl "lcarlon: wget %s" (Url.to_string r.req_url);
   let webinfos_dir = "web_infos" in
   Unix2.safe_mkdir webinfos_dir;
@@ -224,15 +232,20 @@ let wget r f =
       lprintf_nl "Exception %s in loading downloaded file %s" (Printexc2.to_string e) tmp_file
   in
   let fko err =
-    close_out oc;
-    Sys.remove tmp_file;
+    safe_call (fun () -> close_out oc) false;
+    safe_call (fun () -> Sys.remove tmp_file ) false |> ignore
   in
   lprintf_nl "wget";
   let fretry () = seek_out oc 0 in
   http_call r write_f fok fko fretry (fun _ _ -> ())
 
+let wget r f =
+  Thread.create (fun () ->
+    wget_sync r f
+  ) () |> ignore
+
 (** GET request to buffer *)
-let wget_string r f ?(ferr=def_ferr) progress =
+let wget_string_sync r f ?(ferr=def_ferr) progress =
   let buffer = Buffer.create 1000 in
   let write_f = (fun data ->
     Buffer.add_string buffer data;
@@ -247,6 +260,11 @@ let wget_string r f ?(ferr=def_ferr) progress =
   lprintf_nl "wget_string";
   let fretry () = () in
   http_call r write_f fok fko fretry progress
+
+let wget_string r f ?(ferr=def_ferr) progress =
+  Thread.create (fun () ->
+    wget_string_sync r f ~ferr:ferr progress
+  ) () |> ignore
 
 (** HEAD request with error callback *)
 let whead2 r f ferr =

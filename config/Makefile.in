@@ -93,7 +93,7 @@ SRC_FILETP=src/networks/fileTP
 SUBDIRS=$(EXTLIB) $(CDK) $(BITSTRING) $(LIB) $(RSS) $(XML) $(NET) tools \
    $(COMMON) $(DRIVER) $(MP3) src/config/$(OS_FILES)
 
-INCLUDES += $(foreach file, $(SUBDIRS), -I $(file)) -I +camlp4 $(NUMS_INCLUDE) -I +curl
+INCLUDES += $(foreach file, $(SUBDIRS), -I $(file)) -I +camlp4 $(NUMS_INCLUDE) -I +threads -I +curl
 
 CFLAGS:=$(CFLAGS) $(CONFIG_INCLUDES) $(GTKCFLAGS) $(GD_CFLAGS)
 
@@ -579,6 +579,7 @@ DRIVER_SRCS+= \
 
 ICONS_CMXA=icons.cmxa
 
+LIBS_opt += /usr/lib/ocaml/threads/threads.cmxa
 LIBS_opt += /usr/lib/ocaml/curl/curl.cmxa -cclib "-L/usr/lib/ocaml/curl -lcurl-helper"
 CDK_CMXA=cdk.cmxa
 BITSTRING_CMXA=
