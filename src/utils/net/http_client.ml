@@ -71,6 +71,10 @@ let thread_pool = ThreadPool.create 4
 let lprintf_nl fmt =
   lprintf_nl2 log_prefix fmt
 
+let def_user_agent =
+  let (ua: Curl.version_info) = Curl.version_info () in
+  Printf.sprintf "curl/%s" ua.version
+
 let basic_request = {
     req_url = Url.of_string "https://github.com/ygrek/mldonkey";
     req_referer = None;
@@ -79,7 +83,7 @@ let basic_request = {
     req_gzip = false;
     req_proxy = None;
     req_headers = [];
-    req_user_agent = "Wget 1.4";
+    req_user_agent = def_user_agent;
     req_accept = "*/*";
     req_retry = 0;
     req_max_retry = 0;
@@ -132,7 +136,6 @@ let rec http_call_internal r write_f fretry retries_left progress =
     if r.req_gzip then
       Curl.set_encoding curl Curl.CURL_ENCODING_GZIP;
 
-    (* TODO: TEST *)
     (match r.req_request with
     | GET -> ()
     | HEAD ->
