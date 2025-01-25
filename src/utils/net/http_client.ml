@@ -72,8 +72,9 @@ let lprintf_nl fmt =
   lprintf_nl2 log_prefix fmt
 
 let def_user_agent =
-  let (ua: Curl.version_info) = Curl.version_info () in
-  Printf.sprintf "curl/%s" ua.version
+  let ua = Curl.version_info () in
+  let [@warning "-40"] [@warning "-42"] (v: string) = ua.version in
+  Printf.sprintf "curl/%s" v
 
 let basic_request = {
     req_url = Url.of_string "https://github.com/ygrek/mldonkey";
