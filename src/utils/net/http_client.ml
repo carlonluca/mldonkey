@@ -143,7 +143,6 @@ let rec http_call_internal r write_f fretry retries_left progress =
       Curl.set_header curl true;
     );
 
-    (* TODO: TEST *)
     (match r.req_referer with
     | Some ref_url -> Curl.set_referer curl (Url.to_string_no_args ref_url)
     | None -> ());
