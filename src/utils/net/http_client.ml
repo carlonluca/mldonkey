@@ -23,73 +23,6 @@ open Printf2
 open BasicSocket
 open Url
 
-(* Thread pool *)
-module TaskQueue = struct
-  type 'a t = {
-    queue : 'a Queue.t;
-    mutex : Mutex.t;
-    cond : Condition.t;
-  }
-
-  (* Create a new task queue *)
-  let create () = {
-    queue = Queue.create ();
-    mutex = Mutex.create ();
-    cond = Condition.create ();
-  }
-
-  (* Add a task to the queue *)
-  let add t task =
-    Mutex.lock t.mutex;
-    Queue.add task t.queue;
-    Condition.signal t.cond;
-    Mutex.unlock t.mutex
-
-  (* Retrieve a task from the queue (blocking if empty) *)
-  let take t =
-    Mutex.lock t.mutex;
-    while Queue.is_empty t.queue do
-      Condition.wait t.cond t.mutex
-    done;
-    let task = Queue.pop t.queue in
-    Mutex.unlock t.mutex;
-    task
-end
-
-module ThreadPool = struct
-  type t = {
-    threads : Thread.t list;
-    tasks : (unit -> unit) TaskQueue.t;
-    stop_flag : bool ref;
-  }
-
-  (* Worker thread function *)
-  let rec worker_loop tasks stop_flag =
-    if !stop_flag then ()
-    else
-      let task = TaskQueue.take tasks in
-      (try task () with _ -> ());  (* Execute the task, ignoring errors *)
-      worker_loop tasks stop_flag
-
-  (* Create a thread pool with a fixed number of threads *)
-  let create num_threads =
-    let tasks = TaskQueue.create () in
-    let stop_flag = ref false in
-    let threads = List.init num_threads (fun _ ->
-      Thread.create (fun () -> worker_loop tasks stop_flag) ()
-    ) in
-    { threads; tasks; stop_flag }
-
-  (* Add a task to the thread pool *)
-  let add_task pool task =
-    TaskQueue.add pool.tasks task
-
-  (* Stop the thread pool and wait for all threads to finish *)
-  let stop pool =
-    pool.stop_flag := true;
-    List.iter Thread.join pool.threads
-end
-
 type http_request =
   GET
 | HEAD
@@ -132,7 +65,7 @@ type request = {
 
 let log_prefix = "[HTTPcl]"
 
-let pool = ThreadPool.create 1
+let thread_pool = ThreadPool.create 1
 
 let lprintf_nl fmt =
   lprintf_nl2 log_prefix fmt
@@ -309,7 +242,7 @@ let wget_sync r f =
   http_call r write_f fok fko fretry (fun _ _ -> ())
 
 let wget r f =
-  ThreadPool.add_task pool (fun () ->
+  ThreadPool.add_task thread_pool (fun () ->
     wget_sync r f |> ignore
   )
 
@@ -331,7 +264,7 @@ let wget_string_sync r f ?(ferr=def_ferr) progress =
   http_call r write_f fok fko fretry progress
 
 let wget_string r f ?(ferr=def_ferr) progress =
-  ThreadPool.add_task pool (fun () ->
+  ThreadPool.add_task thread_pool (fun () ->
     wget_string_sync r f ~ferr:ferr progress |> ignore
   )
 

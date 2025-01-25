@@ -25,7 +25,8 @@ type http_request =
 | OPTIONS of url option (* None = '*' *)
 | CONNECT of string * int
 *)
-val verbose : bool ref 
+val verbose : bool ref
+val thread_pool : ThreadPool.t
   
 type request = {
     req_headers : ( string * string ) list;
