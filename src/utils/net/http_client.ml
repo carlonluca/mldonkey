@@ -166,14 +166,14 @@ let rec http_call_internal r write_f fretry retries_left progress =
     Curl.set_writefunction curl write_f;
     Curl.perform curl;
     match Curl.getinfo curl Curl.CURLINFO_HTTP_CODE with
-    | Curl.CURLINFO_Long code -> match code with
+    | Curl.CURLINFO_Long code -> (match code with
       | 200 ->
         Curl.cleanup curl;
         Ok ""
       | code ->
         lprintf_nl "HTTP error occurred: %d" code;
         Curl.cleanup curl;
-        Error (`HTTP code)
+        Error (`HTTP code))
     | _ ->
       lprintf_nl "HTTP error unknown";
       Curl.cleanup curl;
@@ -237,7 +237,7 @@ let wget_sync r f =
       lprintf_nl "Exception %s in loading downloaded file %s" (Printexc2.to_string e) tmp_file
   in
   let fko err =
-    safe_call (fun () -> close_out oc) false;
+    safe_call (fun () -> close_out oc) false |> ignore;
     safe_call (fun () -> Sys.remove tmp_file) false |> ignore
   in
   lprintf_nl "wget";
