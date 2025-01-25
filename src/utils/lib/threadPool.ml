@@ -17,6 +17,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *)
 
+open Printf2
+
 module TaskQueue = struct
   type 'a t = {
     queue : 'a Queue.t;
@@ -61,7 +63,7 @@ let rec worker_loop tasks stop_flag =
   if !stop_flag then ()
   else
     let task = TaskQueue.take tasks in
-    (try task () with _ -> ());  (* Execute the task, ignoring errors *)
+    (try task () with _ -> ());
     worker_loop tasks stop_flag
 
 (* Create a thread pool with a fixed number of threads *)
