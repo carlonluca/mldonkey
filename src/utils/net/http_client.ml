@@ -1,4 +1,5 @@
 (* Copyright 2002 b8_bavard, b8_fee_carabine, INRIA *)
+(* Copyright 2025 Luca Carlon *)
 (*
     This file is part of mldonkey.
 
@@ -65,13 +66,13 @@ type request = {
 
 let log_prefix = "[HTTPcl]"
 
-let thread_pool = ThreadPool.create 1
+let thread_pool = ThreadPool.create 4
 
 let lprintf_nl fmt =
   lprintf_nl2 log_prefix fmt
 
 let basic_request = {
-    req_url = Url.of_string "http://mldonkey.sf.net/";
+    req_url = Url.of_string "https://github.com/ygrek/mldonkey";
     req_referer = None;
     req_save_to_file_time = 0.;
     req_request = GET;
@@ -116,7 +117,6 @@ let rec http_call_internal r write_f fretry retries_left progress =
   fretry ();
   let curl = Curl.init () in
   try
-    (* TODO: TEST *)
     Curl.set_url curl (Url.to_string r.req_url);
     let headers = 
       ("User-Agent", r.req_user_agent) ::
@@ -235,7 +235,7 @@ let wget_sync r f =
   in
   let fko err =
     safe_call (fun () -> close_out oc) false;
-    safe_call (fun () -> Sys.remove tmp_file ) false |> ignore
+    safe_call (fun () -> Sys.remove tmp_file) false |> ignore
   in
   lprintf_nl "wget";
   let fretry () = seek_out oc 0 in
