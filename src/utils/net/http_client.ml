@@ -168,34 +168,37 @@ let rec http_call_internal r write_f fretry retries_left progress =
     match Curl.getinfo curl Curl.CURLINFO_HTTP_CODE with
     | Curl.CURLINFO_Long code -> (match code with
       | 200 ->
+        lprintf_nl "lcarlon: HTTP success: %s" (Url.to_string r.req_url);
         Curl.cleanup curl;
         Ok ""
       | code ->
-        lprintf_nl "HTTP error occurred: %d" code;
+        lprintf_nl "lcarlon: HTTP error occurred: %d %s" code (Url.to_string r.req_url);
         Curl.cleanup curl;
         Error (`HTTP code))
     | _ ->
-      lprintf_nl "HTTP error unknown";
+      lprintf_nl "lcarlon: HTTP error unknown: %s" (Url.to_string r.req_url);
       Curl.cleanup curl;
       Error `UnknownError
   with
   | Curl.CurlException (code, i, s) ->
     if retries_left > 0 then begin
-      lprintf_nl "Request failed with code %s - %d - %s, retrying (%d left)..."
-        (Curl.strerror code) i s (retries_left - 1);
+      lprintf_nl "lcarlon: request %s failed: %s - %s, retrying (%d left)..."
+      (Url.to_string r.req_url) (Curl.strerror code) s (retries_left - 1);
+      Curl.cleanup curl;
       http_call_internal r write_f fretry (retries_left - 1) progress
     end else begin
+      lprintf_nl "lcarlon: request %s failed: %s" (Url.to_string r.req_url) (Curl.strerror code);
       Curl.cleanup curl;
       Error (`CurlCode code)
     end
   | ex ->
-    lprintf_nl "Failed to download file: %s" (Printexc.to_string ex);
+    lprintf_nl "lcarlon: exception trying to download: %s" (Printexc.to_string ex);
     Curl.cleanup curl;
     Error `UnknownError
 
 (** Call an endpoint *)
 let http_call r write_f fok fko fretry progress =
-  match http_call_internal r write_f fretry r.req_retry progress with
+  match http_call_internal r write_f fretry r.req_max_retry progress with
   | Ok _ -> safe_call (fun () -> fok ()) true
   | Error code -> safe_call (fun () -> fko code) true
 
@@ -217,7 +220,7 @@ let wget_sync r f =
   let tmp_file = Filename.concat webinfos_dir base in
   let oc = open_out_bin tmp_file in
   let write_f = (fun data ->
-    lprintf_nl "lcarlon: downloaded %d" (String.length data);
+    (* lprintf_nl "lcarlon: downloaded %d" (String.length data); *)
     output_string oc data;
     String.length data
   ) in
@@ -262,7 +265,6 @@ let wget_string_sync r f ?(ferr=def_ferr) progress =
   let fko err =
     ferr err
   in
-  lprintf_nl "wget_string";
   let fretry () = () in
   http_call r write_f fok fko fretry progress
 
