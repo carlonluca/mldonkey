@@ -237,7 +237,10 @@ let wget_sync r f =
       (f tmp_file : unit);
       if not r.req_save then Sys.remove tmp_file
     with e ->  
-      lprintf_nl "Exception %s in loading downloaded file %s" (Printexc2.to_string e) tmp_file
+      lprintf_nl "Exception %s in loading downloaded file %s" (Printexc2.to_string e) tmp_file;
+      safe_call (fun () ->
+        if not r.req_save then Sys.remove tmp_file
+      ) false |> ignore
   in
   let fko err =
     safe_call (fun () -> close_out oc) false |> ignore;
