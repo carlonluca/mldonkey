@@ -164,31 +164,31 @@ let rec http_call_internal r write_f fretry retries_left progress =
     match Curl.getinfo curl Curl.CURLINFO_HTTP_CODE with
     | Curl.CURLINFO_Long code -> (match code with
       | 200 ->
-        lprintf_nl "lcarlon: HTTP success: %s" (Url.to_string r.req_url);
+        lprintf_nl "HTTP success: %s" (Url.to_string r.req_url);
         Curl.cleanup curl;
         Ok ""
       | code ->
-        lprintf_nl "lcarlon: HTTP error occurred: %d %s" code (Url.to_string r.req_url);
+        lprintf_nl "HTTP error occurred: %d %s" code (Url.to_string r.req_url);
         Curl.cleanup curl;
         Error (`HTTP code))
     | _ ->
-      lprintf_nl "lcarlon: HTTP error unknown: %s" (Url.to_string r.req_url);
+      lprintf_nl "HTTP error unknown: %s" (Url.to_string r.req_url);
       Curl.cleanup curl;
       Error `UnknownError
   with
   | Curl.CurlException (code, i, s) ->
     if retries_left > 0 then begin
-      lprintf_nl "lcarlon: request %s failed: %s - %s, retrying (%d left)..."
+      lprintf_nl "request %s failed: %s - %s, retrying (%d left)..."
       (Url.to_string r.req_url) (Curl.strerror code) s (retries_left - 1);
       Curl.cleanup curl;
       http_call_internal r write_f fretry (retries_left - 1) progress
     end else begin
-      lprintf_nl "lcarlon: request %s failed: %s" (Url.to_string r.req_url) (Curl.strerror code);
+      lprintf_nl "request %s failed: %s" (Url.to_string r.req_url) (Curl.strerror code);
       Curl.cleanup curl;
       Error (`CurlCode code)
     end
   | ex ->
-    lprintf_nl "lcarlon: exception trying to download: %s" (Printexc.to_string ex);
+    lprintf_nl "exception trying to download: %s" (Printexc.to_string ex);
     Curl.cleanup curl;
     Error `UnknownError
 
@@ -200,7 +200,7 @@ let http_call r write_f fok fko fretry progress =
 
 (** Download to file *)
 let wget_sync r f =
-  lprintf_nl "lcarlon: wget %s" (Url.to_string r.req_url);
+  lprintf_nl "wget %s" (Url.to_string r.req_url);
   let webinfos_dir = "web_infos" in
   Unix2.safe_mkdir webinfos_dir;
   Unix2.can_write_to_directory webinfos_dir;
@@ -216,7 +216,7 @@ let wget_sync r f =
   let tmp_file = Filename.concat webinfos_dir base in
   let oc = open_out_bin tmp_file in
   let write_f = (fun data ->
-    (* lprintf_nl "lcarlon: downloaded %d" (String.length data); *)
+    (* lprintf_nl "downloaded %d" (String.length data); *)
     output_string oc data;
     String.length data
   ) in
@@ -274,7 +274,7 @@ let wget_string r f ?(ferr=def_ferr) progress =
 
 (** HEAD request with error callback *)
 let whead2 r f ferr =
-  lprintf_nl "lcarlon: whead %s" (Url.to_string r.req_url);
+  lprintf_nl "whead %s" (Url.to_string r.req_url);
   let f_headers = fun data ->
     let lines = String.split_on_char '\n' data in
     f (List.filter_map (fun line ->
