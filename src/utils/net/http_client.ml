@@ -53,7 +53,6 @@ type request = {
     req_accept : string;
     req_proxy : (string * int * (string * string) option) option; (* (host,port,(login,password)) *)
     mutable req_url : url;
-    mutable req_gzip : bool;
     mutable req_save_to_file_time : float;
     req_request : http_request;
     req_referer : Url.url option;
@@ -81,7 +80,6 @@ let basic_request = {
     req_referer = None;
     req_save_to_file_time = 0.;
     req_request = GET;
-    req_gzip = false;
     req_proxy = None;
     req_headers = [];
     req_user_agent = def_user_agent;
@@ -134,8 +132,6 @@ let rec http_call_internal r write_f fretry retries_left progress =
       false
     );
     Curl.set_httpheader curl (List.map (fun (k, v) -> k ^ ": " ^ v) headers);
-    if r.req_gzip then
-      Curl.set_encoding curl Curl.CURL_ENCODING_GZIP;
 
     (match r.req_request with
     | GET -> ()
@@ -210,7 +206,7 @@ let wget_sync r f =
   Unix2.can_write_to_directory webinfos_dir;
   let base = Filename.basename r.req_url.Url.short_file in
   (* Base could be "." for http://site.com/ *)
-  let base = if base = "." 
+  let base = if base = "." || base = "/"
     then begin
       let prng = Random.State.make_self_init () in
       let rnd = (Random.State.bits prng) land 0xFFFFFF in
