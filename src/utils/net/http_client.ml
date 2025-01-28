@@ -194,9 +194,19 @@ let rec http_call_internal r write_f fretry retries_left progress =
 
 (** Call an endpoint *)
 let http_call r write_f fok fko fretry progress =
-  match http_call_internal r write_f fretry r.req_max_retry progress with
-  | Ok _ -> safe_call (fun () -> fok ()) true
-  | Error code -> safe_call (fun () -> fko code) true
+  let url = r.req_url in
+  let ip, port = match r.req_proxy with
+  | None -> url.server, url.port
+  | Some (s, p, _) -> s, p
+  in
+  Ip.async_ip ip (fun ip ->
+    match r.req_filter_ip ip with
+    | false -> fko (`Block ip)
+    | true -> match http_call_internal r write_f fretry r.req_max_retry progress with
+      | Ok _ -> safe_call (fun () -> fok ()) true |> ignore
+      | Error code -> safe_call (fun () -> fko code) true |> ignore
+  )
+  (fun () -> fko `DNS)
 
 (** Download to file *)
 let wget_sync r f =
