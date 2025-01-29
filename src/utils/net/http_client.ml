@@ -72,7 +72,7 @@ let lprintf_nl fmt =
 
 let def_user_agent =
   let ua = Curl.version_info () in
-  let [@warning "-40"] [@warning "-42"] (v: string) = ua.version in
+  let v = ua.Curl.version in
   Printf.sprintf "curl/%s" v
 
 let basic_request = {
@@ -161,15 +161,23 @@ let rec http_call_internal r write_f fretry retries_left progress =
 
     Curl.set_writefunction curl write_f;
     Curl.perform curl;
-    match Curl.getinfo curl Curl.CURLINFO_HTTP_CODE with
+    let http_code = Curl.getinfo curl Curl.CURLINFO_HTTP_CODE in
+    Curl.cleanup curl;
+    match http_code with
     | Curl.CURLINFO_Long code -> (match code with
       | 200 ->
         lprintf_nl "HTTP success: %s" (Url.to_string r.req_url);
-        Curl.cleanup curl;
         Ok ""
+      | 502 | 503 | 504 ->
+        if retries_left > 0 then begin
+          lprintf_nl "HTTP %d unavailable, retrying (%d left)..." code (retries_left - 1);
+          http_call_internal r write_f fretry (retries_left - 1) progress
+        end else begin
+          lprintf_nl "HTTP unavailable";
+          Error (`HTTP code)
+        end
       | code ->
         lprintf_nl "HTTP error occurred: %d %s" code (Url.to_string r.req_url);
-        Curl.cleanup curl;
         Error (`HTTP code))
     | _ ->
       lprintf_nl "HTTP error unknown: %s" (Url.to_string r.req_url);
@@ -177,16 +185,9 @@ let rec http_call_internal r write_f fretry retries_left progress =
       Error `UnknownError
   with
   | Curl.CurlException (code, i, s) ->
-    if retries_left > 0 then begin
-      lprintf_nl "request %s failed: %s - %s, retrying (%d left)..."
-      (Url.to_string r.req_url) (Curl.strerror code) s (retries_left - 1);
-      Curl.cleanup curl;
-      http_call_internal r write_f fretry (retries_left - 1) progress
-    end else begin
-      lprintf_nl "request %s failed: %s" (Url.to_string r.req_url) (Curl.strerror code);
-      Curl.cleanup curl;
-      Error (`CurlCode code)
-    end
+    lprintf_nl "request %s failed: %s" (Url.to_string r.req_url) (Curl.strerror code);
+    Curl.cleanup curl;
+    Error (`CurlCode code)
   | ex ->
     lprintf_nl "exception trying to download: %s" (Printexc.to_string ex);
     Curl.cleanup curl;
@@ -195,18 +196,23 @@ let rec http_call_internal r write_f fretry retries_left progress =
 (** Call an endpoint *)
 let http_call r write_f fok fko fretry progress =
   let url = r.req_url in
-  let ip, port = match r.req_proxy with
+  let name, port = match r.req_proxy with
   | None -> url.server, url.port
   | Some (s, p, _) -> s, p
   in
-  Ip.async_ip ip (fun ip ->
-    match r.req_filter_ip ip with
-    | false -> fko (`Block ip)
-    | true -> match http_call_internal r write_f fretry r.req_max_retry progress with
+  try
+    let host_entry = Unix.gethostbyname name in
+    let ip_list = host_entry.Unix.h_addr_list in
+    match Array.find_opt (fun ip -> not (r.req_filter_ip (Ip.of_inet_addr ip))) ip_list with
+    | Some ip ->
+      lprintf "Match found: %s!\n" (Unix.string_of_inet_addr ip);
+      safe_call (fun () -> fko (`Block (Ip.of_inet_addr ip))) true |> ignore
+    | None -> match http_call_internal r write_f fretry r.req_max_retry progress with
       | Ok _ -> safe_call (fun () -> fok ()) true |> ignore
       | Error code -> safe_call (fun () -> fko code) true |> ignore
-  )
-  (fun () -> fko `DNS)
+  with Not_found ->
+    lprintf "Host not found!\n";
+    fko `DNS
 
 (** Download to file *)
 let wget_sync r f =
@@ -215,7 +221,6 @@ let wget_sync r f =
   Unix2.safe_mkdir webinfos_dir;
   Unix2.can_write_to_directory webinfos_dir;
   let base = Filename.basename r.req_url.Url.short_file in
-  (* Base could be "." for http://site.com/ *)
   let base = if base = "." || base = "/"
     then begin
       let prng = Random.State.make_self_init () in
@@ -252,7 +257,6 @@ let wget_sync r f =
     safe_call (fun () -> close_out oc) false |> ignore;
     safe_call (fun () -> Sys.remove tmp_file) false |> ignore
   in
-  lprintf_nl "wget";
   let fretry () = seek_out oc 0 in
   http_call r write_f fok fko fretry (fun _ _ -> ())
 
@@ -263,6 +267,7 @@ let wget r f =
 
 (** GET request to buffer *)
 let wget_string_sync r f ?(ferr=def_ferr) progress =
+  lprintf_nl "wget_string %s" (Url.to_string r.req_url);
   let buffer = Buffer.create 1000 in
   let write_f = (fun data ->
     Buffer.add_string buffer data;
@@ -284,7 +289,6 @@ let wget_string r f ?(ferr=def_ferr) progress =
 
 (** HEAD request with error callback *)
 let whead2 r f ferr =
-  lprintf_nl "whead %s" (Url.to_string r.req_url);
   let f_headers = fun data ->
     let lines = String.split_on_char '\n' data in
     f (List.filter_map (fun line ->
