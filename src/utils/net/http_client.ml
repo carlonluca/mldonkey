@@ -30,7 +30,6 @@ type http_request =
 
 type error = [
   `HTTP of int
-| `RST of BasicSocket.close_reason
 | `DNS
 | `Block of Ip.t
 | `CurlCode of Curl.curlCode
@@ -39,7 +38,6 @@ type error = [
 
 let show_error = function
 | `HTTP code -> Printf.sprintf "HTTP error code %d" code
-| `RST reason -> Printf.sprintf "Connection closed : %s" (BasicSocket.string_of_reason reason)
 | `DNS -> Printf.sprintf "DNS resolution failed"
 | `Block ip -> Printf.sprintf "Blocked connection to %s" (Ip.to_string ip)
 | `CurlCode curlCode -> Printf.sprintf "Curl error: %s" (Curl.strerror curlCode)
@@ -56,7 +54,6 @@ type request = {
     mutable req_save_to_file_time : float;
     req_request : http_request;
     req_referer : Url.url option;
-    req_retry : int;
     req_max_retry : int;
     req_save : bool;
     req_max_total_time : float;
@@ -84,7 +81,6 @@ let basic_request = {
     req_headers = [];
     req_user_agent = def_user_agent;
     req_accept = "*/*";
-    req_retry = 0;
     req_max_retry = 0;
     req_save = false;
     req_max_total_time = infinite_timeout;
@@ -168,6 +164,14 @@ let rec http_call_internal r write_f fretry retries_left progress =
       | 200 ->
         lprintf_nl "HTTP success: %s" (Url.to_string r.req_url);
         Ok ""
+      | 400 when r.req_request = HEAD ->
+        lprintf_nl "Error 400 received for HEAD %s, re-try GET" (Url.to_string_no_args r.req_url);
+        let r2 = {
+          r with
+          req_request = GET;
+        } in
+        http_call_internal r2 write_f fretry (retries_left - 1) progress
+  
       | 502 | 503 | 504 ->
         if retries_left > 0 then begin
           lprintf_nl "HTTP %d unavailable, retrying (%d left)..." code (retries_left - 1);
