@@ -174,7 +174,10 @@ let rec http_call_internal r write_f fretry retries_left progress =
   
       | 502 | 503 | 504 ->
         if retries_left > 0 then begin
-          lprintf_nl "HTTP %d unavailable, retrying (%d left)..." code (retries_left - 1);
+          let retrynum = r.req_max_retry - retries_left in
+          let seconds = float_of_int ((retrynum + 1)*10) in
+          lprintf_nl "HTTP %d unavailable, retrying (%d left out of %d) in %f seconds..." code (retries_left - 1) r.req_max_retry seconds;
+          Thread.delay seconds;
           http_call_internal r write_f fretry (retries_left - 1) progress
         end else begin
           lprintf_nl "HTTP unavailable";
