@@ -36,6 +36,8 @@ type error = [
 | `UnknownError
 ]
 
+exception ScheduleRetry of error
+
 let show_error = function
 | `HTTP code -> Printf.sprintf "HTTP error code %d" code
 | `DNS -> Printf.sprintf "DNS resolution failed"
@@ -54,6 +56,7 @@ type request = {
     mutable req_save_to_file_time : float;
     req_request : http_request;
     req_referer : Url.url option;
+    req_retry : int;
     req_max_retry : int;
     req_save : bool;
     req_max_total_time : float;
@@ -81,6 +84,7 @@ let basic_request = {
     req_headers = [];
     req_user_agent = def_user_agent;
     req_accept = "*/*";
+    req_retry = 0;
     req_max_retry = 0;
     req_save = false;
     req_max_total_time = infinite_timeout;
@@ -112,7 +116,7 @@ let safe_call f write_log =
     None
 
 (** Internal HTTP call implementation *)
-let rec http_call_internal r write_f fretry retries_left progress =
+let rec http_call_internal r write_f fretry progress =
   fretry ();
   let curl = Curl.init () in
   try
@@ -169,20 +173,11 @@ let rec http_call_internal r write_f fretry retries_left progress =
         let r2 = {
           r with
           req_request = GET;
+          req_retry = r.req_retry + 1;
         } in
-        http_call_internal r2 write_f fretry (retries_left - 1) progress
-  
+        http_call_internal r2 write_f fretry progress
       | 502 | 503 | 504 ->
-        if retries_left > 0 then begin
-          let retrynum = r.req_max_retry - retries_left in
-          let seconds = float_of_int ((retrynum + 1)*10) in
-          lprintf_nl "HTTP %d unavailable, retrying (%d left out of %d) in %f seconds..." code (retries_left - 1) r.req_max_retry seconds;
-          Thread.delay seconds;
-          http_call_internal r write_f fretry (retries_left - 1) progress
-        end else begin
-          lprintf_nl "HTTP unavailable";
-          Error (`HTTP code)
-        end
+        raise (ScheduleRetry (`HTTP code))
       | code ->
         lprintf_nl "HTTP error occurred: %d %s" code (Url.to_string r.req_url);
         Error (`HTTP code))
@@ -191,6 +186,9 @@ let rec http_call_internal r write_f fretry retries_left progress =
       Curl.cleanup curl;
       Error `UnknownError
   with
+  | ScheduleRetry error ->
+    lprintf_nl "exception";
+    raise (ScheduleRetry error)
   | Curl.CurlException (code, i, s) ->
     lprintf_nl "request %s failed: %s" (Url.to_string r.req_url) (Curl.strerror code);
     Curl.cleanup curl;
@@ -214,11 +212,11 @@ let http_call r write_f fok fko fretry progress =
     | Some ip ->
       lprintf "Match found: %s!\n" (Unix.string_of_inet_addr ip);
       safe_call (fun () -> fko (`Block (Ip.of_inet_addr ip))) true |> ignore
-    | None -> match http_call_internal r write_f fretry r.req_max_retry progress with
+    | None -> match http_call_internal r write_f fretry progress with
       | Ok _ -> safe_call (fun () -> fok ()) true |> ignore
       | Error code -> safe_call (fun () -> fko code) true |> ignore
   with Not_found ->
-    lprintf "Host not found!\n";
+    lprintf_nl "Host not found: %s" name;
     fko `DNS
 
 (** Download to file *)
@@ -267,10 +265,32 @@ let wget_sync r f =
   let fretry () = seek_out oc 0 in
   http_call r write_f fok fko fretry (fun _ _ -> ())
 
-let wget r f =
+let rec schedule_retry request f_attempt ferr =
   ThreadPool.add_task thread_pool (fun () ->
-    wget_sync r f |> ignore
+    try
+      f_attempt request
+    with
+    | ScheduleRetry error ->
+      if request.req_retry >= request.req_max_retry then
+        safe_call (fun () -> ferr error) true |> ignore
+      else begin
+        let request2 = {
+          request with
+          req_retry = request.req_retry + 1;
+        } in
+        let seconds = float_of_int ((request.req_retry + 1)*10) in
+        lprintf_nl "Reschedule request (%d out of %d) in %d seconds..."
+          request2.req_retry request2.req_max_retry (int_of_float seconds);
+        ignore(add_timer (seconds) (fun _ ->
+          schedule_retry request2 f_attempt ferr
+        ))
+      end
   )
+
+let wget r f =
+  schedule_retry r (fun req ->
+    wget_sync req f |> ignore
+  ) (fun _ -> ())
 
 (** GET request to buffer *)
 let wget_string_sync r f ?(ferr=def_ferr) progress =
@@ -290,9 +310,9 @@ let wget_string_sync r f ?(ferr=def_ferr) progress =
   http_call r write_f fok fko fretry progress
 
 let wget_string r f ?(ferr=def_ferr) progress =
-  ThreadPool.add_task thread_pool (fun () ->
-    wget_string_sync r f ~ferr:ferr progress |> ignore
-  )
+  schedule_retry r (fun req ->
+    wget_string_sync req f ~ferr:ferr progress |> ignore
+  ) ferr
 
 (** HEAD request with error callback *)
 let whead2 r f ferr =

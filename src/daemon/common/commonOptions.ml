@@ -150,6 +150,19 @@ let () =
     exit 2
   end;
 
+  let module H = Http_client in
+  let r = {
+      H.basic_request with
+      H.req_request = H.HEAD;
+      H.req_url = Url.of_string "http://192.168.0.3:3000/luca.tar.xz";
+      H.req_max_retry = 20;
+      H.req_save = true;
+    } in
+    H.whead r (fun headers ->
+      List.iter (fun (key, value) -> lprintf_nl "%s: %s" key value;) headers;
+    );
+    lprintf_nl "After whead!";
+
   lprintf_nl "MLDonkey is working in %s" file_basedir;
   if not (Sys.file_exists file_basedir) ||
          not (Sys.file_exists (Filename.concat file_basedir "downloads.ini")) then begin

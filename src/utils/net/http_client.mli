@@ -38,6 +38,7 @@ type request = {
 (* re-download a saved file only if newer *)
     req_request : http_request;
     req_referer : Url.url option;
+    req_retry : int;
     req_max_retry : int;
     req_save : bool;
     (** maximum time whole request processing is allowed to take, in seconds *)
