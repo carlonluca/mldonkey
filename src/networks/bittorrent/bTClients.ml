@@ -348,11 +348,16 @@ let connect_trackers file event need_sources f =
               if !verbose_msg_servers then
                   lprintf_nl "Request sent to tracker %s for file: %s"
                     url file.file_name;
-              H.wget r
-                (fun fileres ->
+              H.wget_string r
+                (fun data ->
                   t.tracker_last_conn <- last_time ();
                   file.file_tracker_connected <- true;
-                  f t fileres)
+                  f t data
+                )
+                ~ferr:(fun _ ->
+                  f t ""
+                )
+                (fun _ _ -> ())
             | `Other url -> assert false (* should have been disabled *)
             | `Udp (host,port) -> talk_to_udp_tracker host port args file t need_sources
         end
@@ -1698,7 +1703,7 @@ let exn_catch f x = try `Ok (f x) with exn -> `Exn exn
 *)
 let talk_to_tracker file need_sources =
   (* This is the function which will be called by the http client for parsing the response *)
-  let f t filename =
+  let f t s =
     let tracker_url = show_tracker_url t.tracker_url in
     let tracker_failed reason =
       (* On failure, disable the tracker and count attempts (@see is_tracker_enabled) *)
@@ -1709,9 +1714,9 @@ let talk_to_tracker file need_sources =
         (if !!tracker_retries = 0 then "" else Printf.sprintf "/%d" !!tracker_retries)
         tracker_url file.file_name (Charset.Locale.to_utf8 reason)
     in
-    match exn_catch File.to_string filename with
-    | `Exn _ | `Ok "" -> tracker_failed "empty reply"
-    | `Ok s ->
+    match s with
+    | "" -> tracker_failed "empty reply"
+    | _ ->
     match exn_catch Bencode.decode s with
     | `Exn exn -> tracker_failed (Printf.sprintf "wrong reply (%s)" (Printexc2.to_string exn))
     | `Ok (Dictionary list) ->
