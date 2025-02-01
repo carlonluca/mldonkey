@@ -49,7 +49,7 @@ jobs:
         with:
           ocaml-compiler: ${{ matrix.ocaml-version }}
 
-      - run: sudo apt install libcrypto++-dev libminiupnpc-dev libnatpmp-dev libgd-dev
+      - run: sudo apt install libcrypto++-dev libminiupnpc-dev libnatpmp-dev libgd-dev libcurl-ocaml-dev
         if: matrix.os == 'ubuntu-latest'
 
       - run: brew install cryptopp miniupnpc libnatpmp gd
