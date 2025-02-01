@@ -2297,6 +2297,7 @@ let dllink_parse html url user =
       (* Combine the list of header fields into one string *)
       let concat_headers =
         (List.fold_right (fun (n, c) t -> n ^ ": " ^ c ^ "\n" ^ t) headers "")
+        ^ "Location: " ^ url ^ "\n"
       in
       ignore (dllink_query_networks html concat_headers user user.user_default_group)
     );
