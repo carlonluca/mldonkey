@@ -567,7 +567,7 @@ CURL=yes
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking ocaml curl library" >&5
 AC_MSG_CHECKING([ocaml curl library])
 CURL_INCLUDE=$(ocamlfind query -i-format curl 2> /dev/null)
-if [ $? -ne 0 ]; then
+if test $? -ne 0; then
   CURL=no
 fi
 CURL_LIB=$(ocamlfind query -a-format -predicates native curl 2> /dev/null)
