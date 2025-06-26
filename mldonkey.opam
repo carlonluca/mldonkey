@@ -25,6 +25,7 @@ depends: [
   "conf-zlib"
   "ocamlfind"
   "num" # technically optional, enables bittorrent
+  "ocurl"
 ]
 build: [
   ["./configure" "--enable-debug" "--prefix" prefix]
