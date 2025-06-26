@@ -575,7 +575,7 @@ if test $? -ne 0; then
   CURL=no
 fi
 CURL_CLIB=$(ocamlfind query -l-format -predicates native curl 2> /dev/null)
-if [ $? -ne 0 ]; then
+if test $? -ne 0; then
   CURL=no
 fi
 if test "$CURL" = "no"; then
