@@ -586,8 +586,7 @@ else
 fi
 
 THREADS=yes
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking ocaml posix thread module" >&5
-AC_MSG_CHECKING([ocaml posix thread module]); }
+AC_MSG_CHECKING([ocaml posix thread module])
 THREADS_INCLUDE=$(ocamlfind query -i-format threads.posix 2> /dev/null)
 if [ $? -ne 0 ]; then
   THREADS=no
