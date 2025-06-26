@@ -592,6 +592,7 @@ if [ $? -ne 0 ]; then
   THREADS=no
 fi
 if test "$THREADS" = "no"; then
+  AC_MSG_RESULT([no])
   AC_MSG_ERROR([thread module is missing])
 else
   AC_MSG_RESULT([found $THREADS_INCLUDE])
