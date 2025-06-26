@@ -580,6 +580,7 @@ if test $? -ne 0; then
 fi
 if test "$CURL" = "no"; then
   AC_MSG_RESULT([no])
+  AC_MSG_RESULT([no])
   AC_MSG_ERROR([ocurl is missing])
 else
   AC_MSG_RESULT([found $CURL_INCLUDE])
