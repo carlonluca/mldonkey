@@ -597,6 +597,27 @@ else
   AC_MSG_RESULT([found $THREADS_INCLUDE])
 fi
 
+STREAMS=yes
+AC_MSG_CHECKING([camlp-streams module])
+STREAMS_INCLUDE=$(ocamlfind query -i-format camlp-streams 2> /dev/null)
+if [ $? -ne 0 ]; then
+  STREAMS=no
+fi
+STREAMS_LIB=$(ocamlfind query -a-format -predicates native camlp-streams 2> /dev/null)
+if test $? -ne 0; then
+  STREAMS=no
+fi
+STREAMS_CLIB=$(ocamlfind query -l-format -predicates native camlp-streams 2> /dev/null)
+if test $? -ne 0; then
+  STREAMS=no
+fi
+if test "$STREAMS" = "no"; then
+  AC_MSG_RESULT([no])
+  AC_MSG_ERROR([camlp-streams is missing])
+else
+  AC_MSG_RESULT([found $STREAMS_INCLUDE])
+fi
+
 echo ""
 echo "----------------------------------"
 echo "     Checking system headers."
