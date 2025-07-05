@@ -28,11 +28,8 @@ NO_LIBS_opt=
 NO_STATIC_LIBS_opt=
 NO_CMXA=
 
-LIBS_byte=-custom bigarray.cma unix.cma str.cma
-LIBS_opt= bigarray.cmxa unix.cmxa str.cmxa
-
-BIGARRAY_LIBS_opt=bigarray.cmxa
-BIGARRAY_LIBS_byte=bigarray.cma
+LIBS_byte=-custom unix.cma str.cma
+LIBS_opt= unix.cmxa str.cmxa
 
 CRYPT_LIBS_opt=-cclib -lcrypt
 CRYPT_LIBS_byte=-cclib -lcrypt
@@ -140,7 +137,7 @@ BITSTRING_SRCS = \
 
 ifeq ("$(BZIP2)", "yes")
   LIBS_flags += -cclib -lbz2
-  CDK_SRCS +=  $(CDK)/bzlib.ml $(CDK)/bzip2.ml
+  CDK_SRCS += $(CDK)/bzlib.mli $(CDK)/bzlib.ml $(CDK)/bzip2.ml
 endif
 
 CDK_SRCS +=  $(CDK)/zlib.ml $(CDK)/zlib2.ml $(CDK)/zip.ml $(CDK)/gzip.ml $(CDK)/zlibstubs.c $(CDK)/bzip2stubs.c $(CDK)/tar.mlcpp
@@ -593,12 +590,12 @@ BITSTRING_CMXA=bitstring.cmxa
 BITSTRING_CMA=bitstring.cma
 endif
 ifeq ("$(BITTORRENT)", "yes")
-LIBS_byte += $(NUMS_INCLUDE) nums.cma
+LIBS_byte += $(NUMS_INCLUDE) nums.cma $(STREAMS_INCLUDE) camlp_streams.cma
 LIBS_opt += $(NUMS_INCLUDE) nums.cmxa
 BITSTRING_CMXA=bitstring.cmxa
 BITSTRING_CMA=bitstring.cma
 endif
-MLNET_SRCS+= $(MAIN_SRCS)
+MLNET_SRCS+=$(CDK_SRCS) $(MAIN_SRCS)
 MLNET_CMXA=extlib.cmxa $(CDK_CMXA) $(BITSTRING_CMXA) magic.cmxa common.cmxa client.cmxa core.cmxa driver.cmxa
 
 TESTS_CMXA=extlib.cmxa $(CDK_CMXA) $(BITSTRING_CMXA) magic.cmxa common.cmxa client.cmxa core.cmxa
@@ -614,7 +611,7 @@ mlnet+gui_CMXA= \
   gmisc.cmxa icons.cmxa guibase.cmxa gui.cmxa
 endif
 
-mlnet+gui_SRCS=$(MAIN_SRCS)
+#mlnet+gui_SRCS=$(MAIN_SRCS)
 
 
 #######################################################################
@@ -1159,14 +1156,17 @@ $1_CMXS=$(foreach file, $($1_ML),   $(basename $(file)).cmx)
 $1_OBJS=$(foreach file, $($1_C),   $(basename $(file)).o)    
 
 TMPSOURCES += $($1_ML4:.ml4=.ml) $($1_MLC4:.mlc4=.ml) $($1_MLT:.mlt=.ml) $($1_MLP:.mlcpp=.ml) $($1_MLL:.mll=.ml) $($1_MLY:.mly=.ml) $($1_MLY:.mly=.mli)  $($1_ZOG:.zog=.ml) 
- 
+
+$(info Building 1)
 ZOGSOURCES +=  $($1_ZOG:.zog=.ml) 
 MLTSOURCES +=  $($1_MLT:.mlt=.ml)
 MLPSOURCES +=  $($1_MLP:.mlcpp=.ml)
 
+$(info Building 2)
 build/$2.cmxa: $($1_OBJS) $($1_CMXS) 
 	$(OCAMLOPT) -a -o $[[@]]  $($1_OBJS) $(LIBS_flags) $($3_LIBS_flags) $($1_CMXS) 
- 
+
+$(info Building 3)
 build/$2.cma: $($1_OBJS) $($1_CMOS) 
 	$(OCAMLC) -a -o $[[@]]  $($1_OBJS) $(LIBS_flags) $($3_LIBS_flags) $($1_CMOS) 
  
@@ -1381,7 +1381,6 @@ EXPAND(INSTALLER,mldonkey_installer,GTK,INSTALLER)
 EXPAND(MLPIC,mlpic)
 EXPAND(SPIDER,mlspider)
 EXPAND(DISASM,disasm,CURSES)
-EXPAND(ANALYSER1,analyser1,BIGARRAY)
 EXPAND(BTVIEW,btview)
 EXPAND(CLUSTER,cluster)
 EXPAND(TESTRSS,testrss)
@@ -1566,6 +1565,7 @@ depend:   $(RESFILE) \
 		$(MAKE) svg_converter.byte; \
 	fi
 
+$(info Building 4)
 $(LOCAL)/ocamlopt-$(REQUIRED_OCAML)/Makefile: patches/ocamlopt-$(REQUIRED_OCAML).tar.gz
 	rm -rf $(LOCAL)/ocamlopt-$(REQUIRED_OCAML)
 	mkdir -p $(LOCAL)
@@ -1573,6 +1573,7 @@ $(LOCAL)/ocamlopt-$(REQUIRED_OCAML)/Makefile: patches/ocamlopt-$(REQUIRED_OCAML)
 	gzip -cd ../ocamlopt-$(REQUIRED_OCAML).tar.gz | tar xf -; \
 	touch ocamlopt-$(REQUIRED_OCAML)/Makefile
 
+$(info Building 5)
 $(LOCAL)/ocamlopt-$(REQUIRED_OCAML)/ocamlopt: $(LOCAL)/ocamlopt-$(REQUIRED_OCAML)/Makefile
 	cd $(LOCAL)/ocamlopt-$(REQUIRED_OCAML); $(MAKE)
 
@@ -1583,6 +1584,7 @@ BT_UTILS_STATIC=$(foreach x, $(BT_UTILS), $(x).static)
 BT_UTILS_BYTE_STATIC=$(foreach x, $(BT_UTILS), $(x).byte.static)
 endif
 
+$(info Building 6)
 utils.byte: mld_hash.byte $(BT_UTILS_BYTE) copysources.byte get_range.byte subconv.byte
 utils.opt: svg_converter mld_hash $(BT_UTILS) copysources get_range subconv
 utils.opt.static: svg_converter mld_hash.static $(BT_UTILS_STATIC) copysources.static get_range.static subconv.static

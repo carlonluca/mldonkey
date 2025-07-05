@@ -643,6 +643,10 @@ ac_header_c_list=
 enable_year2038=no
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+STREAMS_LIB
+STREAMS_INCLUDE
+CURL_INCLUDE
+THREADS_INCLUDE
 NUMS_INCLUDE
 OCAMLVERSION_MAJOR
 DEVFLAGS
@@ -6161,6 +6165,7 @@ else
 printf "%s\n" "found $NUMS_INCLUDE" >&6; }
 fi
 
+CURL_INCLUDE=
 CURL=yes
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking ocaml curl library" >&5
 printf %s "checking ocaml curl library... " >&6; }
@@ -6189,7 +6194,7 @@ THREADS=yes
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking ocaml posix thread module" >&5
 printf %s "checking ocaml posix thread module... " >&6; }
 THREADS_INCLUDE=$(ocamlfind query -i-format threads.posix 2> /dev/null)
-if test $? -ne 0 ; then
+if test $? -ne 0; then
   THREADS=no
 fi
 if test "$THREADS" = "no"; then
@@ -6205,7 +6210,7 @@ STREAMS=yes
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking camlp-streams module" >&5
 printf %s "checking camlp-streams module... " >&6; }
 STREAMS_INCLUDE=$(ocamlfind query -i-format camlp-streams 2> /dev/null)
-if test $? -ne 0 ; then
+if test $? -ne 0; then
   STREAMS=no
 fi
 STREAMS_LIB=$(ocamlfind query -a-format -predicates native camlp-streams 2> /dev/null)
@@ -6221,8 +6226,8 @@ if test "$STREAMS" = "no"; then
 printf "%s\n" "no" >&6; }
   as_fn_error $? "camlp-streams is missing" "$LINENO" 5
 else
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: found $CURL_INCLUDE" >&5
-printf "%s\n" "found $CURL_INCLUDE" >&6; }
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: found $STREAMS_INCLUDE" >&5
+printf "%s\n" "found $STREAMS_INCLUDE" >&6; }
 fi
 
 echo ""
@@ -11795,6 +11800,10 @@ fi
 
 
 BUILD_SYSTEM="`uname -s` `uname -m` `uname -r`"
+
+
+
+
 
 
 

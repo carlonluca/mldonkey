@@ -42,10 +42,10 @@ static void camlzip_bzerror(char * fn, int err)
   if (camlzip_bzerror_exn == NULL) {
     camlzip_bzerror_exn = caml_named_value("Bzlib.Error");
     if (camlzip_bzerror_exn == NULL)
-      invalid_argument("Exception Bzlib.Error not initialized");
+      caml_invalid_argument("Exception Bzlib.Error not initialized");
   }
   Begin_roots3(s1, s2, bucket);
-    s1 = copy_string(fn);
+    s1 = caml_copy_string(fn);
     switch (err) {
     case BZ_CONFIG_ERROR:
       s2 = Val_int(0);
@@ -68,12 +68,12 @@ static void camlzip_bzerror(char * fn, int err)
     default:
       s2 = Val_int(6);
     }
-    bucket = alloc_small(3, 0);
+    bucket = caml_alloc_small(3, 0);
     Field(bucket, 0) = *camlzip_bzerror_exn;
     Field(bucket, 1) = s1;
     Field(bucket, 2) = s2;
   End_roots();
-  mlraise(bucket);
+  caml_raise(bucket);
 }
 
 static value camlzip_new_bzstream(void)
@@ -126,7 +126,7 @@ value camlzip_bzCompress(value vzs, value srcbuf, value srcpos, value srclen,
   used_out = Long_val(dstlen) - zs->avail_out;
   zs->next_in = NULL;         /* not required, but cleaner */
   zs->next_out = NULL;        /* (avoid dangling pointers into Caml heap) */
-  res = alloc_small(3, 0);
+  res = caml_alloc_small(3, 0);
   Field(res, 0) = Val_bool(retcode == BZ_STREAM_END);
   Field(res, 1) = Val_int(used_in);
   Field(res, 2) = Val_int(used_out);
@@ -187,7 +187,7 @@ value camlzip_bzDecompress(value vzs, value srcbuf, value srcpos, value srclen,
   used_out = Long_val(dstlen) - zs->avail_out;
   zs->next_in = NULL;           /* not required, but cleaner */
   zs->next_out = NULL;          /* (avoid dangling pointers into Caml heap) */
-  res = alloc_small(3, 0);
+  res = caml_alloc_small(3, 0);
   Field(res, 0) = Val_bool(retcode == BZ_STREAM_END);
   Field(res, 1) = Val_int(used_in);
   Field(res, 2) = Val_int(used_out);
@@ -220,7 +220,7 @@ int camlzip_bzlibversion(void)
   CAMLparam0 ();
   CAMLlocal1 (v);
 #ifdef HAVE_BZLIBVERSION
-  v = copy_string (BZ2_bzlibVersion());
+  v = caml_copy_string (BZ2_bzlibVersion());
   CAMLreturn (v);
 #else
   failwith("bzlibVersion not found");
