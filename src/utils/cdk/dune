@@ -1,0 +1,29 @@
+(library
+    (name cdk)
+    (modules
+        arg2
+        array2
+        bzip2
+        bzlib
+        file
+        filename2
+        filepath
+        gd
+        genlex2
+        gzip
+        hashtbl2
+        heap
+        list2
+        printexc2
+        printf2
+        string2
+        tar
+        unix2
+        zip
+        zlib2
+        zlib)
+    (foreign_stubs
+        (language c)
+        (names bzip2stubs gdstubs heap_c zlibstubs))
+    (libraries unix str threads mldonkey.utils)
+    (flags (:standard -w -32)))

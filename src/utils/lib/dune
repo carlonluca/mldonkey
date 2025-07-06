@@ -1,0 +1,6 @@
+(library
+    (name utils)
+    (public_name mldonkey.utils)
+    (flags (:standard -w -3))
+    (wrapped false)
+)
