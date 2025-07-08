@@ -23,12 +23,11 @@
         unix32
         zip
         zlib2
-        zlib)
+        zlib
+        fifo)
     (foreign_stubs
         (language c)
         (names bzip2stubs gdstubs heap_c zlibstubs))
     (libraries IO unix str threads camlp-streams)
-    (flags
-        (:standard -w -32)
-        (:standard -w -50)
-    ))
+    (flags (:standard -w -32 -w -50 -w -27 -w -35 -w -69))
+)

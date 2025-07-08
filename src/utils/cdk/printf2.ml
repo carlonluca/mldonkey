@@ -80,7 +80,7 @@ let () =
 
 let detach () =
   match !lprintf_output with
-    Some oc when oc == Pervasives.stdout -> lprintf_output := None
+    Some oc when oc == Stdlib.stdout -> lprintf_output := None
   | _ -> ()
 
 let close_log () =
