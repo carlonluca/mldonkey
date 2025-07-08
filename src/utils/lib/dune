@@ -1,6 +1,45 @@
 (library
     (name utils)
-    (public_name mldonkey.utils)
-    (flags (:standard -w -3))
+    (flags
+        (:standard -w -3)
+        (:standard -w -50)
+    )
     (wrapped false)
+    (libraries cdk)
+    (modules
+        autoconf
+        bitv
+        charset
+        date
+        fifo
+        gettext
+        http_lexer
+        indexer
+        indexer1
+        indexer2
+        int64ops
+        intmap
+        intset
+        levenshtein
+        magic
+        magic_magic
+        magiclib
+        md4
+        misc
+        misc2
+        options
+        queues
+        set2
+        sparseFile
+        store
+        stringMap
+        threadPool
+        url
+        verificationBitmap
+    )
+    (foreign_stubs
+        (language c)
+        (flags -O2)
+        (names CryptoPP_stubs charsetstubs fst_hash magiclib_stub md4_c md4_comp md4sum md5_c sha1_c stubs_c tiger)
+    )
 )

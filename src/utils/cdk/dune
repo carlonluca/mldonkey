@@ -18,12 +18,17 @@
         printf2
         string2
         tar
+        syslog
         unix2
+        unix32
         zip
         zlib2
         zlib)
     (foreign_stubs
         (language c)
         (names bzip2stubs gdstubs heap_c zlibstubs))
-    (libraries unix str threads mldonkey.utils)
-    (flags (:standard -w -32)))
+    (libraries IO unix str threads camlp-streams)
+    (flags
+        (:standard -w -32)
+        (:standard -w -50)
+    ))

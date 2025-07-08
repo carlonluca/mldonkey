@@ -1,0 +1,8 @@
+(library
+    (name IO)
+    (modules
+        IO)
+    (flags
+        (:standard -w -32)
+        (:standard -w -50)
+    ))

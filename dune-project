@@ -1,6 +1,5 @@
 (lang dune 3.12)
 (name mldonkey)
-
 (package
     (name mldonkey)
     (synopsis "Cross-platform multi-network peer-to-peer daemon")
@@ -21,4 +20,6 @@ interfaces : telnet, web, and binary protocol for third party GUIs.
         threads
         camlp-streams
         curl
-        num))
+        num
+    )
+)

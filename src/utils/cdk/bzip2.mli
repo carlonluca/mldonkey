@@ -12,7 +12,7 @@ type in_channel
 val open_in: string -> in_channel
         (* Open a compressed file for reading.  The argument is the file
            name. *)
-val open_in_chan: Pervasives.in_channel -> in_channel
+val open_in_chan: Stdlib.in_channel -> in_channel
         (* Open a compressed file for reading.  The argument is a
            regular file channel already opened on the compressed file. *)
 val input_char: in_channel -> char
@@ -72,7 +72,7 @@ val open_out: ?level:int -> string -> out_channel
            (but fastest) compression and 9 being the strongest
            (but slowest) compression.  The default level is 6
            (medium compression). *)
-val open_out_chan: ?level:int -> Pervasives.out_channel -> out_channel
+val open_out_chan: ?level:int -> Stdlib.out_channel -> out_channel
         (* Open a compressed file for writing.  The argument is a
            regular file channel already opened on the compressed file.
            The optional [level] argument sets the compression level
