@@ -39,6 +39,7 @@ let rec remove_rec ele list tail =
 let remove ele list =
   remove_rec ele list []
 
+[@@@ocaml.warning "-32"]
 let rec remove_one_rec ele list tail =
   match list with
     [] -> List.rev tail
@@ -47,6 +48,7 @@ let rec remove_one_rec ele list tail =
         List.rev_append tail list
       else
         remove_one_rec ele list (e :: tail)
+[@@@ocaml.warning "+32"]
 
 let remove_one ele list =
   remove_rec ele list []

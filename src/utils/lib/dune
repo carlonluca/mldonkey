@@ -41,5 +41,6 @@
         (language c)
         (flags -O2)
         (names CryptoPP_stubs charsetstubs fst_hash magiclib_stub md4_c md4_comp md4sum md5_c sha1_c stubs_c tiger)
+        (include_dirs ../../..)
     )
 )
