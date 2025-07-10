@@ -1,7 +1,7 @@
 (library
     (name utils)
     (flags
-        (:standard -w -3 -w -50)
+        (:standard -w -3 -w -50 -w -27)
     )
     (wrapped false)
     (libraries cdk)
