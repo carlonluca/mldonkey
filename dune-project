@@ -2,6 +2,7 @@
 (name mldonkey)
 (package
     (name mldonkey)
+    (allow_empty)
     (synopsis "Cross-platform multi-network peer-to-peer daemon")
     (description "
  Supported networks include:

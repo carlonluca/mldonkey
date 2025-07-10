@@ -1,8 +1,7 @@
 (library
     (name utils)
     (flags
-        (:standard -w -3)
-        (:standard -w -50)
+        (:standard -w -3 -w -50)
     )
     (wrapped false)
     (libraries cdk)
@@ -35,6 +34,12 @@
         threadPool
         url
         verificationBitmap
+    )
+    (foreign_stubs
+        (language cxx)
+        (names CryptoPP)
+        (flags -O2)
+        (include_dirs ../../..)
     )
     (foreign_stubs
         (language c)

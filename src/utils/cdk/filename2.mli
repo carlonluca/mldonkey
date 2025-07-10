@@ -66,10 +66,6 @@ conversion functions. *)
 val path_of_filename : string -> string list
   
 val basename : string -> string
-  
-(* remove invalid chars in a filename, depending on the filesystem, 
-   trim filename length to allowed limit on filesystem *)
-val filesystem_compliant : string -> Unix32.fstype -> int -> string
 
 (** [temp_file prefix suffix] returns the name of a
    fresh temporary file in the temporary directory.
