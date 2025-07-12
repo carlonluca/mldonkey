@@ -1,5 +1,6 @@
 (library
     (name IO)
+    (public_name mldonkey.io)
     (modules
         IO)
     (flags

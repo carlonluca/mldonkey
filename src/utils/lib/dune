@@ -1,12 +1,24 @@
 (library
-    (name utils)
+    (name autoconf)
+    (public_name mldonkey.autoconf)
     (flags
-        (:standard -w -3 -w -50 -w -27)
+        (:standard -w -3 -w -50 -w -27 -w -67 -w -69)
     )
     (wrapped false)
-    (libraries cdk)
     (modules
         autoconf
+    )
+)
+
+(library
+    (name utils)
+    (public_name mldonkey.utils)
+    (flags
+        (:standard -w -3 -w -27 -w -67 -w -35 -w -69 -w -32)
+    )
+    (wrapped false)
+    (libraries mldonkey.cdk mldonkey.autoconf mldonkey.mlunix)
+    (modules
         bitv
         charset
         date
@@ -15,7 +27,6 @@
         indexer
         indexer1
         indexer2
-        int64ops
         intmap
         intset
         levenshtein
@@ -28,23 +39,10 @@
         options
         queues
         set2
-        sparseFile
         store
         stringMap
         threadPool
         url
         verificationBitmap
-    )
-    (foreign_stubs
-        (language cxx)
-        (names CryptoPP)
-        (flags -O2)
-        (include_dirs ../../..)
-    )
-    (foreign_stubs
-        (language c)
-        (flags -O2)
-        (names CryptoPP_stubs charsetstubs fst_hash magiclib_stub md4_c md4_comp md4sum md5_c sha1_c stubs_c tiger)
-        (include_dirs ../../..)
     )
 )

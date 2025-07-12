@@ -58,7 +58,9 @@ let string_of_date formats tm date =
       | Colon -> s ^ ":"
       | Dot -> s ^ "."
       | Minus -> s ^ "-"
-      | Zone -> Printf.sprintf "%s%s" s (Rss_date.mk_timezone date)
+      (* TODO: fix this *)
+      (* | Zone -> Printf.sprintf "%s%s" s (Rss_date.mk_timezone date) *)
+      | Zone -> Printf.sprintf "-"
       | Gmt -> s ^ "GMT"
   ) "" formats
 

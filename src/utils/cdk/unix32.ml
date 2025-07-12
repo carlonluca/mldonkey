@@ -648,7 +648,7 @@ module MultiFile = struct
       let possible_len = Int64.to_int possible_len64 in
       if possible_len64 > zero then
         FDCache.read file.fd in_file_pos s in_string_pos possible_len;
-      String.fill s (in_string_pos + possible_len) (len - possible_len) '\000'
+      Bytes.fill s (in_string_pos + possible_len) (len - possible_len) '\000'
 
     let io f t chunk_begin string string_pos len =
       let (file, tail) = find_file t chunk_begin in
