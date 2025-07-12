@@ -20,6 +20,8 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open Printf2
+
 (** Analysis of command line arguments. *)
 
 (** The files to handle. *)
@@ -37,5 +39,5 @@ let parse () =
     ()
   with
     Failure s ->
-      lprintf_newline "%s" s ;
+      lprintf_nl "%s" s ;
       exit 1

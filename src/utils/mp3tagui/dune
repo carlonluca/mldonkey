@@ -1,0 +1,16 @@
+(library
+    (name mp3tagui)
+    (public_name mldonkey.mp3tagui)
+    (libraries mldonkey.cdk mldonkey.utils)
+    (flags
+        (:standard -w -3 -w -50 -w -27 -w -67 -w -69 -w -35)
+    )
+    (wrapped false)
+    (modules
+        mp3_info
+        mp3_genres
+        mp3_misc
+        mp3_tag
+        mp3tag
+    )
+)
