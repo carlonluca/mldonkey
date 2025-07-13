@@ -326,7 +326,7 @@ let file_best_name (file : file) =
 let set_file_best_name file name ?(fs=`Unknown) namemax =
   let file = as_file_impl file in
   let old_name = file.impl_file_best_name in
-  let real_name = Filename2.filesystem_compliant name fs namemax in
+  let real_name = Filesystem.filesystem_compliant name fs namemax in
   if real_name = "" then
     lprintf_nl "can not rename file \"%s\" to \"%s\""
       (String.escaped file.impl_file_best_name) (String.escaped real_name)
@@ -862,7 +862,7 @@ parent.fstatus.location.href='submit?q=chgrp+'+v+'+%d';
 
     end else
     begin
-      Printf.bprintf buf "[%-s %5d]\n%s\n%s%s\nTotal   %10s\nPartial %10s\npriority %d\nOwner/Group: %s/%s\n"
+      Printf.bprintf buf "[%-10s %5d]\n%s\n%s%s\nTotal   %10s\nPartial %10s\npriority %d\nOwner/Group: %s/%s\n"
         n.network_name
         (file_num file)
         (shorten (file_best_name file) 80)
@@ -1277,5 +1277,5 @@ let concat_file dir filename =
     | None -> 0
     | Some v -> v
   in
-  Filename.concat dir (Filename2.filesystem_compliant filename fs namemax)
+  Filename.concat dir (Filesystem.filesystem_compliant filename fs namemax)
 

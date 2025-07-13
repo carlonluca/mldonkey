@@ -134,14 +134,14 @@ let file_committed_name incoming_dir file =
     | Some v -> v
   in
   let new_name =
-    Filename2.filesystem_compliant 
+    Filesystem.filesystem_compliant 
       (canonize_basename (file_best_name file)) fs namemax in
 
   let new_name =
     if Sys.file_exists (Filename.concat incoming_dir new_name) then
       let rec iter num =
         let new_name =
-          Filename2.filesystem_compliant
+          Filesystem.filesystem_compliant
             (Printf.sprintf "%s_%d" new_name num) fs namemax in
           if Sys.file_exists (Filename.concat incoming_dir new_name) then
             iter (num+1)
