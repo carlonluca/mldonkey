@@ -1,5 +1,5 @@
 (executable
     (name hello)
     (public_name mldonkey_hello)
-    (libraries utils cdk unix)
+    (libraries utils cdk unix daemoncommon)
 )

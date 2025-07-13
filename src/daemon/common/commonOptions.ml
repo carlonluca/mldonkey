@@ -127,7 +127,7 @@ let windows_sleep seconds =
 let min_reserved_fds = 50
 let min_connections = 50
 
-let () =
+let main_app =
   lprintf_nl "Starting MLDonkey %s ... " Autoconf.current_version;
 
   Curl.global_init Curl.CURLINIT_GLOBALALL;
