@@ -1,7 +1,7 @@
 (* hello.ml *)
 
-open CommonOptions
+(* open CommonOptions *)
 
 let () =
   print_endline "Hello, world!";
-  main_app
+  (* main_app *)
