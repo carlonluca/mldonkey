@@ -1,9 +1,0 @@
-(library
-    (name mlunix)
-    (public_name mldonkey.mlunix)
-    (libraries mldonkey.cdk)
-    (flags
-        (:standard -w -3 -w -50 -w -27 -w -67 -w -69)
-    )
-    (wrapped false)
-)

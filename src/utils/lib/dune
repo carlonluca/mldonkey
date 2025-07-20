@@ -11,13 +11,28 @@
 )
 
 (library
+    (name utils_stubs)
+    (public_name mldonkey.utils_stubs)
+    (modules)
+    (foreign_stubs
+        (language c)
+        (names
+            md4_c
+            md4_comp
+            charsetstubs
+        )
+        (flags (:standard -I%{project_root}/../..))
+    )
+)
+
+(library
     (name utils)
     (public_name mldonkey.utils)
     (flags
         (:standard -w -3 -w -27 -w -67 -w -35 -w -69 -w -32)
     )
     (wrapped false)
-    (libraries mldonkey.cdk mldonkey.autoconf mldonkey.mlunix)
+    (libraries mldonkey.cdk mldonkey.autoconf mldonkey.utils_stubs)
     (modules
         bitv
         charset

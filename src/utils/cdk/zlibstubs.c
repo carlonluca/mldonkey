@@ -14,7 +14,7 @@
 /* $Id$ */
 
 /* Stub code to interface with Zlib */
-#include "../../../config/config.h" /* for HAVE_ZLIBVERSION */
+#include <config/config.h> /* for HAVE_ZLIBVERSION */
 
 #include <stdint.h>
 #include <zlib.h>

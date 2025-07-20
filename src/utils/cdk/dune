@@ -1,4 +1,23 @@
 (library
+    (name cdkstubs)
+    (public_name mldonkey.cdkstubs)
+    (wrapped false)
+    (modules)
+    (foreign_stubs
+        (language c)
+        (names
+            bzip2stubs
+            gdstubs
+            heap_c
+            zlibstubs
+            stubs_c
+            unix_stubs_c
+        )
+        (flags (:standard -I%{project_root}/../..))
+    )
+)
+
+(library
     (name cdk)
     (public_name mldonkey.cdk)
     (wrapped false) 
@@ -29,7 +48,8 @@
         zlib
         fifo
         int64ops
+        mlUnix
     )
-    (libraries IO unix str threads camlp-streams autoconf)
+    (libraries IO unix str threads camlp-streams autoconf mldonkey.cdkstubs)
     (flags (:standard -w -32 -w -50 -w -27 -w -35 -w -69))
 )
