@@ -20,8 +20,14 @@
             md4_c
             md4_comp
             charsetstubs
+            tiger
+            tiger_stubs
+            hashes_stubs
+            sha1_c
+            md5_c
+            fst_hash
         )
-        (flags (:standard -I%{project_root}/../..))
+        (flags (:standard -I%{project_root}/../.. -I../cdk))
     )
 )
 

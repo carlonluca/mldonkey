@@ -1,6 +1,7 @@
 #include "md4.h"
 #include "md5.h"
 #include "sha1_c.h"
+#include "hashes_stubs.h"
 
 ML_HASH(sha1,SHA1_CTX,sha1_begin,sha1_hash, sha1_end)
 ML_HASH(md5,md5_state_t,md5_init,md5_append,md5_finish)

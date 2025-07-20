@@ -17,8 +17,9 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-#include "../../utils/lib/os_stubs.h"
+#include <os_stubs.h>
 #include "tiger.h"
+#include "hashes_stubs.h"
 
 /* The following macro denotes that an optimization    */
 /* for Alpha is required. It is used only for          */
