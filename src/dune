@@ -2,5 +2,5 @@
     (name mlnet)
     (public_name mlnet)
     (libraries utils cdk unix daemoncommon mldonkey.driver)
-    (link_flags (-cclib -lz -cclib -lbz2))
+    (link_flags (-cclib -lz -cclib -lbz2 -cclib -lminiupnpc -cclib -lnatpmp))
 )

@@ -26,6 +26,7 @@
             sha1_c
             md5_c
             fst_hash
+            magiclib_stub
         )
         (flags (:standard -I%{project_root}/../.. -I../cdk))
     )
