@@ -127,7 +127,7 @@ let windows_sleep seconds =
 let min_reserved_fds = 50
 let min_connections = 50
 
-let main_app =
+let () =
   lprintf_nl "Starting MLDonkey %s ... " Autoconf.current_version;
 
   Curl.global_init Curl.CURLINIT_GLOBALALL;
@@ -220,6 +220,7 @@ let main_app =
   Unix2.can_write_to_directory (Filename2.temp_dir_name ());
 
   if (String2.starts_with (Filename.basename Sys.argv.(0)) "mlnet") then begin
+    lprintf_nl "MLDonkey is working in %s" file_basedir;
     if Sys.file_exists pid_filename then begin
       lprintf_nl "PID file %s exists." (Filename.concat file_basedir pid_filename);
       let pid =

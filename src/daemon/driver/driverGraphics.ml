@@ -37,4 +37,4 @@ sig
   val png_version_num : unit -> string
 end
 
-module G : Graphics = @GDGRAPHICS@.Graphics
+module G : Graphics = DriverGraphics_gd.Graphics

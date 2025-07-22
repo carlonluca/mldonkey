@@ -363,7 +363,7 @@ let load_config () =
   Unix2.safe_mkdir !!temp_directory;
   Unix2.can_write_to_directory !!temp_directory
 
-let _ =
+let main_app =
 
   let t = Unix.localtime (Unix.time ()) in
   if (t.Unix.tm_year<=104) then
