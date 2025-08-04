@@ -672,3 +672,5 @@ let _ =
         print_sockets buf;
         lprintf_nl "%s" (Buffer.contents buf);
   )
+
+let init () = ()

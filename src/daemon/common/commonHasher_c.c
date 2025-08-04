@@ -23,8 +23,8 @@
 #include <signal.h>
 #include <sys/time.h>
 
-#include "../../../config/config.h"
-#include "../../utils/lib/os_stubs.h"
+#include <config/config.h>
+#include <os_stubs.h>
 
 #include <caml/mlvalues.h>
 #include <caml/fail.h>

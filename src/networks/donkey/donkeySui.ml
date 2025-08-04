@@ -1,4 +1,4 @@
-(* Copyright 2001, 2002 b8_bavard, b8_fee_carabine, INRIA *)
+(* Copyright 2006 *)
 (*
     This file is part of mldonkey.
 
@@ -17,7 +17,11 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *)
 
-(* Module [Printexc2]: facilities for printing exceptions *)
+module type SUI = sig
+  val create_key : unit -> string
+  val load_key : string -> string
+  val create_signature : string -> int -> int64 -> int -> int64 -> string
+  val verify_signature : string -> int -> string -> int -> int64 -> int -> int64 -> bool
+end
 
-val to_string : exn -> string
-(** [Printexc2.to_string e] returns a string representation of the exception [e]. *)
+module SUI : SUI = DonkeySui2.SUI

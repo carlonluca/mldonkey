@@ -1,4 +1,18 @@
 (library
+    (name commonstubs)
+    (public_name mldonkey.commonstubs)
+    (wrapped false)
+    (modules)
+    (foreign_stubs
+        (language c)
+        (names
+            commonHasher_c
+        )
+        (flags (:standard -I%{project_root}/../.. -I../../utils/cdk))
+    )
+)
+
+(library
     (name daemoncommon)
     (public_name mldonkey.daemoncommon)
     (flags
@@ -12,5 +26,6 @@
         mldonkey.xmllight
         mldonkey.ocamlrss
         mldonkey.cdk
+        mldonkey.commonstubs
     )
 )

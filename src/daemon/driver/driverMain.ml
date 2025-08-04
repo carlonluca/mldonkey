@@ -363,8 +363,7 @@ let load_config () =
   Unix2.safe_mkdir !!temp_directory;
   Unix2.can_write_to_directory !!temp_directory
 
-let main_app =
-
+let () =
   let t = Unix.localtime (Unix.time ()) in
   if (t.Unix.tm_year<=104) then
     begin
@@ -761,3 +760,5 @@ for config files at the end. *)
         log_to_file stdout;
         close_log ()
       end
+
+let init () = ()

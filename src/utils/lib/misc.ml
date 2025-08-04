@@ -120,3 +120,5 @@ let archive_extract filename archive_type =
 
 let bytes_equal_string (b : Bytes.t) (s : string) =
   String.equal (Bytes.unsafe_to_string b) s
+
+let init () = ()

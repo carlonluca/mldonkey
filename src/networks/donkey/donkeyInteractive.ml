@@ -605,7 +605,7 @@ let parse_donkey_url url user group =
         let md4 = if String.length md4 > 32 then
           String.sub md4 0 32 else md4 in
         let name =
-          let name2 = Filename2.filesystem_compliant name `Unknown 0 in
+          let name2 = Filesystem.filesystem_compliant name `Unknown 0 in
             if name2 = "" then
               Printf.sprintf "urn_ed2k_%s" md4
             else

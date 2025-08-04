@@ -467,3 +467,5 @@ let _ =
         exit 0
     ), " <filename> : print a contact.dat file";
   ]
+
+  let init () = ()

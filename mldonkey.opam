@@ -27,6 +27,7 @@ depends: [
   "num" # technically optional, enables bittorrent
   "ocurl" {<= "0.9.2"}
   "camlp-streams"
+  "bitstring"
 ]
 build: [
   ["./configure" "--enable-debug" "--prefix" prefix]
