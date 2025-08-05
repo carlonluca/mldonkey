@@ -3,7 +3,9 @@
     (public_name mlnet)
     (libraries utils cdk unix daemoncommon mldonkey.driver mldonkey.donkey)
         (flags
-        (:standard -w -33)
+            -linkall -opaque
+            (:standard -w -33)
+        )
+        (link_flags (-cclib -lz -cclib -lbz2 -cclib -lminiupnpc -cclib -lnatpmp -cclib -lmagic -cclib -lgd -cclib -lpng -cclib -lcryptopp)
     )
-    (link_flags (-cclib -lz -cclib -lbz2 -cclib -lminiupnpc -cclib -lnatpmp -cclib -lmagic -cclib -lgd -cclib -lpng))
 )

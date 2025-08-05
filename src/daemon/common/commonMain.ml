@@ -19,7 +19,7 @@
 
 open Printf2
 open CommonGlobals
-  
+
 let _ =
   List.iter (fun f ->
       try

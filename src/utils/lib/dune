@@ -27,8 +27,13 @@
             md5_c
             fst_hash
             magiclib_stub
+            CryptoPP_stubs
         )
         (flags (:standard -I%{project_root}/../.. -I../cdk))
+    )
+    (foreign_stubs
+        (language cxx)
+        (names CryptoPP)
     )
 )
 

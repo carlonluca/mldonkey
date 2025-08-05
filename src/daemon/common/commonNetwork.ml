@@ -321,5 +321,3 @@ let new_network shortname name ?comment flags =
     else Printf.sprintf "%s %s" !networks_string display_name;
   (*  lprintf_nl "Network %s registered" r.network_name; *)
   r
-
-let init () = ()

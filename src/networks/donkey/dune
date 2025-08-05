@@ -8,6 +8,7 @@
     (libraries
         bitstring
         mldonkey.utils
+        mldonkey.utils_stubs
         mldonkey.net
         mldonkey.mp3tagui
         mldonkey.xmllight
