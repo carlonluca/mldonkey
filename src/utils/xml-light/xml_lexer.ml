@@ -1566,3 +1566,6 @@ and __ocaml_lex_dtd_attr_string_rec lexbuf __ocaml_lex_state =
 
 ;;
 
+
+let force_link () = ()
+

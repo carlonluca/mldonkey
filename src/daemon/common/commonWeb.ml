@@ -296,3 +296,6 @@ let _ =
       feed.rss_date <- last_time ();
       feed.rss_value <- c;
   )
+
+let force_link () = ()
+

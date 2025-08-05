@@ -966,3 +966,6 @@ let () =
       end queries
   )
 
+
+let force_link () = ()
+

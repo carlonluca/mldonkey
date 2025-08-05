@@ -349,3 +349,6 @@ let () =
     );
     (*ignore (CommonUploads.add_shared fullname codedname size)*)
   )
+
+let force_link () = ()
+

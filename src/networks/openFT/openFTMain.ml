@@ -106,3 +106,6 @@ let _ =
   
 let main (toto: int) = ()
   
+
+let force_link () = ()
+

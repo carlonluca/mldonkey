@@ -2163,3 +2163,6 @@ Define a function to be called when the "mem_stats" command
       Printf.bprintf buf "  n_overnet_searches: %d\n" !n_overnet_searches;
   );
 end
+
+let force_link () = ()
+

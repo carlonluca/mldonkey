@@ -183,3 +183,6 @@ let _ = (* some assertions on these functions *)
   assert (path_of_filename 
       "/home//bidule" = ["home"; "bidule"])
   
+
+let force_link () = ()
+

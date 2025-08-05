@@ -41,3 +41,6 @@ let parse () =
     Failure s ->
       lprintf_nl "%s" s ;
       exit 1
+
+let force_link () = ()
+

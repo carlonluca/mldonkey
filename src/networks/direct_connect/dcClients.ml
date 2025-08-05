@@ -1659,3 +1659,6 @@ let _ =
     mutable op_client_debug : 'a -> bool -> unit;
 
 *)
+
+let force_link () = ()
+

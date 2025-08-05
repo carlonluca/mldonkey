@@ -39,3 +39,4 @@ val local_search : CommonTypes.search -> unit
 val result_format_of_name : string -> string
 val result_media_of_name : string -> string
   
+val force_link: unit -> unit

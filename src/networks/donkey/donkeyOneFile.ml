@@ -501,3 +501,6 @@ let search_found filter search md4 tags =
         ()
       with _ ->  (* the file was probably filtered *)
           ()
+
+let force_link () = ()
+

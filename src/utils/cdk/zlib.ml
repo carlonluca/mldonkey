@@ -125,3 +125,6 @@ let uncompress ?(header = true) refill flush =
   in
     uncompr 0 0;
     inflate_end zs
+
+let force_link () = ()
+

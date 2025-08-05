@@ -768,3 +768,6 @@ Events
 2: started
 3: stopped
 *)
+
+let force_link () = ()
+

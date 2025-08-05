@@ -728,3 +728,6 @@ let start rt port bw_control =
 
 let stop dht = M.shutdown dht
 
+
+let force_link () = ()
+

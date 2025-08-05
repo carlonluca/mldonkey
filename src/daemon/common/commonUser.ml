@@ -156,3 +156,6 @@ let user_find num =
       impl_user_num = num })
     
   
+
+let force_link () = ()
+

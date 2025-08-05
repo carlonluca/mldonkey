@@ -319,3 +319,6 @@ let _ =
       !list
   )
   
+
+let force_link () = ()
+

@@ -173,3 +173,6 @@ let _ =
   gui_bittorrent_options_panel
 
 let main (toto: int) = ()
+
+let force_link () = ()
+

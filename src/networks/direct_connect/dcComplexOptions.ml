@@ -294,3 +294,6 @@ let _ =
   network.op_network_client_of_option <- (fun is_friend c ->
       as_client (value_to_client is_friend c).client_client)
 
+
+let force_link () = ()
+

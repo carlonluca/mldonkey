@@ -266,3 +266,6 @@ let _ =
   option_hook login can_retry;
   option_hook global_login can_retry;
   option_hook password can_retry
+
+let force_link () = ()
+

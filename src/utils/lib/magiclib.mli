@@ -106,3 +106,5 @@ val check : t -> string list -> bool
       database files [filenames], or [] for the default database.
 
       @raise Invalid_argument if the cookie has been closed. *)
+
+val force_link: unit -> unit

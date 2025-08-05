@@ -1931,3 +1931,6 @@ let _ =
       let s = DonkeyComplexOptions.force_add_server (Ip.ip_of_addr ip) port in
       as_server s.server_server
   )
+
+let force_link () = ()
+

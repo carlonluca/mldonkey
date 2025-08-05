@@ -572,3 +572,6 @@ let recover_files () = (* called every 10 minutes *)
   List.iter (fun file ->
       try recover_file file  with _ -> ()
   ) !current_files;
+
+let force_link () = ()
+

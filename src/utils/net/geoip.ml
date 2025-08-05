@@ -444,3 +444,6 @@ let _ =
         Printf.bprintf buf "  map size: %d\n" (Array1.dim db.map);
     | None -> Printf.bprintf buf "  module not active\n"
   )
+
+let force_link () = ()
+

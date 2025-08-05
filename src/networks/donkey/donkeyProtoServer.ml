@@ -1371,3 +1371,6 @@ let _ =
   assert (s = ss);
   exit 2
   *)
+
+let force_link () = ()
+

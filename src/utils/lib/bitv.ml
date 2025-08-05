@@ -616,3 +616,6 @@ let to_nativeint_s = select_to to_int32_s to_int64_s
 let to_nativeint_us = select_to to_int32_us to_int64_us
 
 
+
+let force_link () = ()
+

@@ -308,3 +308,6 @@ let client_name () =
     end;
   !ft_client_name
 
+
+let force_link () = ()
+

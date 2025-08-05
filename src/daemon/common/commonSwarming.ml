@@ -3569,3 +3569,6 @@ let get_swarmer_priorities_intervals s = s.s_priorities_intervals
    mistaken for each other ?
 *)
 (* let compute_block_num = () *)
+
+let force_link () = ()
+

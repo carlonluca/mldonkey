@@ -247,3 +247,6 @@ let yytables =
     Parsing.names_block=yynames_block }
 let main (lexfun : Lexing.lexbuf -> token) (lexbuf : Lexing.lexbuf) =
    (Parsing.yyparse yytables 1 lexfun lexbuf : GuiProto.gift_command)
+
+let force_link () = ()
+

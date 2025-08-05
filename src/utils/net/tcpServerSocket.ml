@@ -160,3 +160,6 @@ let _ =
             lprintf "[BW3 %6d] %20s: stop accepting connections\n" (last_time ()) cc.cc_name
       ) !connections_controlers
   )
+
+let force_link () = ()
+

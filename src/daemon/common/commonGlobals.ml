@@ -877,3 +877,6 @@ let _ =
       Printf.bprintf buf " dummy_sample: %d\n" (Array.length dummy_sample);
       Printf.bprintf buf " activities: %d\n" (Fifo.length activities);
   )
+
+let force_link () = ()
+

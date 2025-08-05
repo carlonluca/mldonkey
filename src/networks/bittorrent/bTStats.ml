@@ -115,3 +115,6 @@ let _ =
         ""
     ), ":\t\t\t\t\tshow table of download/upload by BT clients brand";
   ]
+
+let force_link () = ()
+

@@ -562,3 +562,6 @@ module Md5Ext = struct
           false
   
   end
+
+let force_link () = ()
+

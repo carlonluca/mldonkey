@@ -2057,3 +2057,6 @@ let udp_send ip port m =
       M.udp_send sock ip port m
 
 let ask_for_push _ = ()
+
+let force_link () = ()
+

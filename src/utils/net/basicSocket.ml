@@ -673,4 +673,4 @@ let _ =
         lprintf_nl "%s" (Buffer.contents buf);
   )
 
-let init () = ()
+let force_link () = ()

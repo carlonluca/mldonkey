@@ -1150,3 +1150,6 @@ let parse filename f =
                  2))))
   
 
+
+let force_link () = ()
+

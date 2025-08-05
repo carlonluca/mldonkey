@@ -1174,3 +1174,6 @@ let run_porttest ?udp ~tcp result =
       with End_of_file -> ()
     end
   end
+
+let force_link () = ()
+

@@ -539,3 +539,6 @@ let _ =
       H.iter (fun _ -> incr counter) descriptions;
       Printf.bprintf buf "  descriptions: %d\n" !counter)
 
+
+let force_link () = ()
+

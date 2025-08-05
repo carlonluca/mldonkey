@@ -613,3 +613,6 @@ let _ =
   
   let cleaner = DonkeySources.attach_sources_to_file file_sources_section in
   cleaner ()
+
+let force_link () = ()
+

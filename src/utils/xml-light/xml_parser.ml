@@ -291,3 +291,6 @@ let yytables =
     Parsing.names_block=yynames_block }
 let dtd_element (lexfun : Lexing.lexbuf -> token) (lexbuf : Lexing.lexbuf) =
    (Parsing.yyparse yytables 1 lexfun lexbuf : Xml_types.dtd_child)
+
+let force_link () = ()
+

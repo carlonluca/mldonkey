@@ -117,3 +117,6 @@ let buffer cookie ?len s =
       else invalid_arg(Printf.sprintf "Magiclib.buffer: len=%i not in [0, %i]"
                          l (String.length s)) in
   magic_buffer cookie s len
+
+let force_link () = ()
+

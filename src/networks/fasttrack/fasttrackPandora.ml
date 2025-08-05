@@ -728,3 +728,6 @@ let read_trace () =
   in
   iter 0;
   lprintf "Total %Ld\n" !total
+
+let force_link () = ()
+

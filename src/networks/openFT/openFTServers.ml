@@ -849,3 +849,6 @@ let _ =
       connection_last_conn s.server_connection_control
   )
   
+
+let force_link () = ()
+

@@ -246,3 +246,6 @@ module Marshal = struct
       v
 
   end
+
+let force_link () = ()
+

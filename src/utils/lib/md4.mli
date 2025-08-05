@@ -81,3 +81,5 @@ module Base16 : Base
 module Base32 : Base
 module Base6427 : Base
   
+
+val force_link: unit -> unit

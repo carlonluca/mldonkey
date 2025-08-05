@@ -220,3 +220,4 @@ val iter_file : (Obj.t option_record -> unit) -> options_file -> unit
 val iter_section : (Obj.t option_record -> unit) -> options_section -> unit
   
   
+val force_link: unit -> unit

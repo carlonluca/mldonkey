@@ -131,3 +131,6 @@ let compute_tiger name begin_pos len f =
       job_error = false;
     } in
   Fifo.put fifo (Obj.magic job)
+
+let force_link () = ()
+

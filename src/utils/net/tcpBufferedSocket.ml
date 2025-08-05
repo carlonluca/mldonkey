@@ -1810,3 +1810,6 @@ let _ =
       Printf.bprintf buf "  max_connections_per_second: %d\n" (!max_connections_per_second ());
       Printf.bprintf buf "  max_buffer_size: %d\n" (!max_buffer_size);
   )
+
+let force_link () = ()
+

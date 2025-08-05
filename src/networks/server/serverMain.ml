@@ -345,3 +345,6 @@ let _ =
         network_downloaded = Int64.zero;
       })
   
+
+let force_link () = ()
+

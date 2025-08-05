@@ -168,3 +168,6 @@ let testcode () =
 let _ =
   testcode ()
 *)
+
+let force_link () = ()
+

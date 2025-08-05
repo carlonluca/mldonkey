@@ -491,3 +491,6 @@ let _ =
    admin user read from users.ini *)
   update_user admin_user_name (Some default_admin_user);
   ignore (find_ui_user admin_user_name)
+
+let force_link () = ()
+

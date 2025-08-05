@@ -83,3 +83,5 @@ val temp_file : string -> string -> string
     or "mlnet_tmp" if the variable is not set.
 *)
 val temp_dir_name : unit -> string
+
+val force_link: unit -> unit

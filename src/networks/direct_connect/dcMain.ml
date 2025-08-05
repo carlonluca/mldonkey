@@ -249,3 +249,6 @@ let _ =
   )
 *)
 
+
+let force_link () = ()
+

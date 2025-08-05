@@ -1808,3 +1808,6 @@ let to_gui (proto : int array)  opcode s =
       
       dump s;
       raise e
+
+let force_link () = ()
+

@@ -1886,3 +1886,6 @@ let () =
 
 end (* Locale *)
 
+
+let force_link () = ()
+

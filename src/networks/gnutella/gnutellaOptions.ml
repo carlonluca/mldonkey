@@ -174,3 +174,6 @@ let old_files =
   define_option gnutella_section ["old_files"]
     "" (list_option (tuple2_option (string_option, int64_option))) []
 
+
+let force_link () = ()
+

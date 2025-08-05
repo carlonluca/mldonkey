@@ -129,3 +129,6 @@ let _ =
       Printf.bprintf buf "  web ranges: %d\n" 
         (Ip_set.bl_length !web_ip_blocking_list)
    )
+
+let force_link () = ()
+

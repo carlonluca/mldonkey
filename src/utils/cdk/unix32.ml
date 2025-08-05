@@ -1889,3 +1889,6 @@ let _ =
       Printf.bprintf buf "  max cache_size: %d\n" !max_cache_size;
       Printf.bprintf buf "  fd cache_size: %d\n" !FDCache.cache_size
   )
+
+let force_link () = ()
+

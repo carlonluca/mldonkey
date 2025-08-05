@@ -218,3 +218,6 @@ let _ =
       let in_mem, total = IndexedResults.stats () in
       Printf.bprintf buf "  store: %d loaded/ %d max\n" in_mem total
   )
+
+let force_link () = ()
+

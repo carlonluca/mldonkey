@@ -1279,3 +1279,6 @@ let concat_file dir filename =
   in
   Filename.concat dir (Filesystem.filesystem_compliant filename fs namemax)
 
+
+let force_link () = ()
+

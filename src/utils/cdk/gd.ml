@@ -312,3 +312,6 @@ let open_png filename =
 
 let open_jpeg filename =
   new gdImage (do_image_open_jpeg filename)
+
+let force_link () = ()
+

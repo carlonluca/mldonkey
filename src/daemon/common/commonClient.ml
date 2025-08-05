@@ -525,3 +525,6 @@ let impl_client_info impl =
      T.client_sui_verified = None;
      T.client_file_queue = [];
   }
+
+let force_link () = ()
+

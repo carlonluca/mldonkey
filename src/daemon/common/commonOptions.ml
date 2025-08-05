@@ -2281,3 +2281,6 @@ let rec update_options () =
       update 23
 
   | _ -> ()
+
+let force_link () = ()
+

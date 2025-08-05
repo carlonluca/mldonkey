@@ -33,3 +33,5 @@ let _ = List.iter
         Sys_error s -> prerr_endline s 
     )
     !Mp3_args.files
+
+let force_link () = ()

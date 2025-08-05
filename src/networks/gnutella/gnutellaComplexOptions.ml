@@ -281,3 +281,6 @@ let _ =
       peers =:= [];
   )
   
+
+let force_link () = ()
+

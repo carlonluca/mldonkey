@@ -344,3 +344,6 @@ module Make(Stored : sig
       ) 
       
   end
+
+let force_link () = ()
+

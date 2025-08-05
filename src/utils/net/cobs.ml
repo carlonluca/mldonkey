@@ -385,3 +385,6 @@ let print list =
           lprintf "   Uptime %d seconds\n" up
   ) list
   
+
+let force_link () = ()
+

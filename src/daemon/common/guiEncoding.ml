@@ -1378,3 +1378,6 @@ let _ =
     assert (check_from_gui (Password ("mldonkey", "toto")));
   done
   
+
+let force_link () = ()
+

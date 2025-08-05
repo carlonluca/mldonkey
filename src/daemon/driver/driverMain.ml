@@ -762,3 +762,6 @@ for config files at the end. *)
       end
 
 let init () = ()
+
+let force_link () = ()
+

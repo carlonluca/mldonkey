@@ -1555,3 +1555,6 @@ let _ =
             T.shared_sub_files = file.file_files;
             }
   )
+
+let force_link () = ()
+

@@ -433,3 +433,6 @@ let t = define_option_class "RoutingTable" value_to_table table_to_value
 
 end
 
+
+let force_link () = ()
+

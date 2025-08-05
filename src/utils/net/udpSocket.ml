@@ -585,3 +585,6 @@ let _ =
       with _ -> ()
   )
 
+
+let force_link () = ()
+

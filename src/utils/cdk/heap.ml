@@ -86,3 +86,6 @@ let print_memstats (level : int) buf use_html_mods =
     end;
 
       dump_heap_c ()
+
+let force_link () = ()
+

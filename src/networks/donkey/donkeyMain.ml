@@ -469,3 +469,6 @@ let _ =
   ]
 
   let init () = ()
+
+let force_link () = ()
+

@@ -233,3 +233,6 @@ let _ =
         P.user_server = 0;
       })
 
+
+let force_link () = ()
+

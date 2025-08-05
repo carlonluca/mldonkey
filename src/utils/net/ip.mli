@@ -94,3 +94,5 @@ val iprange_to_value : ip_range -> Options.option_value
 
 val range_of_string : string -> ip_range
 val string_of_range : ip_range -> string
+
+val force_link: unit -> unit

@@ -675,3 +675,6 @@ done; *)
   
   
   
+
+let force_link () = ()
+

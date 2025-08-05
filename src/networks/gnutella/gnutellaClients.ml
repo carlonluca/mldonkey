@@ -1130,3 +1130,6 @@ let push_connection guid index ip port =
   in
   ()
   
+
+let force_link () = ()
+

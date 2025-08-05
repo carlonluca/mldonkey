@@ -2742,3 +2742,6 @@ a FIFO from where they are removed after 30 minutes. What about using
           lprintf_nl ~exn "remove_location for file_md4 %s"
             file_uid
   )
+
+let force_link () = ()
+

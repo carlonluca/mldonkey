@@ -1,9 +1,8 @@
 (executable
     (name mlnet)
     (public_name mlnet)
-    (libraries utils cdk unix daemoncommon mldonkey.driver mldonkey.donkey)
+    (libraries utils cdk unix daemoncommon mldonkey.driver mldonkey.donkey mldonkey.mp3tagui mldonkey.bittorrent)
         (flags
-            -linkall -opaque
             (:standard -w -33)
         )
         (link_flags (-cclib -lz -cclib -lbz2 -cclib -lminiupnpc -cclib -lnatpmp -cclib -lmagic -cclib -lgd -cclib -lpng -cclib -lcryptopp)

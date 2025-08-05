@@ -332,3 +332,6 @@ let new_packet (kind:t) (number:int) ip1 port1 ip2 port2 data =
               
               
               
+
+let force_link () = ()
+

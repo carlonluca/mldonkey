@@ -303,4 +303,4 @@ val commands_by_kind : (string, (string * string) list ref) Hashtbl.t
 (** Add commands to the registry *)
 val register_commands : (string * string * CommonTypes.arg_kind * string) list -> unit
 
-val init: unit -> unit
+val force_link: unit -> unit

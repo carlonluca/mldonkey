@@ -801,3 +801,6 @@ let _ =
       disconnect_server s Closed_by_user; 
   )
   
+
+let force_link () = ()
+

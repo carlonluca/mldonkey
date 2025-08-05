@@ -267,3 +267,6 @@ let commit () =
   ) connections;
   
   
+
+let force_link () = ()
+

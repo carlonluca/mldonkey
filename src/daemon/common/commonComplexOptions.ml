@@ -1320,3 +1320,6 @@ let _ =
       Printf.bprintf buf "  friends: %d\n" (List.length !!friends);
       Printf.bprintf buf "  contacts: %d\n" (List.length !contacts);
   )
+
+let force_link () = ()
+

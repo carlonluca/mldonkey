@@ -248,3 +248,6 @@ let _ =
   network.op_network_add_server <- (fun ip port ->
       as_server (new_server (Ip.ip_of_addr ip) port).server_server
   )
+
+let force_link () = ()
+

@@ -52,3 +52,5 @@ val shared_check_files : unit -> unit
 val impl_shared_info : 'a shared_impl -> GuiTypes.shared_info
 val shared_info : CommonTypes.shared -> GuiTypes.shared_info
 val shared_state : CommonTypes.shared -> CommonTypes.ui_conn -> string
+
+val force_link: unit -> unit

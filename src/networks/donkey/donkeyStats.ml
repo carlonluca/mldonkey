@@ -292,3 +292,6 @@ let save_download_history file =
   output_string oc (Buffer.contents buf);
   close_out oc
 *)
+
+let force_link () = ()
+

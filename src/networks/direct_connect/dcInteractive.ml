@@ -1605,3 +1605,6 @@ let _ =
           raise Not_found
         end
     )
+
+let force_link () = ()
+

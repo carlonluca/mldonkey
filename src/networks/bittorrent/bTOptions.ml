@@ -180,3 +180,6 @@ let dht_bootstrap_nodes = define_option bittorrent_section ["dht_bootstrap_nodes
     "router.bittorrent.com", 8991;
   ]
 
+
+let force_link () = ()
+

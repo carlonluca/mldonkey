@@ -433,3 +433,6 @@ let _ =
   network.op_network_porttest_result <- (fun _ -> PorttestNotAvailable);
   network.op_network_check_upload_slots <- (fun _ -> ());
   network.op_network_recover_temp <- (fun s -> ())
+
+let force_link () = ()
+

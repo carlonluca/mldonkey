@@ -544,3 +544,6 @@ let client_name () =
 let _ =
   Heap.add_memstat "FasttrackGlobals" (fun level buf ->
      Printf.bprintf buf "Number of old files: %d\n" (List.length !!old_files))
+
+let force_link () = ()
+

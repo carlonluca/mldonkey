@@ -383,3 +383,6 @@ let remember_shared_info file new_name =
           (Printexc2.to_string e)
 
 let must_share_file file = must_share_file file (file_best_name file) None
+
+let force_link () = ()
+

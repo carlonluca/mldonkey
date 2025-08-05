@@ -969,3 +969,6 @@ let _ =
       Printf.bprintf buf "  Memorized searches: %d\n" !counter;
       Printf.bprintf buf "  Memorized items: %d\n" !items;
   )
+
+let force_link () = ()
+

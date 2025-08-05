@@ -1041,3 +1041,6 @@ let _ =
    Printf.bprintf buf "  shared_files: %d\n" (Hashtbl.length shared_files);
    Printf.bprintf buf "  pending_slots: %d\n" (Intmap.length !pending_slots_map);
   )
+
+let force_link () = ()
+

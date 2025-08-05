@@ -95,3 +95,6 @@ let _ =
   gui_fileTP_options_panel
 
 let main (toto: int) = ()
+
+let force_link () = ()
+

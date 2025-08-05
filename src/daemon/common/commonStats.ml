@@ -463,3 +463,6 @@ let _ =
       (List.length !!country_stats)
       (if not (Geoip.active ()) then " - Geoip not active" else "");
    )
+
+let force_link () = ()
+

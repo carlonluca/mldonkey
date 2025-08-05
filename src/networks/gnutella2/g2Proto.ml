@@ -1734,3 +1734,6 @@ let parse_url url =
 
 let ask_for_push _ = ()
   
+
+let force_link () = ()
+

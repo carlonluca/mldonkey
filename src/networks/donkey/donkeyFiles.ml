@@ -170,3 +170,6 @@ module NewUpload = struct
       client_ops.op_client_can_upload <- upload_to_client
     
   end
+
+let force_link () = ()
+

@@ -197,3 +197,6 @@ let client_connection_handler t event =
   | _ ->
       ()
 *)
+
+let force_link () = ()
+

@@ -35,3 +35,6 @@ let ext_lprintf_nl msg verb =
   if !CommonOptions.verbose_unexpected_messages || not verb then Printf2.lprintf_nl ("%s") msg
 
 let _ = Callback.register "ml_lprintf_nl" ext_lprintf_nl
+
+let force_link () = ()
+

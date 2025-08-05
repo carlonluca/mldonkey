@@ -136,3 +136,6 @@ let _ =
   network.op_network_save_complex_options <- (fun _ -> ());
   network.op_network_update_options <- (fun _ -> ());
   network.op_network_save_sources <- (fun _ -> ())
+
+let force_link () = ()
+

@@ -24,3 +24,5 @@ val execute_command :
     (string * 'a * arg_kind * string) list ->
   CommonTypes.ui_conn -> string -> 
   string list -> unit
+
+val force_link: unit -> unit

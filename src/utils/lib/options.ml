@@ -1296,3 +1296,6 @@ let set_after_save_hook file f = file.file_after_save_hook <- f
 let set_before_save_hook file f = file.file_before_save_hook <- f
   
 
+
+let force_link () = ()
+

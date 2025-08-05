@@ -248,3 +248,6 @@ module Make(M: sig
       h.host_obsolete <- 0
 
   end
+
+let force_link () = ()
+
