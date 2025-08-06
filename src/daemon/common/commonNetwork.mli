@@ -304,3 +304,5 @@ val commands_by_kind : (string, (string * string) list ref) Hashtbl.t
 val register_commands : (string * string * CommonTypes.arg_kind * string) list -> unit
 
 val force_link: unit -> unit
+val network_ed2k : CommonTypes.network
+val network_bt : CommonTypes.network

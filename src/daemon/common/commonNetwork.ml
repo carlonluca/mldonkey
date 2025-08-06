@@ -322,5 +322,22 @@ let new_network shortname name ?comment flags =
   (*  lprintf_nl "Network %s registered" r.network_name; *)
   r
 
-let force_link () = ()
+let network_ed2k = new_network "ED2K" "Donkey"
+  ~comment:(if Autoconf.donkey_sui_works () then "SUI" else "noSUI")
+  [
+    NetworkHasServers;
+    NetworkHasSearch;
+    NetworkHasUpload;
+    NetworkHasMultinet;
+    NetworkHasChat;
+    NetworkHasStats;
+  ]
 
+let network_bt = new_network "BT" "BitTorrent"
+    [
+    NetworkHasMultinet;
+    NetworkHasUpload;
+    NetworkHasStats;
+  ]
+
+let force_link () = ()

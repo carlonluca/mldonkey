@@ -49,16 +49,7 @@ plugin.
 
 **************************************************************)
 
-let network = CommonNetwork.new_network "ED2K" "Donkey"
-  ~comment:(if Autoconf.donkey_sui_works () then "SUI" else "noSUI")
-  [
-    NetworkHasServers;
-    NetworkHasSearch;
-    NetworkHasUpload;
-    NetworkHasMultinet;
-    NetworkHasChat;
-    NetworkHasStats;
-  ]
+let network = CommonNetwork.network_ed2k
 
 let connection_manager = network.network_connection_manager
 let connections_controler = TcpServerSocket.create_connections_controler
