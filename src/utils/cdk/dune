@@ -19,7 +19,6 @@
 
 (library
     (name cdk)
-    (public_name mldonkey.cdk)
     (wrapped false) 
     (modules
         arg2

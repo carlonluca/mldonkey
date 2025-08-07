@@ -1,7 +1,6 @@
 (executable
     (name mlnet)
-    (public_name mlnet)
-    (libraries utils cdk unix daemoncommon mldonkey.driver mldonkey.donkey mldonkey.mp3tagui mldonkey.bittorrent)
+    (libraries utils cdk unix daemoncommon driver donkey mp3tagui bittorrent)
         (flags
             (:standard -w -33)
         )

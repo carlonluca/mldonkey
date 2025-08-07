@@ -1,9 +1,8 @@
 (library
     (name bittorrent)
-    (public_name mldonkey.bittorrent)
     (flags
         (:standard -w -3 -w -27 -w -67 -w -35 -w -69 -w -32 -w -16)
     )
     (wrapped false)
-    (libraries mldonkey.utils mldonkey.net mldonkey.daemoncommon bitstring num)
+    (libraries utils net daemoncommon bitstring num)
 )

@@ -1,6 +1,5 @@
 (library
     (name netstubs)
-    (public_name mldonkey.netstubs)
     (wrapped false)
     (modules)
     (foreign_stubs
@@ -14,10 +13,9 @@
 
 (library
     (name net)
-    (public_name mldonkey.net)
     (flags
         (:standard -w -3 -w -27 -w -67 -w -35 -w -69 -w -32 -w -6)
     )
     (wrapped false)
-    (libraries mldonkey.cdk mldonkey.utils curl mldonkey.netstubs)
+    (libraries cdk utils curl netstubs)
 )
