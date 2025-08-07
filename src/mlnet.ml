@@ -4,7 +4,7 @@ open Printf2
 
 let () =
   BasicSocket.force_link ();
-  BasicSocket.add_infinite_timer 0.1 (fun _ ->
+  BasicSocket.add_timer 0.1 (fun _ ->
     Printf2.force_link ();
     Bitv.force_link ();
     Options.force_link ();
@@ -103,7 +103,6 @@ let () =
     DonkeyClient.force_link ();
     DriverCommands.force_link ();
     DriverInterface.force_link ();
-    DriverMain.force_link ();
     CommonUser.force_link ();
     CommonResult.force_link ();
     CommonHosts.force_link ();
@@ -131,5 +130,7 @@ let () =
     CommonStats.force_link ();
     CommonPictures.force_link ();
     CommonUserDb.force_link ();
+    DriverMain.init_1 ();
+    DriverMain.init_2 ();
     );
   CommonMain.main_loop ()
