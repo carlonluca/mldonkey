@@ -292,5 +292,6 @@ let yytables =
 let dtd_element (lexfun : Lexing.lexbuf -> token) (lexbuf : Lexing.lexbuf) =
    (Parsing.yyparse yytables 1 lexfun lexbuf : Xml_types.dtd_child)
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

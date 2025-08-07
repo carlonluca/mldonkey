@@ -295,5 +295,6 @@ let _ =
       as_client (value_to_client is_friend c).client_client)
 
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

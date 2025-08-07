@@ -729,5 +729,6 @@ let read_trace () =
   iter 0;
   lprintf "Total %Ld\n" !total
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

@@ -278,5 +278,6 @@ let private_message_from c s =
 
   
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

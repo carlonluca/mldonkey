@@ -502,5 +502,6 @@ let search_found filter search md4 tags =
       with _ ->  (* the file was probably filtered *)
           ()
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

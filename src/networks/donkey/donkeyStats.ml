@@ -293,5 +293,6 @@ let save_download_history file =
   close_out oc
 *)
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

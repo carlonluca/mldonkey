@@ -36,5 +36,6 @@ let ext_lprintf_nl msg verb =
 
 let _ = Callback.register "ml_lprintf_nl" ext_lprintf_nl
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

@@ -2006,4 +2006,5 @@ let _ =
       ready_for_upload (as_client c));
   network.op_network_connected_servers <- (fun _ -> [])
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()

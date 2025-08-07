@@ -333,5 +333,6 @@ let new_packet (kind:t) (number:int) ip1 port1 ip2 port2 data =
               
               
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

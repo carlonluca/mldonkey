@@ -623,5 +623,6 @@ let mk_timezone t =
   format "%z" (create ~zone:localzone t)
 ;;
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

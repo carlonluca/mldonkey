@@ -617,5 +617,6 @@ let to_nativeint_us = select_to to_int32_us to_int64_us
 
 
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

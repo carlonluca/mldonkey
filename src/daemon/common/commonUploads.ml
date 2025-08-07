@@ -1042,5 +1042,6 @@ let _ =
    Printf.bprintf buf "  pending_slots: %d\n" (Intmap.length !pending_slots_map);
   )
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

@@ -1151,5 +1151,6 @@ let parse filename f =
   
 
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

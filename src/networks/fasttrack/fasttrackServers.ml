@@ -471,5 +471,6 @@ push request: we send a push to the server when we cannot connect to
 a particular client. The client by connecting to us with a
 "GIVE <push_id>\r\n" request, to which we can reply by a "GET ...." *)
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

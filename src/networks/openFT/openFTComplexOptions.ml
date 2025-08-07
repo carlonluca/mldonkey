@@ -150,5 +150,6 @@ let _ =
   network.op_network_add_server <- value_to_server;
   server_ops.op_server_to_option <- server_to_value;
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

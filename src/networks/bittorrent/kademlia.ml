@@ -434,5 +434,6 @@ let t = define_option_class "RoutingTable" value_to_table table_to_value
 end
 
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

@@ -1280,5 +1280,6 @@ let concat_file dir filename =
   Filename.concat dir (Filesystem.filesystem_compliant filename fs namemax)
 
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

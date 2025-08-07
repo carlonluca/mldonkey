@@ -1890,5 +1890,6 @@ let _ =
       Printf.bprintf buf "  fd cache_size: %d\n" !FDCache.cache_size
   )
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

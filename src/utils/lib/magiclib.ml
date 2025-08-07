@@ -118,5 +118,6 @@ let buffer cookie ?len s =
                          l (String.length s)) in
   magic_buffer cookie s len
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

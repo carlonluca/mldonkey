@@ -42,5 +42,6 @@ let parse () =
       lprintf_nl "%s" s ;
       exit 1
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

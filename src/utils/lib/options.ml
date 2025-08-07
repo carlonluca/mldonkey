@@ -1297,5 +1297,6 @@ let set_before_save_hook file f = file.file_before_save_hook <- f
   
 
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

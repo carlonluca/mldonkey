@@ -313,5 +313,6 @@ let open_png filename =
 let open_jpeg filename =
   new gdImage (do_image_open_jpeg filename)
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

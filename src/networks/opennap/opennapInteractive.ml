@@ -249,5 +249,6 @@ let _ =
       as_server (new_server (Ip.ip_of_addr ip) port).server_server
   )
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

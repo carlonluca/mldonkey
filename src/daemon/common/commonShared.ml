@@ -394,5 +394,6 @@ let shareds_by_num = ()
     Filepath.semipath_to_string
     Filepath.string_to_semipath*)
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

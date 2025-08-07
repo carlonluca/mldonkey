@@ -198,5 +198,6 @@ let client_connection_handler t event =
       ()
 *)
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

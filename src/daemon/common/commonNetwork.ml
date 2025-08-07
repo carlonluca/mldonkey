@@ -322,5 +322,6 @@ let new_network shortname name ?comment flags =
   (*  lprintf_nl "Network %s registered" r.network_name; *)
   r
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

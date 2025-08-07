@@ -297,5 +297,6 @@ let _ =
       feed.rss_value <- c;
   )
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

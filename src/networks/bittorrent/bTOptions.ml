@@ -181,5 +181,6 @@ let dht_bootstrap_nodes = define_option bittorrent_section ["dht_bootstrap_nodes
   ]
 
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

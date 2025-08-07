@@ -248,5 +248,6 @@ let yytables =
 let main (lexfun : Lexing.lexbuf -> token) (lexbuf : Lexing.lexbuf) =
    (Parsing.yyparse yytables 1 lexfun lexbuf : GuiProto.gift_command)
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

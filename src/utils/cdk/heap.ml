@@ -87,5 +87,6 @@ let print_memstats (level : int) buf use_html_mods =
 
       dump_heap_c ()
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

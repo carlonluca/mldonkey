@@ -497,5 +497,6 @@ let _ =
   plugin_disable_hooks := disable :: !plugin_disable_hooks
   
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

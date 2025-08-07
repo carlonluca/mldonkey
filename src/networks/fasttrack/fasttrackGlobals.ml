@@ -545,5 +545,6 @@ let _ =
   Heap.add_memstat "FasttrackGlobals" (fun level buf ->
      Printf.bprintf buf "Number of old files: %d\n" (List.length !!old_files))
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

@@ -350,5 +350,6 @@ let () =
     (*ignore (CommonUploads.add_shared fullname codedname size)*)
   )
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

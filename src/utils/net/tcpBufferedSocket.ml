@@ -1811,5 +1811,6 @@ let _ =
       Printf.bprintf buf "  max_buffer_size: %d\n" (!max_buffer_size);
   )
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

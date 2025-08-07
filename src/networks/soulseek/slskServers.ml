@@ -267,5 +267,6 @@ let _ =
   option_hook global_login can_retry;
   option_hook password can_retry
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

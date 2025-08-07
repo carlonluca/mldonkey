@@ -464,5 +464,6 @@ let _ =
       (if not (Geoip.active ()) then " - Geoip not active" else "");
    )
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

@@ -472,5 +472,6 @@ let print_channel ?(date_fmt=default_date_format) fmt ch =
   Format.fprintf fmt "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>\n";
   Format.fprintf fmt "%s" (Xml.to_string_fmt xml )
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

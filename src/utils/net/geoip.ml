@@ -445,5 +445,6 @@ let _ =
     | None -> Printf.bprintf buf "  module not active\n"
   )
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

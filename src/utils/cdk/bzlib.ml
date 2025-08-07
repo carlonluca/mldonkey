@@ -37,5 +37,6 @@ external decompress_end: stream -> unit = "camlzip_bzDecompressEnd"
 
 external bzlib_version : unit -> string = "camlzip_bzlibversion"
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

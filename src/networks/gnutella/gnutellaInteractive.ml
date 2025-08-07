@@ -573,5 +573,6 @@ let recover_files () = (* called every 10 minutes *)
       try recover_file file  with _ -> ()
   ) !current_files;
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

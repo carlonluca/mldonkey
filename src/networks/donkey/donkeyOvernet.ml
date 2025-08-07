@@ -2164,5 +2164,6 @@ Define a function to be called when the "mem_stats" command
   );
 end
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

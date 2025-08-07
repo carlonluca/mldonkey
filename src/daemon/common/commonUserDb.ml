@@ -492,5 +492,6 @@ let _ =
   update_user admin_user_name (Some default_admin_user);
   ignore (find_ui_user admin_user_name)
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

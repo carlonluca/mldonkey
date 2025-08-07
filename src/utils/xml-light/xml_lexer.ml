@@ -1567,5 +1567,6 @@ and __ocaml_lex_dtd_attr_string_rec lexbuf __ocaml_lex_state =
 ;;
 
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

@@ -184,5 +184,6 @@ let _ = (* some assertions on these functions *)
       "/home//bidule" = ["home"; "bidule"])
   
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

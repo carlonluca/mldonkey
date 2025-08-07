@@ -3575,5 +3575,6 @@ let get_swarmer_priorities_intervals s = s.s_priorities_intervals
 *)
 (* let compute_block_num = () *)
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

@@ -1371,5 +1371,6 @@ let _ =
       Printf.bprintf buf "  contacts: %d\n" (List.length !contacts);
   )
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

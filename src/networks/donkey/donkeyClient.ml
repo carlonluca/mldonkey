@@ -2742,5 +2742,6 @@ a FIFO from where they are removed after 30 minutes. What about using
             file_uid
   )
 
+(* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 
