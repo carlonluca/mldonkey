@@ -36,6 +36,7 @@ open BTRate
 open BTTypes
 open BTOptions
 open BTProtocol
+open CommonNetwork
 open TcpMessages
 
 
@@ -72,7 +73,12 @@ let set_client_disconnected client =
 let client_num c = client_num (as_client c)
 
 
-let network = CommonNetwork.network_bt
+let network = new_network "BT" "BitTorrent"
+    [
+    NetworkHasMultinet;
+    NetworkHasUpload;
+    NetworkHasStats;
+  ]
 
 let connection_manager = network.network_connection_manager
 
