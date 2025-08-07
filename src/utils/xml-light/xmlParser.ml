@@ -131,7 +131,7 @@ let convert = function
         | ENodeExpected -> NodeExpected
         | EAttributeNameExpected -> AttributeNameExpected
         | EAttributeValueExpected -> AttributeValueExpected
-        | EUnterminatedEntity -> 	UnterminatedEntity
+        | EUnterminatedEntity ->        UnterminatedEntity
 
 let dtd_convert = function
         | EInvalidDTDDecl -> InvalidDTDDecl

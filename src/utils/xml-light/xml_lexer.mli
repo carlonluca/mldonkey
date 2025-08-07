@@ -32,4 +32,3 @@ val token : Lexing.lexbuf -> token
 val dtd : Lexing.lexbuf -> dtd
 val pos : Lexing.lexbuf -> pos
 val restore : pos -> unit
-val force_link: unit -> unit

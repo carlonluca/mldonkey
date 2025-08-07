@@ -4,4 +4,15 @@
         (:standard -w -3 -w -27 -w -67 -w -35 -w -69 -w -32)
     )
     (wrapped false)
+    (modules
+        Xml_parser
+        Xml_types
+        Xml_lexer
+        XmlParser
+        Xml_dtd
+        Xml
+    )
 )
+
+(ocamllex xml_lexer)
+(ocamlyacc xml_parser)
