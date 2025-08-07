@@ -29,9 +29,8 @@ open CommonShared
 open CommonGlobals
 open CommonFile
 open CommonClient
-open CommonComplexOptions
 open CommonSwarming
-  
+
 open CommonTypes
 open Options
 open BasicSocket
@@ -2431,7 +2430,7 @@ can be increased by AvailableSlotReq, BlocReq, QueryBlocReq
                       set_reader sock (
                         DonkeyProtoCom.cut_messages 
                           (DonkeyProtoClient.parse c.client_emule_proto)
-                        (client_to_client files c));
+                        (client_to_client (CommonComplexOptions.get_files ()) c));
                       
                       c.client_source.DonkeySources.source_sock <- Connection sock;
 

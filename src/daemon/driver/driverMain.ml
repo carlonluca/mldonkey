@@ -72,10 +72,11 @@ let hourly_timer timer =
   CommonFile.propose_filenames ()
 
 let ten_second_timer timer =
+  let done_files_ref = CommonComplexOptions.get_done_files () in
   if !!auto_commit then
     List.iter (fun file ->
         file_commit file
-    ) !!CommonComplexOptions.done_files
+    ) !!(!done_files_ref)
 
 let second_timer timer =
   (try

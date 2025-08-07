@@ -3465,26 +3465,31 @@ let swarmers =
 (*************************************************************************)
 
 let _ =
-  set_after_save_hook files_ini (fun _ -> swarmers =:= []);
+  set_after_save_hook files_ini (fun _ ->
+    swarmers =:= []
+  );
   set_before_save_hook files_ini (fun _ ->
     let list = ref [] in
     HS.iter (fun s ->
       if s.s_networks <> [] then
-        list := s :: !list) swarmers_by_name;
+        list := s :: !list
+    ) swarmers_by_name;
     swarmers =:= !list;
-    (* put primary frontends to the head, so that swarmers' invariants
-       can be verified while downloads are being restored from ini files *)
-    let primary_files, secondary_files = 
-      List.partition (fun file -> 
+    let files_ref = CommonComplexOptions.get_files () in
+    let files = !!(!files_ref) in
+    let primary_files, secondary_files =
+      List.partition (fun file ->
         match file_files file with
         | primary_file :: _ when primary_file == file -> true
-        | _ -> false) !!CommonComplexOptions.files in
-    CommonComplexOptions.files =:= primary_files @ secondary_files
+        | _ -> false
+      ) files
+    in
+    let current = !files_ref in
+    current =:= (primary_files @ secondary_files);
+    files_ref := current  (* update ref *)
   );
   set_after_load_hook files_ini (fun _ ->
-    List.iter (fun s ->
-      check_swarmer s;
-    ) !!swarmers;
+    List.iter check_swarmer !!swarmers;
     swarmers =:= []
   )
 
