@@ -35,6 +35,12 @@
     )
 )
 
+(rule
+    (targets options.ml)
+    (deps options.ml4)
+    (action
+        (run camlp4o pa_o.cmo pa_op.cmo pr_o.cmo -impl %{deps} -o %{targets})))
+
 (library
     (name utils)
     (flags
@@ -60,7 +66,7 @@
         md4
         misc
         misc2
-        options
+        Options
         queues
         set2
         store

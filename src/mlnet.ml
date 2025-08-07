@@ -7,7 +7,6 @@ let () =
   BasicSocket.add_timer 0.1 (fun _ ->
     Printf2.force_link ();
     Bitv.force_link ();
-    Options.force_link ();
     Magiclib.force_link ();
     Charset.force_link ();
     Gettext.force_link ();
