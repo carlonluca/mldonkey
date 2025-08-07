@@ -25,7 +25,6 @@ open Options
 open BasicSocket
 
 open CommonSwarming
-open CommonInteractive
 open CommonFile
 open CommonServer
 open CommonClient
@@ -446,7 +445,7 @@ let new_file file_diskname file_state md4 file_size filename writable user group
       );
 
       update_best_name file;
-      file_add file_impl file_state;
+      CommonInteractive.file_add file_impl file_state;
       Heap.set_tag file tag_file;
       Hashtbl.add files_by_md4 md4 file;
       file
@@ -565,7 +564,7 @@ let new_server ip port =
           CommonServer.impl_server_ops = server_ops;
         }
       in
-      server_add server_impl;
+      CommonInteractive.server_add server_impl;
       Heap.set_tag s tag_server;
       Hashtbl.add servers_by_key key s;
       check_server_country_code s;
@@ -764,7 +763,7 @@ let set_client_type c t=
   set_client_type (as_client c) t
 
 let friend_add c =
-  friend_add (as_client c)
+  CommonInteractive.friend_add (as_client c)
 
 let string_of_server s =
   Printf.sprintf "%s:%d" (Ip.to_string s.server_ip) s.server_port
@@ -909,7 +908,7 @@ let remove_client c =
 
 
 let friend_remove c =
-  friend_remove  (as_client c)
+  CommonInteractive.friend_remove  (as_client c)
 
 
 (* Parts stolen from update_master_servers. Maybe someone competent
@@ -1069,5 +1068,5 @@ let full_client_identifier c =
       (if c.client_emule_proto.emule_release = "" then "" else " " ^ c.client_emule_proto.emule_release)
       (String.escaped c.client_name)
 
-let force_link () = ()
+let force_link () = Printf.printf "DONKEY_GLOBALS\n"
 

@@ -438,7 +438,8 @@ let server_remove server =
         set_server_state server RemovedHost;
         (try impl.impl_server_ops.op_server_remove impl.impl_server_val
           with _ -> ());
-        servers =:= Intmap.remove (server_num server) !!servers
+        let servers_ref = CommonComplexOptions.get_servers () in
+        !servers_ref =:= Intmap.remove (server_num server) !!(!servers_ref)
       end
   with e ->
       lprintf_nl "[cInt] Exception in server_remove: %s" (Printexc2.to_string e)
@@ -447,7 +448,8 @@ let server_add impl =
   let server = as_server impl in
   if impl.impl_server_state = NewHost then begin
       server_update_num impl;
-      servers =:= Intmap.add (server_num server) server !!servers;
+      let servers_ref = CommonComplexOptions.get_servers () in
+      !servers_ref =:= Intmap.add (server_num server) server !!(!servers_ref);
       impl.impl_server_state <- NotConnected (BasicSocket.Closed_by_user, -1);
     end
 
@@ -456,7 +458,8 @@ let friend_add c =
   if not (is_friend c) then begin
       set_friend c;
       client_must_update c;
-      friends =:= c :: !!friends;
+      let friends_ref = CommonComplexOptions.get_friends () in
+      !friends_ref =:= c :: !!(!friends_ref);
       contacts := List2.removeq c !contacts;
       if network_is_enabled ((as_client_impl c).impl_client_ops.op_client_network) then
         impl.impl_client_ops.op_client_browse impl.impl_client_val true
@@ -470,7 +473,8 @@ let friend_remove c =
     if is_friend c then begin
         set_not_friend c;
         client_must_update c;
-        friends =:= List2.removeq c !!friends;
+        let friends_ref = CommonComplexOptions.get_friends () in
+        !friends_ref =:= List2.removeq c !!(!friends_ref);
         impl.impl_client_ops.op_client_clear_files impl.impl_client_val
       end else
     if is_contact c then begin
@@ -1147,6 +1151,7 @@ let force_download_quotas () =
     iter !!max_concurrent_downloads files_by_user []
 
 let _ =
+  Printf.printf "CI\n";
   option_hook max_concurrent_downloads (fun _ ->
       ignore (force_download_quotas ())
   )

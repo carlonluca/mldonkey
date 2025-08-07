@@ -530,9 +530,10 @@ let gui_initialize gui =
     
     end else begin
       
+      let friends_ref = CommonComplexOptions.get_friends () in
       List.iter (fun c ->
           addevent gui.gui_events.gui_clients (client_num c) true
-      ) !!friends;
+      ) !!(!friends_ref);
       
       let files_ref = CommonComplexOptions.get_files () in
       List.iter (fun file ->
@@ -1065,9 +1066,10 @@ let gui_reader (gui: gui_record) t _ =
               friend_remove c 
           
           | P.RemoveAllFriends ->
+              let friends_ref = CommonComplexOptions.get_friends () in
               List.iter (fun c ->
                   friend_remove c
-              ) !!friends
+              ) !!(!friends_ref)
           
           | P.CleanOldServers -> 
               networks_iter network_clean_servers
