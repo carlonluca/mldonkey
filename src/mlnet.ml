@@ -88,7 +88,6 @@ let () =
     DonkeyNodesDat.force_link ();
     DonkeyGlobals.force_link ();
     DonkeyOvernet.force_link ();
-    DonkeySui1.force_link ();
     DonkeyOneFile.force_link ();
     DonkeyServers.force_link ();
     DonkeyFiles.force_link ();

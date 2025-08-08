@@ -35,7 +35,3 @@ let ext_lprintf_nl msg verb =
   if !CommonOptions.verbose_unexpected_messages || not verb then Printf2.lprintf_nl ("%s") msg
 
 let _ = Callback.register "ml_lprintf_nl" ext_lprintf_nl
-
-(* Dummy function to ensure this module is linked by Dune *)
-let force_link () = ()
-

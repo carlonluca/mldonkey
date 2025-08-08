@@ -24,4 +24,4 @@ module type SUI = sig
   val verify_signature : string -> int -> string -> int -> int64 -> int -> int64 -> bool
 end
 
-module SUI : SUI = DonkeySui2.SUI
+module SUI : SUI = DonkeySui1.SUI
