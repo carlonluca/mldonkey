@@ -39,12 +39,17 @@
     (targets options.ml)
     (deps options.ml4)
     (action
-        (run camlp4o pa_o.cmo pa_op.cmo pr_o.cmo -impl %{deps} -o %{targets})))
+        (run camlp4o pa_o.cmo pa_op.cmo pr_o.cmo -impl %{deps} -o %{targets})
+    )
+)
 
 (rule
     (targets misc2.ml)
     (deps misc2.mlcpp)
-    (action (run cpp -x c -DOCAMLVERSION_MAJOR=%{env:OCAMLVERSION_MAJOR=4} -I%{project_root}/../.. -P misc2.mlcpp > misc2.ml)))
+    (action
+        (run cpp -x c -DOCAMLVERSION_MAJOR=%{env:OCAMLVERSION_MAJOR=4122} -I%{project_root}/../.. -P misc2.mlcpp -o misc2.ml)
+    )
+)
 
 (library
     (name utils)
