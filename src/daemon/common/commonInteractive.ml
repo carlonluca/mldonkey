@@ -193,7 +193,7 @@ let script_for_file file incoming new_name =
             ("FILENAME",  filename);
             ("FILEHASH",  string_of_uids info.G.file_uids);
             ("DURATION",  duration);
-            ("DLFILES", string_of_int (List.length (!!(!files_ref))));
+            ("DLFILES",   string_of_int (List.length (!!(!files_ref))));
             ("INCOMING",  incoming);
             ("NETWORK",   network.network_name);
             ("ED2K_HASH", (file_print_ed2k_link filename (file_size file) info.G.file_md4));
@@ -582,7 +582,7 @@ let start_download file =
             ("FILESIZE",  size);
             ("FILENAME",  filename);
             ("FILEHASH",  string_of_uids info.G.file_uids);
-            ("DLFILES", string_of_int (List.length (!!(!files_ref))));
+            ("DLFILES",   string_of_int (List.length (!!(!files_ref))));
             ("NETWORK",   network.network_name);
             ("ED2K_HASH", (file_print_ed2k_link filename (file_size file) info.G.file_md4));
             ("FILE_OWNER",(file_owner file).user_name);
@@ -1151,7 +1151,6 @@ let force_download_quotas () =
     iter !!max_concurrent_downloads files_by_user []
 
 let _ =
-  Printf.printf "CI\n";
   option_hook max_concurrent_downloads (fun _ ->
       ignore (force_download_quotas ())
   )
