@@ -37,4 +37,8 @@ sig
   val png_version_num : unit -> string
 end
 
+(*
+libgd was not mandatory in the past. The dune build instead requires libgd.
+To make this optional again, make it optional in dune and use DriverGraphics_nogd.
+*)
 module G : Graphics = DriverGraphics_gd.Graphics
