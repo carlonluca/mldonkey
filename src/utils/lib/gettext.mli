@@ -64,5 +64,3 @@ module T :
 
 val gettext : ('a, unit, string) format Options.option_record -> 'a
 val buftext : Buffer.t -> ('a, Buffer.t, unit) format Options.option_record -> 'a
-
-val force_link: unit -> unit

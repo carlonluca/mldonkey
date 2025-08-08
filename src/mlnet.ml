@@ -9,7 +9,6 @@ let () =
     Bitv.force_link ();
     Magiclib.force_link ();
     Charset.force_link ();
-    Gettext.force_link ();
     Md4.force_link ();
     TcpServerSocket.force_link ();
     Ip_set.force_link ();

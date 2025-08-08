@@ -44,6 +44,14 @@
 )
 
 (rule
+    (targets gettext.ml)
+    (deps gettext.ml4)
+    (action
+        (run camlp4o pa_o.cmo pa_op.cmo pr_o.cmo -impl %{deps} -o %{targets})
+    )
+)
+
+(rule
     (targets misc2.ml)
     (deps misc2.mlcpp)
     (action
