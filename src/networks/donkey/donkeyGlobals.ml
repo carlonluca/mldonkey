@@ -1068,5 +1068,4 @@ let full_client_identifier c =
       (if c.client_emule_proto.emule_release = "" then "" else " " ^ c.client_emule_proto.emule_release)
       (String.escaped c.client_name)
 
-let force_link () = Printf.printf "DONKEY_GLOBALS\n"
-
+let force_link () = ()
