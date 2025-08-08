@@ -54,5 +54,4 @@ val html_mods_cntr_init : unit -> unit
 val html_mods_cntr : unit -> int
 val print_plural_s : int -> string
 
-val init: unit -> unit
 val force_link: unit -> unit

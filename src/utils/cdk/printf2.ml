@@ -229,8 +229,6 @@ let html_mods_cntr_init () =
 let print_plural_s v =
   if v > 1 then "s" else ""
 
-let init () = ()
-
 (* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 

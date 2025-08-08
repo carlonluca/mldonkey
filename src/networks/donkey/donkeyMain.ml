@@ -468,8 +468,6 @@ let _ =
     ), " <filename> : print a contact.dat file";
   ]
 
-  let init () = ()
-
 (* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
 
