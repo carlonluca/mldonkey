@@ -2195,11 +2195,11 @@ let diskinfo html buf =
               \\<td class=\\\"sr ar\\\"\\>%s\\</td\\>\\<td class=\\\"sr\\\"\\>%s\\</td\\>\\</tr\\>"
             (html_mods_cntr ()) dir strategy diskused diskfree percentfree filesystem
         else
-          Printf.bprintf buf "%-*s|%-*s|%8s|%8s|%5s|%-*s\n"
+          Printf.bprintf buf "%-*s|%-*s|%8s|%8s|%5s|%s\n"
             (max !len_dir (!len_dir - String.length dir)) dir
             (max !len_strategy (!len_strategy - String.length strategy)) strategy
-            diskused diskfree percentfree
-            (String.length filesystem) filesystem
+            diskused diskfree percentfree filesystem
+
         ) !list;
   if html then
     Printf.bprintf buf "\\</table\\>\\</td\\>\\<tr\\>\\</table\\>\\</div\\>"
