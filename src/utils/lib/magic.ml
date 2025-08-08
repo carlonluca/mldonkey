@@ -23,4 +23,7 @@ sig
   val magic_fileinfo : string -> bool -> string option
 end
 
+(*
+With the migration to dune, libmagic is mandatory.
+*)
 module M : MagicInfo = Magic_magic.MagicInfo
