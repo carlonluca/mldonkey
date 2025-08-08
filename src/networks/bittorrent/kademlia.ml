@@ -100,7 +100,6 @@ let hash_of_big_int n =
   let div = big_int_of_int 256 in
   for i = Bytes.length s - 1 downto 0 do
     let (d,m) = quomod_big_int !n div in
-    Bytes.set s 0 (Char.chr 0x7F);
     Bytes.set s i (Char.chr (int_of_big_int m));
     n := d
   done;
