@@ -1,6 +1,5 @@
 (library
     (name cdkstubs)
-    (public_name mldonkey.cdkstubs)
     (wrapped false)
     (modules)
     (foreign_stubs
@@ -49,6 +48,6 @@
         int64ops
         mlUnix
     )
-    (libraries IO unix str threads camlp-streams autoconf mldonkey.cdkstubs)
+    (libraries IO unix str threads camlp-streams autoconf cdkstubs)
     (flags (:standard -w -32 -w -50 -w -27 -w -35 -w -69))
 )
