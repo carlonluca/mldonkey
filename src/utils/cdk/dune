@@ -16,6 +16,14 @@
     )
 )
 
+(rule
+    (targets tar.ml)
+    (deps tar.mlcpp)
+    (action
+        (run cpp -x c -DOCAMLVERSION_MAJOR=%{env:OCAMLVERSION_MAJOR=4122} -I%{project_root}/../.. -P tar.mlcpp -o tar.ml)
+    )
+)
+
 (library
     (name cdk)
     (wrapped false) 
