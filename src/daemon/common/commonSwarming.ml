@@ -3474,6 +3474,8 @@ let _ =
     swarmers =:= !list;
     let files_ref = CommonComplexOptions.get_files () in
     let files = !!(!files_ref) in
+    (* put primary frontends to the head, so that swarmers' invariants
+       can be verified while downloads are being restored from ini files *)
     let primary_files, secondary_files =
       List.partition (fun file ->
         match file_files file with
