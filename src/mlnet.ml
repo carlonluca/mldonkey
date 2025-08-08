@@ -113,7 +113,6 @@ let () =
     CommonHasher.force_link ();
     CommonInteractive.force_link ();
     CommonUploads.force_link ();
-    GiftParser.force_link ();
     CommonGlobals.force_link ();
     CommonIndexing.force_link ();
     CommonSwarming.force_link ();

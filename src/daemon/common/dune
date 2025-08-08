@@ -27,3 +27,6 @@
         mp3tagui
     )
 )
+
+(ocamllex giftLexer)
+(ocamlyacc giftParser)
