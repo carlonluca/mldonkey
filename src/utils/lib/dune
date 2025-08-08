@@ -65,7 +65,7 @@
         (:standard -w -3 -w -27 -w -67 -w -35 -w -69 -w -32)
     )
     (wrapped false)
-    (libraries cdk autoconf utils_stubs)
+    (libraries cdk autoconf utils_stubs ocamlrss)
     (modules
         bitv
         charset
