@@ -31,16 +31,14 @@ def get_perl_path():
     """Return the path to the perl executable, or None if not found."""
     return shutil.which("perl")
 
-def get_latest_git_tag():
-    """Return the latest Git tag in the directory of this script."""
-    global current_script_dir
+def get_latest_semver_tag():
     try:
-        tag = subprocess.check_output(
+        latest_tag = subprocess.check_output(
             ["git", "describe", "--tags", "--abbrev=0"],
-            cwd=current_script_dir,
-            stderr=subprocess.DEVNULL
-        ).decode().strip()
-        return tag
+            text=True
+        ).strip()
+        match = re.search(r'(\d+\.\d+\.\d+)', latest_tag)
+        return match.group(1) if match else None
     except subprocess.CalledProcessError:
         return None
 
@@ -96,18 +94,29 @@ def get_machine_type() -> str:
     kernel = platform.release()       # e.g. "6.12.38-1-lts"
     return f"{system} {machine} {kernel}"
 
+def is_commit_tagged():
+    try:
+        tags = subprocess.check_output(
+            ["git", "tag", "--points-at", "HEAD"],
+            text=True
+        ).strip()
+        return bool(tags)
+    except subprocess.CalledProcessError:
+        return False
+
 perl_path = get_perl_path()
 if perl_path is None:
     sys.stderr.write("Error: perl not found in PATH.\n")
     sys.exit(1)
 
 check_bounds = False
-current_version = get_latest_git_tag()
+current_version = get_latest_semver_tag()
 if current_version is None:
     sys.stderr.write("Error: cannot find latest tag. git command missing?\n")
     sys.exit(1)
 
-current_version = current_version + ".git"
+if not is_commit_tagged():
+    current_version = current_version + ".git"
 semver = extract_semver(current_version)
 if semver is None:
     sys.stderr.write("Error: cannot extract semver from git tag.\n")
