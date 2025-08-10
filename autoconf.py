@@ -138,12 +138,12 @@ system = platform.system()
 windows = 'system = "cygwin" || system = "mingw"'
 
 opennapster = "no"
-gnutella = "no"
+gnutella = "yes"
 gnutella2 = "no"
 direct_connect = "no"
 soulseek = "no"
 openft = "no"
-fasttrack = "no"
+fasttrack = "yes"
 filetp = "no"
 bittorrent = "yes"
 donkey = "yes"

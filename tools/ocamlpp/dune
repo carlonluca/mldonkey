@@ -1,0 +1,14 @@
+(executable
+    (name ocamlpp)
+    (modules ocamlpp)
+    (libraries camlp-streams str)
+    (flags
+        (:standard -w -69)
+    )
+)
+
+(rule
+    (targets ocamlpp.ml)
+    (deps ocamlpp.ml4)
+    (action (run camlp4o -impl %{deps} -o %{targets}))
+)

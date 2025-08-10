@@ -1,0 +1,48 @@
+(rule
+    (target fasttrackTypes.ml)
+    (deps fasttrackTypes.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target fasttrackOptions.ml)
+    (deps fasttrackOptions.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target fasttrackFunctions.ml)
+    (deps fasttrackFunctions.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target fasttrackClients.ml)
+    (deps fasttrackClients.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target fasttrackComplexOptions.ml)
+    (deps fasttrackComplexOptions.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target fasttrackInteractive.ml)
+    (deps fasttrackInteractive.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(library
+    (name fasttrack)
+    (flags
+        (:standard -w -3 -w -27 -w -67 -w -35 -w -69 -w -32)
+    )
+    (wrapped false)
+    (libraries
+        utils
+        utils_stubs
+        daemoncommon
+    )
+)

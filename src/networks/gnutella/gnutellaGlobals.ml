@@ -614,8 +614,8 @@ let parse_magnet url =
 *)    
     
 let clean_file s =
-  String2.replace_char s '\r' '\n';
-  String2.replace_char s ' ' '\n'
+  let _ = String2.replace_char s '\r' '\n' in
+  ignore ( String2.replace_char s ' ' '\n' )
 
 let local_login () =
   let name = !!global_login in
@@ -630,14 +630,12 @@ Define a function to be called when the "mem_stats" command
 **************************************************************)
 
 let _ =
-(*  let network_info = CommonNetwork.network_info network in *)
-  let name = network.network_name ^ "Globals" in
-  Heap.add_memstat name (fun level buf ->
-        Printf.bprintf buf "Number of old files: %d\n" (List.length !!old_files
+  (*  let network_info = CommonNetwork.network_info network in *)
+    let name = network.network_name ^ "Globals" in
+    Heap.add_memstat name (fun level buf ->
+          Printf.bprintf buf "Number of old files: %d\n" (List.length !!old_files
+    )
   )
-);
-
 
 (* Dummy function to ensure this module is linked by Dune *)
 let force_link () = ()
-
