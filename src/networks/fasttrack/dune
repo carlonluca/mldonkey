@@ -1,3 +1,21 @@
+(library
+    (name fasttrackstubs)
+    (wrapped false)
+    (modules)
+    (foreign_stubs
+        (language c)
+        (names
+            enc_type_1
+            enc_type_2
+            enc_type_20
+            enc_type_80
+            fst_crypt_ml
+            fst_crypt
+        )
+        (flags (:standard -I%{project_root}/../.. -I../../utils/cdk))
+    )
+)
+
 (rule
     (target fasttrackTypes.ml)
     (deps fasttrackTypes.mlt)
@@ -34,6 +52,12 @@
     (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
 )
 
+(rule
+    (target fasttrackMain.ml)
+    (deps fasttrackMain.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
 (library
     (name fasttrack)
     (flags
@@ -41,6 +65,7 @@
     )
     (wrapped false)
     (libraries
+        fasttrackstubs
         utils
         utils_stubs
         daemoncommon

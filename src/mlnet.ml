@@ -32,10 +32,6 @@ let () =
     (* SlskServers.force_link ();
     SlskInteractive.force_link ();
     SlskMain.force_link ();
-    FasttrackServers.force_link ();
-    FasttrackProto.force_link ();
-    FasttrackGlobals.force_link ();
-    FasttrackPandora.force_link ();
     OpennapComplexOptions.force_link ();
     OpennapServers.force_link ();
     OpennapInteractive.force_link ();
@@ -57,7 +53,7 @@ let () =
     BTComplexOptions.force_link ();
     BTInteractive.force_link ();
     BTMain.force_link ();
-    (* GnutellaGlobals.force_link ();
+    GnutellaGlobals.force_link ();
     GnutellaComplexOptions.force_link ();
     GnutellaServers.force_link ();
     GnutellaMain.force_link ();
@@ -65,18 +61,22 @@ let () =
     GnutellaInteractive.force_link ();
     GnutellaSupernode.force_link ();
     GnutellaClients.force_link ();
-    OpenFTMain.force_link ();
+    FasttrackServers.force_link ();
+    FasttrackProto.force_link ();
+    FasttrackGlobals.force_link ();
+    FasttrackPandora.force_link ();
+    FileTPGlobals.force_link ();
+    FileTPMain.force_link ();
+    FileTPInteractive.force_link ();
+    FileTPComplexOptions.force_link ();
+    (* OpenFTMain.force_link ();
     OpenFTServers.force_link ();
     OpenFTComplexOptions.force_link ();
     OpenFTInteractive.force_link ();
     G2Proto.force_link ();
     G2Supernode.force_link ();
-    G2Pandora.force_link ();
-    FileTPGlobals.force_link ();
-    FileTPMain.force_link ();
-    FileTPInteractive.force_link ();
-    FileTPComplexOptions.force_link ();
-    ServerMain.force_link (); *)
+    G2Pandora.force_link (); *)
+    (* ServerMain.force_link (); *)
     DonkeyOptions.force_link ();
     DonkeyMain.force_link ();
     DonkeyPandora.force_link ();

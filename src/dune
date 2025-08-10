@@ -1,9 +1,30 @@
 (executable
     (name mlnet)
-    (libraries utils cdk unix daemoncommon driver donkey mp3tagui bittorrent)
-        (flags
-            (:standard -w -33)
-        )
-        (link_flags (-cclib -lz -cclib -lbz2 -cclib -lminiupnpc -cclib -lnatpmp -cclib -lmagic -cclib -lgd -cclib -lpng -cclib -lcryptopp)
+    (libraries
+        utils
+        cdk
+        unix
+        daemoncommon
+        driver
+        donkey
+        mp3tagui
+        bittorrent
+        gnutella
+        fasttrack
+        filetp
+    )
+    (flags
+        (:standard -w -33)
+    )
+    (link_flags
+        (-cclib
+        -lz
+        -cclib -lbz2
+        -cclib -lminiupnpc
+        -cclib -lnatpmp
+        -cclib -lmagic
+        -cclib -lgd
+        -cclib -lpng
+        -cclib -lcryptopp)
     )
 )
