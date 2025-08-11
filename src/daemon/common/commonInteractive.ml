@@ -438,8 +438,7 @@ let server_remove server =
         set_server_state server RemovedHost;
         (try impl.impl_server_ops.op_server_remove impl.impl_server_val
           with _ -> ());
-        let servers_ref = CommonComplexOptions.get_servers () in
-        !servers_ref =:= Intmap.remove (server_num server) !!(!servers_ref)
+        servers =:= Intmap.remove (server_num server) !!servers
       end
   with e ->
       lprintf_nl "[cInt] Exception in server_remove: %s" (Printexc2.to_string e)
@@ -448,8 +447,7 @@ let server_add impl =
   let server = as_server impl in
   if impl.impl_server_state = NewHost then begin
       server_update_num impl;
-      let servers_ref = CommonComplexOptions.get_servers () in
-      !servers_ref =:= Intmap.add (server_num server) server !!(!servers_ref);
+      servers =:= Intmap.remove (server_num server) !!servers;
       impl.impl_server_state <- NotConnected (BasicSocket.Closed_by_user, -1);
     end
 

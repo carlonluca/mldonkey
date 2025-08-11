@@ -43,7 +43,7 @@ val prepend_file_to_option_record_list :
 val append_file_to_option_record_list :
   CommonTypes.file list Options.option_record ref -> CommonTypes.file -> unit
 
-val get_servers : unit -> CommonTypes.server Intmap.t Options.option_record ref
+val servers : CommonTypes.server Intmap.t Options.option_record
 val get_friends : unit -> CommonTypes.client list Options.option_record ref
 val contacts : CommonTypes.client list ref
   

@@ -389,19 +389,10 @@ module ServerOption = struct
       define_option_class "Server" value_to_server server_to_value
   end
 
-let servers_ref : CommonTypes.server Intmap.t option_record ref option ref = ref None
-
-let get_servers () =
-  match !servers_ref with
-  | Some r -> r
-  | None ->
-      let r =
-        ref ( define_option servers_section ["known_servers"] "List of known servers" (
-          intmap_option (fun s -> server_num s) ServerOption.t
-        ) Intmap.empty )
-      in
-      servers_ref := Some r;
-      r
+let servers =
+  define_option servers_section ["known_servers"] "List of known servers" (
+    intmap_option (fun s -> server_num s) ServerOption.t
+  ) Intmap.empty
 
 (*************************************************************************)
 (*                                                                       *)

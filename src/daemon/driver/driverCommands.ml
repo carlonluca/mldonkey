@@ -752,7 +752,6 @@ let _ =
         html_mods_cntr_init ();
         let nb_servers = ref 0 in
         if use_html_mods o then server_print_html_header buf "";
-        let servers_ref = CommonComplexOptions.get_servers () in
         Intmap.iter (fun _ s ->
             try
               server_print s o;
@@ -760,7 +759,7 @@ let _ =
             with e ->
                 lprintf "Exception %s in server_print\n"
                   (Printexc2.to_string e);
-        ) !!(!servers_ref);
+        ) !!servers;
         if use_html_mods o then begin
             Printf.bprintf buf "\\</table\\>\\</div\\>";
             html_mods_table_one_row buf "serversTable" "servers" [
@@ -789,8 +788,7 @@ let _ =
         let counter = ref 0 in
         match args with
           ["all"] ->
-            let servers_ref = CommonComplexOptions.get_servers () in
-            let servers_map = !!(!servers_ref) in
+            let servers_map = !!servers in
             let to_remove =
               Intmap.fold (fun _ s acc -> s :: acc) servers_map [] in
             List.iter (fun s ->
@@ -799,8 +797,7 @@ let _ =
             ) to_remove;
             Printf.sprintf (_b "Removed all %d servers") !counter
         | ["blocked"] ->
-            let servers_ref = CommonComplexOptions.get_servers () in
-            let servers_map = !!(!servers_ref) in
+            let servers_map = !!servers in
             let to_remove =
               Intmap.fold (fun _ s acc ->
                 if server_blocked s then s :: acc else acc
@@ -811,8 +808,7 @@ let _ =
             ) to_remove;
             Printf.sprintf (_b "Removed %d blocked servers") !counter
         | ["disc"] ->
-            let servers_ref = CommonComplexOptions.get_servers () in
-            let servers_map = !!(!servers_ref) in
+            let servers_map = !!servers in
             let to_remove =
               Intmap.fold (fun _ s acc ->
                 match server_state s with
@@ -901,13 +897,12 @@ let _ =
         in
         match args with
         | ["all"] ->
-            let servers_ref = CommonComplexOptions.get_servers () in
             Intmap.iter ( fun _ s ->
               if is_connected (server_state s) then begin
                 server_disconnect s;
                 incr counter
               end
-            ) !!(!servers_ref);
+            ) !!servers;
             print_result !counter;
         ""
         | _ ->
