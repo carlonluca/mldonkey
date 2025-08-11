@@ -12,6 +12,7 @@
         gnutella
         fasttrack
         filetp
+        directconnect
     )
     (flags
         (:standard -w -33)

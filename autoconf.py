@@ -149,7 +149,7 @@ windows = 'system = "cygwin" || system = "mingw"'
 opennapster = "no"
 gnutella = "yes"
 gnutella2 = "no"
-direct_connect = "no"
+direct_connect = "yes"
 soulseek = "no"
 openft = "no"
 fasttrack = "yes"

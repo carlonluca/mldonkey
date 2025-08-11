@@ -36,19 +36,13 @@ let () =
     OpennapServers.force_link ();
     OpennapInteractive.force_link ();
     OpennapMain.force_link ();
-    OpennapOptions.force_link ();
+    OpennapOptions.force_link (); *)
     DcClients.force_link ();
     DcInteractive.force_link ();
     DcShared.force_link ();
     DcServers.force_link ();
     DcMain.force_link ();
-    DcComplexOptions.force_link (); *)
-    BTStats.force_link ();
-    BTGlobals.force_link ();
-    BTOptions.force_link ();
-    BTClients.force_link ();
-    Kademlia.force_link ();
-    BT_DHT.force_link ();
+    DcComplexOptions.force_link ();
     BTTracker.force_link ();
     BTComplexOptions.force_link ();
     BTInteractive.force_link ();
