@@ -1,0 +1,72 @@
+(rule
+    (target g2Clients.ml)
+    (deps g2Clients.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target g2ComplexOptions.ml)
+    (deps g2ComplexOptions.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target g2Functions.ml)
+    (deps g2Functions.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target g2Globals.ml)
+    (deps g2Globals.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target g2Interactive.ml)
+    (deps g2Interactive.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target g2Main.ml)
+    (deps g2Main.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target g2Options.ml)
+    (deps g2Options.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target g2Protocol.ml)
+    (deps g2Protocol.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target g2Servers.ml)
+    (deps g2Servers.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target g2Types.ml)
+    (deps g2Types.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(library
+    (name gnutella2)
+    (flags
+        (:standard -w -3 -w -27 -w -67 -w -35 -w -69 -w -32 -w -33)
+    )
+    (wrapped false)
+    (libraries
+        utils
+        utils_stubs
+        daemoncommon
+    )
+)

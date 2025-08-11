@@ -220,6 +220,7 @@ let () =
   Unix2.can_write_to_directory (Filename2.temp_dir_name ());
 
   if (String2.starts_with (Filename.basename Sys.argv.(0)) "mlnet") then begin
+    lprintf_nl "MLDonkey is working in %s" file_basedir;
     if Sys.file_exists pid_filename then begin
       lprintf_nl "PID file %s exists." (Filename.concat file_basedir pid_filename);
       let pid =
@@ -2280,3 +2281,7 @@ let rec update_options () =
       update 23
 
   | _ -> ()
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

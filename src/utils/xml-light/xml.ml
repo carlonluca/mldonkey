@@ -242,3 +242,7 @@ let xml_of xml = match xml with
     Element (a,b,c) -> a,b,c
   | _ -> failwith "Xml.xml_of: bad XML type"
 
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

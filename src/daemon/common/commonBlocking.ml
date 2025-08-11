@@ -129,3 +129,6 @@ let _ =
       Printf.bprintf buf "  web ranges: %d\n" 
         (Ip_set.bl_length !web_ip_blocking_list)
    )
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()

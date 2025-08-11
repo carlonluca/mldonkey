@@ -187,3 +187,7 @@ let _ =
           Printf.bprintf buf "Query %d sent to %d server(s)\n"
             search.search_num (List.length (connected_servers()))
   )
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

@@ -1068,3 +1068,6 @@ let full_client_identifier c =
       (GuiTypes.client_software_short (brand_to_string_short c.client_brand) c.client_osinfo)
       (if c.client_emule_proto.emule_release = "" then "" else " " ^ c.client_emule_proto.emule_release)
       (String.escaped c.client_name)
+
+let force_link () = ()
+

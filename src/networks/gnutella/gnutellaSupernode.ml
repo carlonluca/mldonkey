@@ -496,3 +496,7 @@ let _ =
   plugin_enable_hooks := enable :: !plugin_enable_hooks;
   plugin_disable_hooks := disable :: !plugin_disable_hooks
   
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

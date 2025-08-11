@@ -37,3 +37,5 @@ val gstats_mod_array : CommonTypes.brand_stat array Options.option_record
 val guptime : unit -> int
 
 val result_of_file : Md4.t -> CommonTypes.tag list -> CommonResult.StoredResult.stored_result option
+
+val force_link: unit -> unit

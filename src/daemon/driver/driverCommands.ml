@@ -4346,3 +4346,7 @@ let _ =
        ^"\t\t\t\t\t\"show\" show all port forwarding info $n";
                 
   ]
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

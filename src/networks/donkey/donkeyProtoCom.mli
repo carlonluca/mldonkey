@@ -39,7 +39,7 @@ TcpBufferedSocket.t -> int -> unit
 *)
 
 val cut_messages : (int -> string -> 'a) ->
-    ('a -> TcpBufferedSocket.t -> 'b) -> TcpBufferedSocket.t -> int -> unit
+    ('a -> TcpBufferedSocket.t -> unit) -> TcpBufferedSocket.t -> int -> unit
 
 val client_handler2 :
   client option ref ->

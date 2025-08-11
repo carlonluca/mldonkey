@@ -31,3 +31,5 @@ val query_locations_timer : unit -> unit
 val add_query_location : DonkeyTypes.file -> DonkeyTypes.server -> unit
 val udp_query_sources : unit -> unit
 val check_for_preferred_servers : unit -> unit
+
+val force_link: unit -> unit

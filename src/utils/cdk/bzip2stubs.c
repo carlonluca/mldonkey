@@ -15,7 +15,7 @@ Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 Boston, MA  02110-1301, USA.
 */
 
-#include "../../../config/config.h"
+#include <config/config.h>
 
 #ifdef USE_BZIP2
 #include <bzlib.h>

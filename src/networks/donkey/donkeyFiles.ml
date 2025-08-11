@@ -170,3 +170,7 @@ module NewUpload = struct
       client_ops.op_client_can_upload <- upload_to_client
     
   end
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

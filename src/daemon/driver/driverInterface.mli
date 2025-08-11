@@ -21,3 +21,5 @@ val gui_handler : 'a -> TcpServerSocket.event -> unit
 val update_gui_info : unit -> unit
 val install_hooks : unit -> unit
 val gift_handler : 'a -> TcpServerSocket.event -> unit
+
+val force_link: unit -> unit

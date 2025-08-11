@@ -196,3 +196,5 @@ val to_nativeint_us : t -> Nativeint.t
 
 val unsafe_set : t -> int -> bool -> unit
 val unsafe_get : t -> int -> bool
+
+val force_link: unit -> unit

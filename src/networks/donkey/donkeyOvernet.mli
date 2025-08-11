@@ -135,3 +135,5 @@ module Make(Proto: sig
   end
 
   
+
+val force_link: unit -> unit

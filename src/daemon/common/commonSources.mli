@@ -174,3 +174,5 @@ module Make(M:
     val set_source_brand : source -> M.source_brand -> unit
   end)
 
+
+val force_link: unit -> unit

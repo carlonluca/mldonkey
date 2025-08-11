@@ -1,0 +1,13 @@
+(library
+    (name gnutella)
+    (flags
+        (:standard -w -3 -w -27 -w -67 -w -35 -w -69 -w -32 -w -33)
+    )
+    (wrapped false)
+    (libraries
+        cdk
+        utils
+        utils_stubs
+        daemoncommon
+    )
+)

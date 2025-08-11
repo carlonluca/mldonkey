@@ -218,3 +218,7 @@ let _ =
       let in_mem, total = IndexedResults.stats () in
       Printf.bprintf buf "  store: %d loaded/ %d max\n" in_mem total
   )
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

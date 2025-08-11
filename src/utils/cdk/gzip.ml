@@ -76,11 +76,11 @@ let open_in ic =
     char_buffer = Bytes.create 1 }
 
 let open_in_file filename =
-  let ic = Pervasives.open_in_bin filename in
+  let ic = Stdlib.open_in_bin filename in
   try
     open_in (IO.input_channel ic)
   with exn ->
-    Pervasives.close_in ic; raise exn
+    Stdlib.close_in ic; raise exn
 
 let read_byte iz =
   if iz.in_avail = 0 then begin
@@ -198,11 +198,11 @@ let open_out ?(level = 6) oc =
     char_buffer = Bytes.create 1 }
 
 let open_out_file ?level filename =
-  let oc = Pervasives.open_out_bin filename in
+  let oc = Stdlib.open_out_bin filename in
   try
     open_out ?level (IO.output_channel oc)
   with
-    exn -> Pervasives.close_out oc; raise exn
+    exn -> Stdlib.close_out oc; raise exn
 
 let flush_and_reset_out_buffer oz =
   ignore (IO.really_output oz.out_chan oz.out_buffer 0 oz.out_pos);

@@ -1,0 +1,21 @@
+(library
+    (name netstubs)
+    (wrapped false)
+    (modules)
+    (foreign_stubs
+        (language c)
+        (names
+            upnp_stubs
+        )
+        (flags (:standard -I%{project_root}/../.. -I../cdk))
+    )
+)
+
+(library
+    (name net)
+    (flags
+        (:standard -w -3 -w -27 -w -67 -w -35 -w -69 -w -32 -w -6)
+    )
+    (wrapped false)
+    (libraries cdk utils curl netstubs)
+)

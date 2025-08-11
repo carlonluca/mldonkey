@@ -444,3 +444,7 @@ let _ =
         Printf.bprintf buf "  map size: %d\n" (Array1.dim db.map);
     | None -> Printf.bprintf buf "  module not active\n"
   )
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

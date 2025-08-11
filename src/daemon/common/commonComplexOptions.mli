@@ -48,3 +48,5 @@ val shared_directories_including_user_commit : unit -> CommonTypes.shared_direct
 val sharing_only_directory : CommonTypes.sharing_strategy
 
 val swarmers_section : Options.options_section
+
+val force_link: unit -> unit

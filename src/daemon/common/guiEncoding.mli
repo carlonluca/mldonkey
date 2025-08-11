@@ -18,7 +18,9 @@
 *)
 
 
-val gui_send : (Buffer.t -> 'a -> 'b) -> TcpBufferedSocket.t -> 'a -> unit
+val gui_send : (Buffer.t -> 'a -> unit) -> TcpBufferedSocket.t -> 'a -> unit
 val from_gui : int array -> Buffer.t -> GuiProto.from_gui -> unit
 val to_gui : int array -> Buffer.t -> GuiProto.to_gui -> unit
   
+
+val force_link: unit -> unit

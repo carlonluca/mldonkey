@@ -53,3 +53,5 @@ val html_mods_td : Buffer.t -> (string * string * string) list -> unit
 val html_mods_cntr_init : unit -> unit
 val html_mods_cntr : unit -> int
 val print_plural_s : int -> string
+
+val force_link: unit -> unit

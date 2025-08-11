@@ -21,3 +21,5 @@
 val new_search : CommonTypes.search -> CommonTypes.search
 
 val send_search : CommonTypes.search -> CommonTypes.query -> unit
+
+val force_link: unit -> unit

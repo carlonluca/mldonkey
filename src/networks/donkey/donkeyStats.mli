@@ -28,3 +28,5 @@ val count_upload : DonkeyTypes.client -> Int64.t -> unit
 val print_stats : ui_conn -> CommonStats.style -> bool -> unit
 
 (*val save_download_history : DonkeyTypes.file -> unit*)
+
+val force_link: unit -> unit

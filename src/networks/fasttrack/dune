@@ -1,0 +1,73 @@
+(library
+    (name fasttrackstubs)
+    (wrapped false)
+    (modules)
+    (foreign_stubs
+        (language c)
+        (names
+            enc_type_1
+            enc_type_2
+            enc_type_20
+            enc_type_80
+            fst_crypt_ml
+            fst_crypt
+        )
+        (flags (:standard -I%{project_root}/../.. -I../../utils/cdk))
+    )
+)
+
+(rule
+    (target fasttrackTypes.ml)
+    (deps fasttrackTypes.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target fasttrackOptions.ml)
+    (deps fasttrackOptions.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target fasttrackFunctions.ml)
+    (deps fasttrackFunctions.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target fasttrackClients.ml)
+    (deps fasttrackClients.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target fasttrackComplexOptions.ml)
+    (deps fasttrackComplexOptions.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target fasttrackInteractive.ml)
+    (deps fasttrackInteractive.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(rule
+    (target fasttrackMain.ml)
+    (deps fasttrackMain.mlt)
+    (action (run ../../../tools/ocamlpp/ocamlpp.exe -o %{target} -pp %{deps}))
+)
+
+(library
+    (name fasttrack)
+    (flags
+        (:standard -w -3 -w -27 -w -67 -w -35 -w -69 -w -32)
+    )
+    (wrapped false)
+    (libraries
+        fasttrackstubs
+        utils
+        utils_stubs
+        daemoncommon
+    )
+)

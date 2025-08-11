@@ -40,7 +40,7 @@ let generate_client_uid =
   let sl_client_uid_random_tail = Bytes.length client_uid_random_tail in
   if sl_client_uid_random_tail > 0  then
     for i = 0 to sl_client_uid_random_tail - 1 do
-      client_uid_random_tail.[i] <- char_of_int (Random.int 256)
+      Bytes.set client_uid_random_tail i (char_of_int (Random.int 256));
     done;
   client_uid_from_version ^ Bytes.unsafe_to_string client_uid_random_tail
 
@@ -179,4 +179,8 @@ let dht_bootstrap_nodes = define_option bittorrent_section ["dht_bootstrap_nodes
     "service.ygrek.org.ua",6881;
     "router.bittorrent.com", 8991;
   ]
+
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
 

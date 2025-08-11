@@ -313,7 +313,7 @@ let rec tiger_of_array array pos block =
   let d1 = tiger_of_array array pos (block/2) in
   let d2 = tiger_of_array array (pos+block/2) (block/2) in
   let s = Bytes.create (1 + Tiger.length * 2) in
-  s.[0] <- '\001';
+  Bytes.set s 0 '\001';
   String.blit (TigerTree.direct_to_string d1) 0 s 1 Tiger.length;
   String.blit (TigerTree.direct_to_string d2) 0 s (1+Tiger.length) Tiger.length;
   let t = Tiger.string @@ Bytes.unsafe_to_string s in
@@ -346,7 +346,7 @@ let rec tiger_pos2 nblocks =
 
 let tiger_node d1 d2 =
   let s = Bytes.create (1 + Tiger.length * 2) in
-  s.[0] <- '\001';
+  Bytes.set s 0 '\001';
   String.blit (TigerTree.direct_to_string d1) 0 s 1 Tiger.length;
   String.blit (TigerTree.direct_to_string d2) 0 s (1+Tiger.length) Tiger.length;
   let t = Tiger.string @@ Bytes.unsafe_to_string s in
@@ -1041,3 +1041,7 @@ let _ =
    Printf.bprintf buf "  shared_files: %d\n" (Hashtbl.length shared_files);
    Printf.bprintf buf "  pending_slots: %d\n" (Intmap.length !pending_slots_map);
   )
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

@@ -248,3 +248,7 @@ module Make(M: sig
       h.host_obsolete <- 0
 
   end
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

@@ -1,4 +1,4 @@
 
-#include "src/networks/gnutella/gnutellaOptions.ml" where "Gnutella" = "G2"
+#include "../gnutella/gnutellaOptions.ml" where "Gnutella" = "G2"
   
   

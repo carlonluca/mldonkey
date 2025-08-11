@@ -467,3 +467,7 @@ let _ =
         exit 0
     ), " <filename> : print a contact.dat file";
   ]
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

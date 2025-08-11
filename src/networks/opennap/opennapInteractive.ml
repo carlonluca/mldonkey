@@ -248,3 +248,7 @@ let _ =
   network.op_network_add_server <- (fun ip port ->
       as_server (new_server (Ip.ip_of_addr ip) port).server_server
   )
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

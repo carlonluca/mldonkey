@@ -17,7 +17,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-#include "os_stubs.h"
 #include "md4.h"
 
 #include "caml/mlvalues.h"

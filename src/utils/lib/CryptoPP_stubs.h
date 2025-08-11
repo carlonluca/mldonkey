@@ -18,7 +18,7 @@
 */
 
 
-#include "../../../config/config.h"
+#include <config/config.h>
 
 #include <string.h>
 #include <caml/mlvalues.h>

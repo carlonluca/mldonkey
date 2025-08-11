@@ -433,3 +433,7 @@ let _ =
   network.op_network_porttest_result <- (fun _ -> PorttestNotAvailable);
   network.op_network_check_upload_slots <- (fun _ -> ());
   network.op_network_recover_temp <- (fun s -> ())
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

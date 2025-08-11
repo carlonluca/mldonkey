@@ -62,3 +62,5 @@ val private_room_ops : Private.private_room room_ops
 val private_room : CommonTypes.room
 val private_history : (CommonTypes.client * string) list
 val private_message_from : CommonTypes.client -> string -> unit
+
+val force_link: unit -> unit

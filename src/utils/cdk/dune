@@ -1,0 +1,61 @@
+(library
+    (name cdkstubs)
+    (wrapped false)
+    (modules)
+    (foreign_stubs
+        (language c)
+        (names
+            bzip2stubs
+            gdstubs
+            heap_c
+            zlibstubs
+            stubs_c
+            unix_stubs_c
+        )
+        (flags (:standard -I%{project_root}/../..))
+    )
+)
+
+(rule
+    (targets tar.ml)
+    (deps tar.mlcpp)
+    (action
+        (run cpp -x c -DOCAMLVERSION_MAJOR=%{env:OCAMLVERSION_MAJOR=4122} -I%{project_root}/../.. -P tar.mlcpp -o tar.ml)
+    )
+)
+
+(library
+    (name cdk)
+    (wrapped false) 
+    (modules
+        arg2
+        array2
+        bzip2
+        bzlib
+        file
+        filename2
+        filepath
+        filesystem
+        gd
+        genlex2
+        gzip
+        hashtbl2
+        heap
+        list2
+        printexc2
+        printf2
+        string2
+        tar
+        syslog
+        unix2
+        unix32
+        zip
+        zlib2
+        zlib
+        fifo
+        int64ops
+        mlUnix
+    )
+    (libraries IO unix str threads camlp-streams autoconf cdkstubs)
+    (flags (:standard -w -32 -w -50 -w -27 -w -35 -w -69))
+)

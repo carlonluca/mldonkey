@@ -18,7 +18,7 @@
 */
 /* 	$Id$	 */
 
-#include "../../../config/config.h"
+#include <config/config.h>
 #include <caml/mlvalues.h>
 #include <caml/memory.h>
 #include <caml/alloc.h>

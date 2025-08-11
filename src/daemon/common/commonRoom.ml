@@ -277,3 +277,7 @@ let private_message_from c s =
     (PrivateMessage (CommonClient.client_num c, s))
 
   
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

@@ -118,7 +118,7 @@ let rec iter s pos =
   else iter s (pos+1)
 
 let hescaped s =
-  String2.replace_char s '\r' ' ';s
+  String2.replace_char s '\r' ' '
 
 let commit () =  
   Hashtbl.iter (fun _ cnx ->
@@ -169,8 +169,6 @@ let commit () =
   ) connections;
   lprintf "\n\n#use \"limewire.ml\";;\n\n"
 
-
-
 let new_packet (kind:t) (number:int) ip1 port1 ip2 port2 data = 
   match kind with
     UDP -> 
@@ -198,5 +196,3 @@ let new_packet (kind:t) (number:int) ip1 port1 ip2 port2 data =
             cnx
       in
       Buffer.add_string cnx.packets data
-      
-      

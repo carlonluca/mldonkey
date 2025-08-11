@@ -18,3 +18,5 @@ val compute_sha1 :
 val compute_md5 : string -> int64 -> int64 -> (Md4.Md5.t job -> unit) -> unit
 val compute_tiger :
   string -> int64 -> int64 -> (Md4.TigerTree.t job -> unit) -> unit
+
+val force_link: unit -> unit
