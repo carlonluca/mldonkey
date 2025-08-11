@@ -664,7 +664,6 @@ formID.msgText.value=\\\"\\\";
                         found_select := 1;
                       end
                 ) fifo_list;
-                let friends_ref = CommonComplexOptions.get_friends () in
                 List.iter (fun c ->
                     let g = client_info c in
                     if not (List.mem g.client_num !found_nums) then begin
@@ -672,7 +671,7 @@ formID.msgText.value=\\\"\\\";
                         Printf.bprintf buf "\\<option value=\\\"%d\\\"\\>%d:%s\n"
                           g.client_num g.client_num g.client_name;
                       end
-                ) !!(!friends_ref);
+                ) !!friends;
 
                 Printf.bprintf buf "\\</select\\>\\</td\\>";
                 Printf.bprintf buf "\\<td width=100%%\\>\\<input style=\\\"width: 99%%; font-family: verdana; font-size: 12px;\\\"
@@ -788,37 +787,29 @@ let _ =
         let counter = ref 0 in
         match args with
           ["all"] ->
-            let servers_map = !!servers in
-            let to_remove =
-              Intmap.fold (fun _ s acc -> s :: acc) servers_map [] in
-            List.iter (fun s ->
+            Intmap.iter ( fun _ s ->
               server_remove s;
               incr counter
-            ) to_remove;
+            ) !!servers;
             Printf.sprintf (_b "Removed all %d servers") !counter
         | ["blocked"] ->
-            let servers_map = !!servers in
-            let to_remove =
-              Intmap.fold (fun _ s acc ->
-                if server_blocked s then s :: acc else acc
-              ) servers_map [] in
-            List.iter (fun s ->
-              server_remove s;
-              incr counter
-            ) to_remove;
+            Intmap.iter ( fun _ s ->
+              if server_blocked s then
+                begin
+                  server_remove s;
+                  incr counter
+                end
+            ) !!servers;
             Printf.sprintf (_b "Removed %d blocked servers") !counter
         | ["disc"] ->
-            let servers_map = !!servers in
-            let to_remove =
-              Intmap.fold (fun _ s acc ->
-                match server_state s with
-                | NotConnected _ -> s :: acc
-                | _ -> acc
-              ) servers_map [] in
-            List.iter (fun s ->
-              server_remove s;
-              incr counter
-            ) to_remove;
+            Intmap.iter (fun _ s ->
+              match server_state s with
+                NotConnected _ ->
+                  begin
+                    server_remove s;
+                    incr counter
+                  end
+              | _ -> ()) !!servers;
             Printf.sprintf (_b "Removed %d disconnected servers") !counter
         | _ ->
             List.iter (fun num ->
@@ -931,9 +922,8 @@ let _ =
     [
 
     "vfr", Arg_none (fun o ->
-        let friends_ref = CommonComplexOptions.get_friends () in
         List.iter (fun c ->
-            client_print c o) !!(!friends_ref);
+            client_print c o) !!friends;
         ""
     ), ":\t\t\t\t\tview friends";
 
@@ -953,10 +943,9 @@ let _ =
 
     "friend_remove", Arg_multiple (fun args o ->
         if args = ["all"] then begin
-            let friends_ref = CommonComplexOptions.get_friends () in
             List.iter (fun c ->
                 friend_remove c
-            ) !!(!friends_ref);
+            ) !!friends;
             _s "Removed all friends"
           end else begin
             List.iter (fun num ->
@@ -1001,7 +990,6 @@ let _ =
               ( Str, "srh", "State", "State" ) ] ;
           end;
         html_mods_cntr_init ();
-        let friends_ref = CommonComplexOptions.get_friends () in
         List.iter (fun c ->
             let i = client_info c in
             let n = network_find_by_num i.client_network in
@@ -1045,7 +1033,7 @@ let _ =
             else
               Printf.bprintf buf "[%s %d] %s" n.network_name
                 i.client_num i.client_name
-        ) !!(!friends_ref);
+        ) !!friends;
 
         if use_html_mods o then
           Printf.bprintf buf " \\</table\\>\\</td\\>\\<tr\\>\\</table\\>\\</div\\>";
@@ -1054,7 +1042,6 @@ let _ =
     ), ":\t\t\t\tdisplay all friends";
 
     "files", Arg_one (fun arg o ->
-        let friends_ref = CommonComplexOptions.get_friends () in
         let buf = o.conn_buf in
         let n = int_of_string arg in
         List.iter (fun c ->
@@ -1070,7 +1057,7 @@ let _ =
 
                 ()
               end
-        ) !!(!friends_ref);
+        ) !!friends;
         ""), "<client num> :\t\t\tprint files from friend <client num>";
 
 

@@ -1726,9 +1726,9 @@ let print_search buf s o =
     end
 
 let browse_friends () =
-  let friends_ref = CommonComplexOptions.get_friends () in
-  List.iter (fun c -> client_browse c false) !!(!friends_ref);
+  List.iter (fun c -> client_browse c false) !!friends;
   List.iter (fun c -> client_browse c false) !contacts
+
 
 let networks_header buf =
     html_mods_table_header buf "networkTable" "networkInfo" [

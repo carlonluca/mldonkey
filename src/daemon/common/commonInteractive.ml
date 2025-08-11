@@ -193,7 +193,7 @@ let script_for_file file incoming new_name =
             ("FILENAME",  filename);
             ("FILEHASH",  string_of_uids info.G.file_uids);
             ("DURATION",  duration);
-            ("DLFILES",   string_of_int (List.length (!!(!files_ref))));
+            ("DLFILES", string_of_int (List.length (!!(!files_ref))));
             ("INCOMING",  incoming);
             ("NETWORK",   network.network_name);
             ("ED2K_HASH", (file_print_ed2k_link filename (file_size file) info.G.file_md4));
@@ -447,7 +447,7 @@ let server_add impl =
   let server = as_server impl in
   if impl.impl_server_state = NewHost then begin
       server_update_num impl;
-      servers =:= Intmap.remove (server_num server) !!servers;
+      servers =:= Intmap.add (server_num server) server !!servers;
       impl.impl_server_state <- NotConnected (BasicSocket.Closed_by_user, -1);
     end
 
@@ -456,8 +456,7 @@ let friend_add c =
   if not (is_friend c) then begin
       set_friend c;
       client_must_update c;
-      let friends_ref = CommonComplexOptions.get_friends () in
-      !friends_ref =:= c :: !!(!friends_ref);
+      friends =:= c :: !!friends;
       contacts := List2.removeq c !contacts;
       if network_is_enabled ((as_client_impl c).impl_client_ops.op_client_network) then
         impl.impl_client_ops.op_client_browse impl.impl_client_val true
@@ -471,8 +470,7 @@ let friend_remove c =
     if is_friend c then begin
         set_not_friend c;
         client_must_update c;
-        let friends_ref = CommonComplexOptions.get_friends () in
-        !friends_ref =:= List2.removeq c !!(!friends_ref);
+        friends =:= List2.removeq c !!friends;
         impl.impl_client_ops.op_client_clear_files impl.impl_client_val
       end else
     if is_contact c then begin
@@ -580,7 +578,7 @@ let start_download file =
             ("FILESIZE",  size);
             ("FILENAME",  filename);
             ("FILEHASH",  string_of_uids info.G.file_uids);
-            ("DLFILES",   string_of_int (List.length (!!(!files_ref))));
+            ("DLFILES", string_of_int (List.length (!!(!files_ref))));
             ("NETWORK",   network.network_name);
             ("ED2K_HASH", (file_print_ed2k_link filename (file_size file) info.G.file_md4));
             ("FILE_OWNER",(file_owner file).user_name);

@@ -38,13 +38,13 @@ val remove_file_from_option_record_list :
 (* Prepend [file] to the list inside the option_record ref [opt_ref] *)
 val prepend_file_to_option_record_list :
   CommonTypes.file list Options.option_record ref -> CommonTypes.file -> unit
-
+  
 (* Prepend [file] to the list inside the option_record ref [opt_ref] *)
 val append_file_to_option_record_list :
   CommonTypes.file list Options.option_record ref -> CommonTypes.file -> unit
 
 val servers : CommonTypes.server Intmap.t Options.option_record
-val get_friends : unit -> CommonTypes.client list Options.option_record ref
+val friends : CommonTypes.client list Options.option_record
 val contacts : CommonTypes.client list ref
   
 val customized_queries : unit ->

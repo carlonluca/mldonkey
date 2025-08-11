@@ -389,10 +389,11 @@ module ServerOption = struct
       define_option_class "Server" value_to_server server_to_value
   end
 
-let servers =
-  define_option servers_section ["known_servers"] "List of known servers" (
-    intmap_option (fun s -> server_num s) ServerOption.t
-  ) Intmap.empty
+
+let servers = define_option servers_section
+    ["known_servers"] "List of known servers"
+    (intmap_option (fun s -> server_num s) ServerOption.t) Intmap.empty
+
 
 (*************************************************************************)
 (*                                                                       *)
@@ -677,17 +678,13 @@ module ClientOption = struct
   end
 
 let friends_section = file_section friends_ini [] ""
-let friends_ref : CommonTypes.client list option_record ref option ref = ref None
-let get_friends () =
-  match !friends_ref with
-  | Some r -> r
-  | None ->
-      let r = ref (  define_option friends_section ["friends"] 
-    "The list of known friends" (listiter_option (ClientOption.t true)) []) in
-      friends_ref := Some r;
-      r
-
+let friends = 
+  define_option friends_section ["friends"] 
+    "The list of known friends" (listiter_option (ClientOption.t true)) []
+  
+      
 let contacts = ref []
+
   
 (*************************************************************************)
 (*                                                                       *)
@@ -1358,7 +1355,7 @@ let _ =
 
 let _ =
   Heap.add_memstat "CommonComplexOptions" (fun level buf ->
-      Printf.bprintf buf "  friends: %d\n" (List.length !!(!(get_friends ())));
+      Printf.bprintf buf "  friends: %d\n" (List.length !!friends);
       Printf.bprintf buf "  contacts: %d\n" (List.length !contacts);
   )
 
