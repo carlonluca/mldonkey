@@ -1,4 +1,4 @@
 #where "Gnutella" = "G2"
 #where "GNUT" = "G2"
-#include "src/networks/gnutella/gnutellaGlobals.ml"
+#include "../gnutella/gnutellaGlobals.ml"
 
