@@ -61,6 +61,10 @@ let () =
     GnutellaInteractive.force_link ();
     GnutellaSupernode.force_link ();
     GnutellaClients.force_link ();
+    FasttrackMain.force_link();
+    FasttrackClients.force_link();
+    FasttrackInteractive.force_link();
+    FasttrackOptions.force_link();
     FasttrackServers.force_link ();
     FasttrackProto.force_link ();
     FasttrackGlobals.force_link ();
