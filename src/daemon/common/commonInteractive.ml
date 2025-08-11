@@ -179,7 +179,6 @@ let script_for_file file incoming new_name =
       !counter, !users
   in
   begin try
-  let files_ref = CommonComplexOptions.get_files () in
   MlUnix.fork_and_exec !!file_completed_cmd
       [|  (* keep those for compatibility *)
       "";
@@ -193,7 +192,7 @@ let script_for_file file incoming new_name =
             ("FILENAME",  filename);
             ("FILEHASH",  string_of_uids info.G.file_uids);
             ("DURATION",  duration);
-            ("DLFILES", string_of_int (List.length (!!(!files_ref))));
+            ("DLFILES",   string_of_int (List.length !!files)); 
             ("INCOMING",  incoming);
             ("NETWORK",   network.network_name);
             ("ED2K_HASH", (file_print_ed2k_link filename (file_size file) info.G.file_md4));
@@ -272,9 +271,8 @@ let file_commit file =
             end;
 
             update_file_state impl FileShared;
-
-            remove_file_from_option_record_list (CommonComplexOptions.get_done_files ()) file;
-            remove_file_from_option_record_list (CommonComplexOptions.get_files ()) file;
+            done_files =:= List2.removeq file !!done_files;
+            files =:= List2.removeq file !!files;
 
             List.iter (fun file ->
 (* Commit the file first, and share it after... *)
@@ -282,8 +280,8 @@ let file_commit file =
                   let impl = as_file_impl file in
                   update_file_state impl FileCancelled;
                   impl.impl_file_ops.op_file_cancel impl.impl_file_val;
-                  remove_file_from_option_record_list (CommonComplexOptions.get_done_files ()) file;
-                  remove_file_from_option_record_list (CommonComplexOptions.get_files ()) file;
+                  done_files =:= List2.removeq file !!done_files;
+                  files =:= List2.removeq file !!files;
 
                 with e ->
                     lprintf_nl "Exception %s in file_commit secondaries" (Printexc2.to_string e);
@@ -307,7 +305,7 @@ let file_cancel file user =
           try
             update_file_state impl FileCancelled;
             impl.impl_file_ops.op_file_cancel impl.impl_file_val;
-            remove_file_from_option_record_list (CommonComplexOptions.get_files ()) file;
+            files =:= List2.removeq file !!files;
           with e ->
               lprintf_nl "Exception %s in file_cancel" (Printexc2.to_string e);
       ) subfiles;
@@ -394,8 +392,8 @@ let file_completed (file : file) =
     if impl.impl_file_state = FileDownloading then begin
         CommonSwarming.duplicate_chunks ();
         set_file_release file false (admin_user ());
-        remove_file_from_option_record_list (CommonComplexOptions.get_files ()) file;
-        prepend_file_to_option_record_list (CommonComplexOptions.get_done_files ()) file;
+        files =:= List2.removeq file !!files;
+        done_files =:= file :: !!done_files;
         update_file_state impl FileDownloaded;
         (try mail_for_completed_file file with e ->
               lprintf_nl "Exception %s in sendmail" (Printexc2.to_string e);
@@ -411,7 +409,7 @@ let file_add impl state =
         update_file_num impl;
         (match state with
             FileDownloaded ->
-              prepend_file_to_option_record_list (CommonComplexOptions.get_done_files ()) file;
+              done_files =:= file :: !!done_files;
           | FileShared
           | FileNew
           | FileCancelled -> ()
@@ -420,7 +418,7 @@ let file_add impl state =
           | FileDownloading
           | FileQueued
           | FilePaused ->
-              append_file_to_option_record_list (CommonComplexOptions.get_files ()) file);
+              files =:= !!files @ [file]);
         update_file_state impl state
       end
   with e ->
@@ -566,7 +564,6 @@ let start_download file =
                 end);
           !counter, !users
       in
-      let files_ref = CommonComplexOptions.get_files () in
       MlUnix.fork_and_exec  !!file_started_cmd
       [|
       !!file_started_cmd;
@@ -578,7 +575,7 @@ let start_download file =
             ("FILESIZE",  size);
             ("FILENAME",  filename);
             ("FILEHASH",  string_of_uids info.G.file_uids);
-            ("DLFILES", string_of_int (List.length (!!(!files_ref))));
+            ("DLFILES",   string_of_int (List.length !!files)); 
             ("NETWORK",   network.network_name);
             ("ED2K_HASH", (file_print_ed2k_link filename (file_size file) info.G.file_md4));
             ("FILE_OWNER",(file_owner file).user_name);
@@ -1047,27 +1044,25 @@ let force_download_quotas () =
     queue_files user_file_list.file_list in
 
   if !all_temp_queued then
-    let files_ref = CommonComplexOptions.get_files () in
-    queue_files (!!(!files_ref))
+    queue_files !!CommonComplexOptions.files
   else
 
   (* create the assoc list of downloads of each user *)
-  let files_ref = CommonComplexOptions.get_files () in
-  let files_by_user = List.fold_left (fun acc f ->
-    let owner = CommonFile.file_owner f in
-    try
-      let owner_file_list = List.assoc owner acc in
-      (owner, { owner_file_list with 
-        file_list = f :: owner_file_list.file_list }) :: 
-        List.remove_assoc owner acc
-    with Not_found ->
-      (owner, { 
-        downloads_allowed = 
-          (match owner.user_max_concurrent_downloads with
-          | 0 -> None
-          | i -> Some i);
-        file_list = [f] }) :: acc
-  ) [] (!!(!files_ref)) in
+    let files_by_user = List.fold_left (fun acc f ->
+      let owner = CommonFile.file_owner f in
+      try
+        let owner_file_list = List.assoc owner acc in
+        (owner, { owner_file_list with 
+          file_list = f :: owner_file_list.file_list }) :: 
+          List.remove_assoc owner acc
+      with Not_found ->
+        (owner, { 
+          downloads_allowed = 
+            (match owner.user_max_concurrent_downloads with
+            | 0 -> None
+            | i -> Some i);
+          file_list = [f] }) :: acc
+    ) [] !!CommonComplexOptions.files in
 
     (* sort each user's list separately *)
     let files_by_user = List.map (fun (owner, owner_file_list) ->

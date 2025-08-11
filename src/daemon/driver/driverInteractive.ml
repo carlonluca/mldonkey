@@ -1158,13 +1158,12 @@ let display_active_file_list buf o list =
 
 let display_file_list buf o l =
   display_active_file_list buf o l;
-  let done_files_ref = CommonComplexOptions.get_done_files () in
   if not (use_html_mods o) then
-    Printf.bprintf buf "%0sDownloaded %d files\n" (if !!term_ansi then "$n" else "") (List.length !!(!done_files_ref));
-  if !!(!done_files_ref) <> [] then begin
+    Printf.bprintf buf "%0sDownloaded %d files\n" (if !!term_ansi then "$n" else "") (List.length !!done_files);
+  if !!done_files <> [] then begin
 (*      List.iter (fun file -> CommonFile.file_print file o)   !!done_files; *)
       simple_print_file_list true buf
-        (List2.tail_map file_info !!(!done_files_ref)) o;
+        (List2.tail_map file_info !!done_files) o;
       if not (use_html_mods o) then
         if !!auto_commit then
           if o.conn_output = HTML then

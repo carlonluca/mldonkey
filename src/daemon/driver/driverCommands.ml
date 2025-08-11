@@ -2733,7 +2733,6 @@ let _ =
         in
 
         let compute_downloads () =
-          let files_ref = CommonComplexOptions.get_files () in
           List.iter (fun f ->
             try
               ignore (Hashtbl.find list f.file_md4)
@@ -2743,7 +2742,7 @@ let _ =
                     filesize = f.file_size;
                     fileid = f.file_md4;
                 }) (List2.tail_map file_info 
-                      (user2_filter_files !!(!files_ref) o.conn_user.ui_user))
+                      (user2_filter_files !!files o.conn_user.ui_user))
         in
 
         let list =
@@ -2984,10 +2983,9 @@ let parse_filter args =
   | l -> `Files (List.map int_of_string l)
 
 let filter_files args k =
-  let files_ref = CommonComplexOptions.get_files () in
   match parse_filter args with
-  | `All -> List.iter k !!(!files_ref)
-  | `Filter filter -> List.iter (fun file -> if filter file then k file) !!(!files_ref)
+  | `All -> List.iter k !!files
+  | `Filter filter -> List.iter (fun file -> if filter file then k file) !!files
   | `Files l -> List.iter begin fun num ->
       match try Some (file_find num) with _ -> None with
       | None -> ()
@@ -3077,11 +3075,10 @@ let () =
           if not (List.memq num !to_cancel) then
             to_cancel := num :: !to_cancel
         in
-        let files_ref = CommonComplexOptions.get_files() in
         if args = ["all"] && user2_is_admin o.conn_user.ui_user then
           List.iter (fun file ->
               file_cancel file
-          ) !!(!files_ref)
+          ) !!files
         else
           List.iter (fun num ->
               let num = int_of_string num in
@@ -3090,7 +3087,7 @@ let () =
                       lprintf "TRY TO CANCEL FILE\n";
                       file_cancel file
                     end
-              ) !!(!files_ref)) args;
+              ) !!files) args;
         files_to_cancel o
     ), "<num|all> :\t\t\tcancel download (use arg 'all' for all files)";
 
@@ -3120,11 +3117,11 @@ let () =
               ( Str, "srh", "Filename", "Filename" ) ]);
 
         let counter = ref 0 in
-        let files_ref = CommonComplexOptions.get_files() in
+
         List.iter
           (fun file ->
             if (CommonFile.file_downloaders file o !counter) then counter := 0 else counter := 1;
-        ) (user2_filter_files !!(!files_ref) o.conn_user.ui_user);
+        ) (user2_filter_files !!files o.conn_user.ui_user);
 
         if use_html_mods o then Printf.bprintf buf "\\</table\\>\\</div\\>";
 
@@ -3132,13 +3129,12 @@ let () =
     ) , ":\t\t\t\tdisplay downloaders list";
 
     "verify_chunks", Arg_multiple (fun args o ->
-        let files_ref = CommonComplexOptions.get_files() in
         let buf = o.conn_buf in
         match args with
         | [] -> ""
         | "all"::[] ->
             Printf.bprintf buf "Verifying chunks of all files";
-            List.iter file_check !!(!files_ref);
+            List.iter file_check !!files;
             _s "done"
         | l ->
             let l = List.map int_of_string l in
@@ -3149,7 +3145,7 @@ let () =
                   Printf.bprintf  buf "Verifying chunks of file %d : %s" (file_num file) (file_best_name file);
                   file_check file;
                 end)
-              !!(!files_ref);
+              !!files;
             ""
     ), "<num|all> :\t\t\tverify chunks of file <num> (use 'all' for all files)";
 
@@ -3176,10 +3172,9 @@ let () =
     ), "<num> :\t\t\t\tchange release state of a download";
 
     "commit", Arg_none (fun o ->
-        let done_files_ref = CommonComplexOptions.get_done_files() in
         List.iter (fun file ->
             file_commit file
-        ) !!(!done_files_ref);
+        ) !!done_files;
         let buf = o.conn_buf in
         if o.conn_output = HTML then
           html_mods_table_one_row buf "serversTable" "servers" [
@@ -3191,8 +3186,7 @@ let () =
 
     "vd", Arg_multiple (fun args o ->
         let buf = o.conn_buf in
-        let files_ref = CommonComplexOptions.get_files() in
-        let list = user2_filter_files !!(!files_ref) o.conn_user.ui_user in
+        let list = user2_filter_files !!files o.conn_user.ui_user in
         let filelist = List2.tail_map file_info list in
         match args with
           | ["queued"] ->
@@ -3234,11 +3228,10 @@ let () =
               (fun file -> if (as_file_impl file).impl_file_num = num then
                   CommonFile.file_print file o)
             list;
-            let done_files_ref = CommonComplexOptions.get_done_files() in
             List.iter
               (fun file -> if (as_file_impl file).impl_file_num = num then
                   CommonFile.file_print file o)
-            !!(!done_files_ref);
+            !!done_files;
             ""
         | _ ->
             DriverInteractive.display_file_list buf o filelist;
@@ -3263,9 +3256,8 @@ let () =
     ), "<num> \"<new name>\" :\t\tchange name of download <num> to <new name>";
 
     "filenames_variability", Arg_none (fun o ->
-      let files_ref = CommonComplexOptions.get_files() in
       let list = List2.tail_map file_info
-        (user2_filter_files !!(!files_ref) o.conn_user.ui_user) in
+        (user2_filter_files !!files o.conn_user.ui_user) in
       DriverInteractive.filenames_variability o list;
       _s "done"
     ), ":\t\t\ttell which files have several very different names";
@@ -3402,14 +3394,13 @@ let _ =
                       else
                         begin
                           let counter = ref 0 in
-                          let files_ref = CommonComplexOptions.get_files() in
                           List.iter (fun f -> 
                             if file_owner f = u && file_group f = Some g then
                               begin
                                 incr counter;
                                 set_file_group f u.user_default_group
                               end
-                          ) !!(!files_ref);
+                          ) !!files;
                           user2_user_remove_group (user2_user_find user) (user2_group_find group);
                           print_command_result o (Printf.sprintf "Removed group %s from user %s%s"
                             group user

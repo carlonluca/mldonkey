@@ -22,26 +22,9 @@ val save : unit -> unit
 val save_sources : unit -> unit
 val backup_options : unit -> unit
 val allow_saving_ini_files : bool ref
-
-(** Returns a reference to the internal [done_files] option_record. 
-    The caller can read or update the reference value directly. *)
-val get_done_files : unit -> CommonTypes.file list Options.option_record ref
-
-(** Returns a reference to the internal [files] option_record.
-    The caller can read or update the reference value directly. *)
-val get_files : unit -> CommonTypes.file list Options.option_record ref
-
-(* Remove [file] from the list inside the option_record ref [opt_ref] *)
-val remove_file_from_option_record_list :
-  CommonTypes.file list Options.option_record ref -> CommonTypes.file -> unit
-
-(* Prepend [file] to the list inside the option_record ref [opt_ref] *)
-val prepend_file_to_option_record_list :
-  CommonTypes.file list Options.option_record ref -> CommonTypes.file -> unit
   
-(* Prepend [file] to the list inside the option_record ref [opt_ref] *)
-val append_file_to_option_record_list :
-  CommonTypes.file list Options.option_record ref -> CommonTypes.file -> unit
+val done_files :  CommonTypes.file list Options.option_record
+val files :  CommonTypes.file list Options.option_record
 
 val servers : CommonTypes.server Intmap.t Options.option_record
 val friends : CommonTypes.client list Options.option_record

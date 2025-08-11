@@ -3472,23 +3472,19 @@ let _ =
       if s.s_networks <> [] then
         list := s :: !list) swarmers_by_name;
     swarmers =:= !list;
-    let files_ref = CommonComplexOptions.get_files () in
-    let files = !!(!files_ref) in
     (* put primary frontends to the head, so that swarmers' invariants
        can be verified while downloads are being restored from ini files *)
-    let primary_files, secondary_files =
-      List.partition (fun file ->
+    let primary_files, secondary_files = 
+      List.partition (fun file -> 
         match file_files file with
         | primary_file :: _ when primary_file == file -> true
-        | _ -> false
-      ) files
-    in
-    let current = !files_ref in
-    current =:= (primary_files @ secondary_files);
-    files_ref := current  (* update ref *)
+        | _ -> false) !!CommonComplexOptions.files in
+    CommonComplexOptions.files =:= primary_files @ secondary_files
   );
   set_after_load_hook files_ini (fun _ ->
-    List.iter check_swarmer !!swarmers;
+    List.iter (fun s ->
+      check_swarmer s;
+    ) !!swarmers;
     swarmers =:= []
   )
 

@@ -201,54 +201,16 @@ module FileOption = struct
 
 let swarmers_section = file_section files_ini [] ""
 let files_section = file_section files_ini [] "" 
-
-let done_files : CommonTypes.file list Options.option_record option ref = ref None
-let files : CommonTypes.file list Options.option_record option ref = ref None
-
-let init_done_files () : CommonTypes.file list Options.option_record =
+  
+let done_files = 
   define_option files_section ["done_files"] 
     "The files whose download is finished" (
     listiter_option (FileOption.t true)) []
-
-let init_files () : CommonTypes.file list Options.option_record =
+  
+let files = 
   define_option files_section ["files"] 
     "The files currently being downloaded, primary downloads must come first" (
     listiter_option (FileOption.t false)) []
-
-let get_done_files () : CommonTypes.file list Options.option_record ref =
-  if !done_files = None then
-    done_files := Some (init_done_files ());
-  match !done_files with
-  | Some v -> ref v
-  | None -> assert false
-
-let get_files () : CommonTypes.file list Options.option_record ref =
-  if !files = None then
-    files := Some (init_files ());
-  match !files with
-  | Some v -> ref v
-  | None -> assert false
-
-let remove_file_from_option_record_list
-    (opt_ref : CommonTypes.file list Options.option_record ref)
-    (file : CommonTypes.file) : unit =
-  let opt = !opt_ref in
-  opt =:= List2.removeq file (!!opt);
-  opt_ref := opt
-
-let prepend_file_to_option_record_list
-    (opt_ref : CommonTypes.file list Options.option_record ref)
-    (file : CommonTypes.file) : unit =
-  let opt = !opt_ref in
-  opt =:= (file :: !!opt);
-  opt_ref := opt
-
-let append_file_to_option_record_list
-    (opt_ref : CommonTypes.file list Options.option_record ref)
-    (file : CommonTypes.file) : unit =
-  let opt = !opt_ref in
-  opt =:= (!!opt @ [file]);
-  opt_ref := opt
 
 (*************************************************************************)
 (*                                                                       *)

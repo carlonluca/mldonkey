@@ -534,7 +534,6 @@ let gui_initialize gui =
           addevent gui.gui_events.gui_clients (client_num c) true
       ) !!friends;
       
-      let files_ref = CommonComplexOptions.get_files () in
       List.iter (fun file ->
           addevent gui.gui_events.gui_files (file_num file) true;
           let sources = file_active_sources file in
@@ -545,12 +544,11 @@ let gui_initialize gui =
                   (File_add_source_event (file,c))
                 :: gui.gui_events.gui_new_events
             ) sources
-      ) (user2_filter_files !!(!files_ref) gui.gui_conn.conn_user.ui_user);
+      ) (user2_filter_files !!files gui.gui_conn.conn_user.ui_user);
       
-      let done_files_ref = CommonComplexOptions.get_done_files () in
       List.iter (fun file ->
           addevent gui.gui_events.gui_files (file_num file) true;
-      ) !!(!done_files_ref);
+      ) !!done_files;
       
       networks_iter_all (fun n ->
           List.iter (fun s ->
@@ -669,7 +667,6 @@ let gui_reader (gui: gui_record) t _ =
         if interested then begin
             
 (*            lprintf "--------- send sources to GUI --------\n"; *)
-            let files_ref = CommonComplexOptions.get_files () in
             List.iter (fun file ->
                 List.iter (fun c ->
 (*                    lprintf "   ++ send source to GUI --------\n"; *)
@@ -678,7 +675,7 @@ let gui_reader (gui: gui_record) t _ =
                     (File_add_source_event (file,c))
                     :: gui.gui_events.gui_new_events
                 ) (file_active_sources file)
-            ) (user2_filter_files !!(!files_ref) gui.gui_conn.conn_user.ui_user);
+            ) (user2_filter_files !!files gui.gui_conn.conn_user.ui_user);
             
           end
     
@@ -1101,14 +1098,12 @@ let gui_reader (gui: gui_record) t _ =
                     server_info !list))
           
           | P.GetDownloadedFiles ->
-              let done_files_ref = CommonComplexOptions.get_done_files () in
               gui_send gui (P.DownloadedFiles
-                  (List2.tail_map file_info !!(!done_files_ref)))
+                  (List2.tail_map file_info !!done_files))
           
-          | P.GetDownloadFiles ->
-              let files_ref = CommonComplexOptions.get_files () in
+          | P.GetDownloadFiles -> 
               gui_send gui (P.DownloadFiles
-                  (List2.tail_map file_info !!(!files_ref)))
+                  (List2.tail_map file_info !!files))              
           
           | GetSearches ->
               let user = gui.gui_conn.conn_user in
@@ -1508,9 +1503,7 @@ let update_gui_info () =
   networks_iter_all (fun n -> 
       nets := 
         (n.network_num, List.length (network_connected_servers n)) :: !nets);
-    
-  let done_files_ref = CommonComplexOptions.get_done_files () in
-  let files_ref = CommonComplexOptions.get_files() in
+     
   let msg = (Client_stats {
         upload_counter = !upload_counter;
         download_counter = !download_counter;
@@ -1521,8 +1514,8 @@ let update_gui_info () =
         udp_upload_rate = !udp_upload_rate;
         udp_download_rate = !udp_download_rate;
         connected_networks = !nets;
-        ndownloaded_files = List.length !!(!done_files_ref);
-        ndownloading_files = List.length !!(!files_ref);
+        ndownloaded_files = List.length !!done_files;
+        ndownloading_files = List.length !!files;
       }) in
   with_guis(fun gui -> 
       gui_send gui msg);       
