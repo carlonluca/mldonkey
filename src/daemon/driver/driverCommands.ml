@@ -790,31 +790,39 @@ let _ =
         match args with
           ["all"] ->
             let servers_ref = CommonComplexOptions.get_servers () in
-            Intmap.iter ( fun _ s ->
+            let servers_map = !!(!servers_ref) in
+            let to_remove =
+              Intmap.fold (fun _ s acc -> s :: acc) servers_map [] in
+            List.iter (fun s ->
               server_remove s;
               incr counter
-            ) !!(!servers_ref);
+            ) to_remove;
             Printf.sprintf (_b "Removed all %d servers") !counter
         | ["blocked"] ->
             let servers_ref = CommonComplexOptions.get_servers () in
-            Intmap.iter ( fun _ s ->
-              if server_blocked s then
-                begin
-                  server_remove s;
-                  incr counter
-                end
-            ) !!(!servers_ref);
+            let servers_map = !!(!servers_ref) in
+            let to_remove =
+              Intmap.fold (fun _ s acc ->
+                if server_blocked s then s :: acc else acc
+              ) servers_map [] in
+            List.iter (fun s ->
+              server_remove s;
+              incr counter
+            ) to_remove;
             Printf.sprintf (_b "Removed %d blocked servers") !counter
         | ["disc"] ->
             let servers_ref = CommonComplexOptions.get_servers () in
-            Intmap.iter (fun _ s ->
-              match server_state s with
-                NotConnected _ ->
-                  begin
-                    server_remove s;
-                    incr counter
-                  end
-              | _ -> ()) !!(!servers_ref);
+            let servers_map = !!(!servers_ref) in
+            let to_remove =
+              Intmap.fold (fun _ s acc ->
+                match server_state s with
+                | NotConnected _ -> s :: acc
+                | _ -> acc
+              ) servers_map [] in
+            List.iter (fun s ->
+              server_remove s;
+              incr counter
+            ) to_remove;
             Printf.sprintf (_b "Removed %d disconnected servers") !counter
         | _ ->
             List.iter (fun num ->
