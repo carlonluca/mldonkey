@@ -68,12 +68,12 @@ let dump_record t s ip =
   flush bin_oc
 
 let read_record ic =
-  let s = String.create 100 in
+  let s = Bytes.create 100 in
   really_input ic s 0 10;
   let t = get_int64 s 0 in
   let ip = get_ip s 4 in
   let len = get_int16 s 8 in
-  let s = String.create len in
+  let s = Bytes.create len in
   really_input ic s 0 len;
   (t, ip, s)
 

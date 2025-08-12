@@ -65,7 +65,7 @@ let _ =
         
         let segment = kilobytes 10 in
         let bufferlen = Int64.to_int segment in
-        let buffer = String.create bufferlen in
+        let buffer = Bytes.create bufferlen in
         let rec iter begin_pos end_pos =
           let len = end_pos -- begin_pos in
           if len > zero then
@@ -75,7 +75,7 @@ let _ =
             let encoded = Base64.encode_substring (Bytes.unsafe_to_string buffer) 0 len in
             Printf.printf "[SEGMENT %s %Ld %d %d]\n" file_num begin_pos len (
               String.length encoded);
-            output_string Pervasives.stdout encoded;
+            output_string Stdlib.stdout encoded;
             Printf.printf "\n[/SEGMENT]\n";
             iter (begin_pos ++ len64) end_pos
         in
@@ -91,7 +91,7 @@ let _ =
         
         let segment = kilobytes 10 in
         let bufferlen = Int64.to_int segment in
-        let buffer = String.create bufferlen in
+        let buffer = Bytes.create bufferlen in
         let rec iter begin_pos end_pos =
           let len = end_pos -- begin_pos in
           if len > zero then
@@ -101,7 +101,7 @@ let _ =
             let encoded = Bytes.sub_string buffer 0 len in
             Printf.printf "[SEGMENT 8bits %s %Ld %d %d]\n" file_num begin_pos len (
               String.length encoded);
-            output_string Pervasives.stdout encoded;
+            output_string Stdlib.stdout encoded;
             Printf.printf "[/SEGMENT]\n";
             iter (begin_pos ++ len64) end_pos
         in

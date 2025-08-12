@@ -514,7 +514,7 @@ let value_to_port v =
 
 (* The Pervasives version is too restrictive *)
 let bool_of_string s =
-  match String.lowercase s with
+  match String2.lowercase_utf8 s with
     "true" -> true
   | "false" -> false
   | "yes" -> true

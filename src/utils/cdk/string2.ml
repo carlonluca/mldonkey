@@ -323,3 +323,8 @@ let dehtmlize =
     s
     |> Str.global_replace br_regexp "\n"
     |> Str.global_replace tag_regexp ""
+
+open Camomile
+module CM = CaseMap.Make(UTF8)
+let lowercase_utf8 s = CM.lowercase s
+let capitalize_utf8 s = CM.capitalize s

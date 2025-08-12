@@ -46,7 +46,7 @@ open GnutellaProtocol
 (*************************************************************************)
 
 let max_upload_buffer_len = 102400
-let upload_buffer = String.create max_upload_buffer_len
+let upload_buffer = Bytes.create max_upload_buffer_len
 let current_downloads = ref ([] : TcpBufferedSocket.t list)
   
 (*************************************************************************)

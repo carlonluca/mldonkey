@@ -27,7 +27,6 @@ open Md4
 open AnyEndian
 open LittleEndian
 open TcpBufferedSocket
-open Xml_types
   
 open CommonHosts
 open CommonTypes
@@ -824,12 +823,12 @@ let create_qrt_table words table_size =
       array.(Int64.to_int pos) <- 1;
   ) words;
   let string_size = table_length/2 in
-  let table = String.create  string_size in
+  let table = Bytes.create  string_size in
   for i = 0 to string_size - 1 do
-    table.[i] <- char_of_int (
-      (
-        ((array.(i*2) - old_array.(i*2)) land 15) lsl 4) + 
-      ((array.(i*2+1) - old_array.(i*2+1)) land 15))
+    Bytes.set table i (char_of_int (
+      (((array.(i*2) - old_array.(i*2)) land 15) lsl 4) + 
+      ((array.(i*2+1) - old_array.(i*2+1)) land 15)
+    ))
   done;
   Bytes.unsafe_to_string table
 
@@ -886,7 +885,7 @@ let xml_to_string xml =
   "<?xml version=\"1.0\"?>" ^ (  Xml.to_string xml)
       
 let audio_schema tags = 
-  Element ("audios",
+  Xml.Element ("audios",
     [("xsi:nonamespaceschemalocation",
         "http://www.limewire.com/schemas/audio.xsd")],
     [Element ("audio", tags, [])])
@@ -928,13 +927,13 @@ let translate_query q =
           match field with
             Field_Type -> 
               begin
-                match String.lowercase w with
+                match String2.lowercase_utf8 w with
                   "audio" -> audio := true
                 | _ -> add_words w
               end
           | Field_Format ->
               begin
-                match String.lowercase w with
+                match String2.lowercase_utf8 w with
                 | "mp3" | "wav" -> 
                     add_words w;
                     audio := true

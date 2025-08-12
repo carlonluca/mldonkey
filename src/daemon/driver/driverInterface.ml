@@ -391,7 +391,7 @@ let send_sysinfo_data gui =
     ("runinfo_max_string", string_of_int Sys.max_string_length);
     ("runinfo_word_size", string_of_int Sys.word_size);
     ("runinfo_max_arr_size", string_of_int Sys.max_array_length);
-    ("runinfo_max_int_size", string_of_int Pervasives.max_int);
+    ("runinfo_max_int_size", string_of_int Stdlib.max_int);
     ("runinfo_max_fds", string_of_int (Unix2.c_getdtablesize ()));
     ("runinfo_max_file_size", string_of_int (Unix2.c_sizeofoff_t ()))
   ] in

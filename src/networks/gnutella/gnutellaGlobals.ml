@@ -123,7 +123,7 @@ let (clients_by_uid ) = Hashtbl.create 127
 let (results_by_uid : (uid_type, result) Hashtbl.t) = Hashtbl.create 127 
 
 let max_upload_buffer_len = 102400
-let upload_buffer = String.create max_upload_buffer_len
+let upload_buffer = Bytes.create max_upload_buffer_len
   
 (***************************************************************
 

@@ -26,7 +26,6 @@ let () =
     Filename2.force_link ();
     Heap.force_link ();
     Unix32.force_link ();
-    Xml.force_link ();
     (* Mp3.force_link (); *)
     (* Mp3_args.force_link (); *)
     (* SlskServers.force_link ();

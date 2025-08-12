@@ -223,8 +223,8 @@ type geoip_database = {
 }
 
 let unpack filename =
-  let ext = String.lowercase (Filename2.extension filename) in
-  let last_ext = String.lowercase (Filename2.last_extension filename) in
+  let ext = String2.lowercase_utf8 (Filename2.extension filename) in
+  let last_ext = String2.lowercase_utf8 (Filename2.last_extension filename) in
   let real_ext = if last_ext = ".zip" then last_ext else ext in
   match real_ext with
   | ".zip" ->

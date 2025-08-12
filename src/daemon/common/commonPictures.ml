@@ -32,7 +32,7 @@ open CommonOptions
 let files = Hashtbl.create 300
 
 let flag_html cc =
-  let filename = Printf.sprintf "flag_%s.png" (String.lowercase cc) in
+  let filename = Printf.sprintf "flag_%s.png" (String2.lowercase_utf8 cc) in
   if !!html_flags && Hashtbl.mem files filename then
     Printf.sprintf "\\<img src=\\\"%s\\\" alt=\\\"%s\\\"\\>" filename cc
   else

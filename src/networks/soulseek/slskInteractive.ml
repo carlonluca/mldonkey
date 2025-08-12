@@ -43,7 +43,7 @@ let download r filenames =
   let result_name = List.hd r.result_names in
   let key = (result_name, r.result_size) in
   if not (Hashtbl.mem files_by_key 
-        (String.lowercase result_name)) then begin
+        (String2.lowercase_utf8 result_name)) then begin
       let file = new_file (Md4.random()) result_name r.result_size in
       begin
         try

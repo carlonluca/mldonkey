@@ -346,7 +346,7 @@ let best_packet_size nbytes =
 let copy_read_buffer = ref true
 
 let big_buffer_len = 65536
-let big_buffer = String.create big_buffer_len
+let big_buffer = Bytes.create big_buffer_len
 
 let min_buffer_read = 2000
 let min_read_size = min_buffer_read - 100
@@ -437,7 +437,7 @@ let buf_add t b s pos1 len =
     let new_len = min (max (2 * max_len) (b.len + len)) b.max_buf_size  in
 (*    if t.monitored then
       (lprintf "Allocate new for %d\n" len; ); *)
-    let new_buf = String.create new_len in
+    let new_buf = Bytes.create new_len in
     Bytes.blit b.buf b.pos new_buf 0 b.len;
     Bytes.blit s pos1 new_buf b.len len;
     b.len <- b.len + len;
@@ -619,7 +619,7 @@ let can_read_handler t sock max_len =
             b.buf <- new_string ();
             min_buffer_read
           end else begin
-            b.buf <- String.create b.min_buf_size;
+            b.buf <- Bytes.create b.min_buf_size;
             b.min_buf_size
           end
       else
@@ -644,7 +644,7 @@ let can_read_handler t sock max_len =
             (max
               (2 * buf_len) (b.len + min_read_size)) b.max_buf_size
         in
-        let new_buf = String.create new_len in
+        let new_buf = Bytes.create new_len in
         Bytes.blit b.buf b.pos new_buf 0 b.len;
         b.pos <- 0;
         b.buf <- new_buf;
@@ -1535,7 +1535,7 @@ let to_deflate = ref []
 let to_deflate_len = ref 0
 
 let compression_buffer_len = !max_buffer_size / 10
-let compression_buffer = String.create compression_buffer_len
+let compression_buffer = Bytes.create compression_buffer_len
 
 let deflate_connection sock =
   (* lprintf "Creating deflate connection\n"; *)

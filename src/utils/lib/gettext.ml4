@@ -394,7 +394,7 @@ let set_strings_file filename =
   
   (match !strings_file with Some _ -> ()
     | None -> 
-        Pervasives.at_exit (fun _ -> try save_strings () with _ -> ()));
+        Stdlib.at_exit (fun _ -> try save_strings () with _ -> ()));
   strings_file := Some filename;
 
 (* If the file exists, load it. Check that '%' formats are the same

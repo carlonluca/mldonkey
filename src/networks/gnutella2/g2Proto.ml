@@ -25,7 +25,6 @@ open Options
 open Md4
 open TcpBufferedSocket
 
-open Xml_types
 open CommonGlobals
 open CommonTypes
 open CommonOptions
@@ -245,7 +244,7 @@ module Print = struct
         let xml = Xml.parse_string s in
         let rec iter indent xml =
           match xml with
-            Element (name, params, subexprs) ->
+            Xml.Element (name, params, subexprs) ->
               Printf.bprintf buf "%s%s:\n" indent name;
               List.iter (fun (name,value) ->
                   Printf.bprintf buf "  %s%s = %s\n" indent name value
@@ -1484,7 +1483,7 @@ let bitv_to_string bitv =
       let pos = i / 8 in
       let bit = 7 - (i mod 8) in
       let x = (1 lsl bit) in
-      s.[pos] <- char_of_int ( (int_of_char (Bytes.get s pos)) lor x );
+      Bytes.set s pos (char_of_int ( (int_of_char (Bytes.get s pos)) lor x ));
   ) bitv;
   Bytes.unsafe_to_string s
     
@@ -1515,9 +1514,9 @@ let create_qrt_table2 words table_size =
       array.(pos) <- array.(pos) lor bit; (* index_out_of_bounds *)
   ) words;
   let string_size = table_length in
-  let table = String.create  string_size in
+  let table = Bytes.create  string_size in
   for i = 0 to string_size - 1 do
-    table.[i] <- char_of_int array.(i)
+    Bytes.set table i (char_of_int array.(i))
   done;
   table
   
@@ -1655,10 +1654,10 @@ let xml_to_string xml =
   "<?xml version=\"1.0\"?>" ^ (  Xml.to_string xml)
       
 let audio_schema tags = 
-  Element ("audios",
+  Xml.Element ("audios",
     [("xsi:nonamespaceschemalocation",
         "http://www.limewire.com/schemas/audio.xsd")],
-    [Element ("audio", tags, [])])
+    [Xml.Element ("audio", tags, [])])
 
 (*
 [
@@ -1697,13 +1696,13 @@ let translate_query q =
           match field with
             Field_Type -> 
               begin
-                match String.lowercase w with
+                match String2.lowercase_utf8 w with
                   "audio" -> audio := true
                 | _ -> add_words w
               end
           | Field_Format ->
               begin
-                match String.lowercase w with
+                match String2.lowercase_utf8 w with
                 | "mp3" | "wav" -> 
                     add_words w;
                     audio := true

@@ -20,7 +20,7 @@
     (libraries
         utils
         net
-        xmllight
+        xml-light
         ocamlrss
         cdk
         commonstubs

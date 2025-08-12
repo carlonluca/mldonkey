@@ -952,7 +952,7 @@ let load_torrent_from_web r user group ft =
         end)
 
 let valid_torrent_extension url =
-  let ext = String.lowercase (Filename2.last_extension url) in
+  let ext = String2.lowercase_utf8 (Filename2.last_extension url) in
   ext = ".torrent" || ext = ".tor"
 
 let get_regexp_string text r =
@@ -1189,10 +1189,10 @@ let output buf typ elements =
   let f = match typ with
   | HTML | XHTML | XML ->
     begin function 
-    | `Text s -> Xml.buffer_escape buf s
+    | `Text s -> Xml2.buffer_escape buf s
     | `Link (name,url) -> 
         Printf.bprintf buf "<a href=\"%s\">%s</a>" 
-          (Xml.escape url) (Xml.escape (match name with "" -> url | s -> s))
+          (Xml2.escape url) (Xml2.escape (match name with "" -> url | s -> s))
     | `Break -> Buffer.add_string buf "<br/>"
     end
   | TEXT | ANSI ->

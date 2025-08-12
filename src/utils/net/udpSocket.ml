@@ -290,7 +290,7 @@ lprintf_nl "UDP sent [%s]" (String.escaped
     
 let dummy_sock = Obj.magic 0
 
-let read_buf = String.create 66000
+let read_buf = Bytes.create 66000
 
 let rec iter_write_no_bc t sock = 
   let (time,p) = PacketSet.min_elt t.wlist in

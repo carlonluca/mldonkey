@@ -33,7 +33,7 @@ open DonkeyStats
 
 let msg_block_size_int = 10240
 let msg_block_size = Int64.of_int msg_block_size_int
-let upload_buffer = String.create msg_block_size_int
+let upload_buffer = Bytes.create msg_block_size_int
 let max_msg_size = 15000
 
 (* For upload, it is clearly useless to completely fill a
@@ -85,7 +85,7 @@ module NewUpload = struct
           ) in
         let s = client_msg_to_string c.client_emule_proto msg in
         let slen = String.length s in
-        let upload_buffer = String.create (slen + len_int) in
+        let upload_buffer = Bytes.create (slen + len_int) in
         String.blit s 0 upload_buffer 0 slen;
         DonkeyProtoCom.new_string msg upload_buffer;
         Unix32.read (file_fd file) begin_pos upload_buffer slen len_int;

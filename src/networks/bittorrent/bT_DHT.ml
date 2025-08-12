@@ -309,7 +309,7 @@ let make_peer (ip,port) =
   let (a,b,c,d) = Ip.to_ints ip in
   let e = port lsr 8 and f = port land 0xff in
   let s = Bytes.create 6 in
-  let set i c = s.[i] <- char_of_int c in
+  let set i c = Bytes.set s i (char_of_int c) in
   set 0 a; set 1 b; set 2 c; set 3 d; set 4 e; set 5 f;
   Bytes.unsafe_to_string s
 

@@ -29,7 +29,7 @@ open DonkeyMftp
 
 let dump_file filename =
   Unix2.tryopen_read filename (fun ic ->
-  let s = String.create 20 in
+  let s = Bytes.create 20 in
   try
     lprintf "file: %s\n" filename; 
     let pos = ref 0 in

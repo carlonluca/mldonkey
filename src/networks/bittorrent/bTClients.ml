@@ -534,7 +534,7 @@ let is_bit_set s n =
 
 let set_bit s n =
   let i = n lsr 3 in
-  s.[i] <- Char.unsafe_chr (Char.code (Bytes.get s i) lor bits.(n land 7))
+  Bytes.set s i (Char.unsafe_chr (Char.code (Bytes.get s i) lor bits.(n land 7)))
 
 (* Official client seems to use max_range_request 5 and max_range_len 2^14 *)
 (* How much requests in the 'pipeline' *)
@@ -543,8 +543,8 @@ let max_range_requests = 5
 
 let reserved () =
   let s = Bytes.make 8 '\x00' in
-  s.[7] <- (match !bt_dht with None -> '\x00' | Some _ -> '\x01');
-  s.[5] <- '\x10'; (* TODO bep9, bep10, notify clients about extended*)
+  Bytes.set s 7 (match !bt_dht with None -> '\x00' | Some _ -> '\x01');
+  Bytes.set s 5 '\x10';  (* TODO bep9, bep10, notify clients about extended *)
   Bytes.unsafe_to_string s
 
 (** handshake *)
@@ -1880,7 +1880,7 @@ let recover_files () =
           | s -> if !verbose then lprintf_file_nl (as_file file) "recover: Other state %s!!" (string_of_state s)
       ) !current_files
 
-let upload_buffer = String.create 100000
+let upload_buffer = Bytes.create 100000
 
 
 (**

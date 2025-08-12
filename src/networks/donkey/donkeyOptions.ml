@@ -134,8 +134,8 @@ open Md4
 let mldonkey_md4 md4 =
   (* not sure if mutation in-place is necessary, keeping behaviour as it was *)
   let md4 = Bytes.unsafe_of_string @@ Md4.direct_to_string md4 in
-  md4.[5] <- Char.chr 14;
-  md4.[14] <- Char.chr 111;
+  Bytes.set md4 5 (Char.chr 14);
+  Bytes.set md4 14 (Char.chr 111);
   Md4.direct_of_string @@ Bytes.unsafe_to_string md4
 
 let client_md4 = define_option donkey_section ["client_md4"]

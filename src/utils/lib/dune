@@ -91,5 +91,6 @@
         threadPool
         url
         verificationBitmap
+        xml2
     )
 )

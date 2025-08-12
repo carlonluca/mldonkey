@@ -25,7 +25,6 @@ open Options
 open Md4
 open TcpBufferedSocket
 
-open Xml_types
 open CommonGlobals
 open CommonTypes
 open CommonOptions

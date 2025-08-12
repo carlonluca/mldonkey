@@ -32,8 +32,8 @@
 
 #define UNIX_BUFFER_SIZE 16384
 
-extern void enter_blocking_section(); 
-extern void leave_blocking_section();
+extern void caml_enter_blocking_section(); 
+extern void caml_leave_blocking_section();
 
 extern ssize_t os_read(OS_FD fd, char *buf, size_t len)
 {
@@ -42,9 +42,9 @@ extern ssize_t os_read(OS_FD fd, char *buf, size_t len)
 
   if (len > UNIX_BUFFER_SIZE) len = UNIX_BUFFER_SIZE;
 
-  enter_blocking_section();
+  caml_enter_blocking_section();
   ret = ReadFile(fd, buf, len, &numread, NULL);
-  leave_blocking_section();
+  caml_leave_blocking_section();
   if (! ret) {
     win32_maperr(GetLastError());
     uerror("os_read", Nothing);

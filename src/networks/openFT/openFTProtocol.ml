@@ -500,7 +500,7 @@ module SearchReply = struct
       buf_int16 buf t.http_port;
       buf_int buf t.avail;
       buf_int64_32 buf t.size;
-      buf_string buf (String.lowercase (Md4.to_string t.md5));
+      buf_string buf (String2.lowercase_utf8 (Md4.to_string t.md5));
       buf_string buf t.filename
       
   end

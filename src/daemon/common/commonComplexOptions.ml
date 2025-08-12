@@ -1157,7 +1157,7 @@ let backup_tar archive files =
               t_prefix = "";
               t_gnu = None;} in
             let s = Bytes.create size in
-            Pervasives.really_input ic s 0 size;
+            Stdlib.really_input ic s 0 size;
             header, Bytes.unsafe_to_string s) in
         Tar.output otar header s
       with
@@ -1176,8 +1176,8 @@ let backup_options () =
   let backup_prefix = "backup-" in
   let old_backups = List.rev (List.sort (fun o -> compare o)
     (List.filter (fun o -> (
-        String.lowercase (Filename2.extension o) = ".tar.gz"
-        || String.lowercase (Filename2.extension o) = ".zip")
+        String2.lowercase_utf8 (Filename2.extension o) = ".tar.gz"
+        || String2.lowercase_utf8 (Filename2.extension o) = ".zip")
           && String.sub o 0 (String.length backup_prefix) = backup_prefix)
     (Unix2.list_directory "old_config")))
   in
@@ -1200,7 +1200,7 @@ let backup_options () =
       in
       let files =
         List.sort (fun o -> compare o) (List.filter (fun o ->
-          String.lowercase (Filename2.last_extension o) = ".ini"
+          String2.lowercase_utf8 (Filename2.last_extension o) = ".ini"
           && o <> "file_sources.ini")
             (Unix2.list_directory file_basedir))
       in

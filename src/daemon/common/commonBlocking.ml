@@ -82,7 +82,7 @@ let set_geoip_dat filename =
 
 let set_ip_blocking_countries cl =
   let temp_list = ref [] in
-  let cl = List.map String.uppercase cl in
+  let cl = List.map String.uppercase_ascii cl in
   Array.fill country_blocking_list 0 
     (Array.length country_blocking_list) !country_blocking_block;
   List.iter (fun cc ->

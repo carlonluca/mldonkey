@@ -917,7 +917,7 @@ let send_preview r file fd size filename exten =
   in
   let len = String.length exten in
   let exten = if len = 0 then exten
-      else String.lowercase (String.sub exten 1 (len - 1)) in
+      else String2.lowercase_utf8 (String.sub exten 1 (len - 1)) in
   http_add_bin_stream_header r (extension_to_file_ext exten);
 
   add_reply_header r "Content-Disposition"
@@ -1534,7 +1534,7 @@ let http_handler o t r =
                 read_theme_page this_page else
               if !!html_mods then !!CommonMessages.download_html_js_mods0
               else !!CommonMessages.download_html_js_old)
-        | s ->  http_send_bin_pictures r buf (String.lowercase s)
+        | s ->  http_send_bin_pictures r buf (String2.lowercase_utf8 s)
       with
       | Not_found ->
           let _, error_text_long, head = Http_server.error_page (Not_Found r.get_url.Url.full_file)

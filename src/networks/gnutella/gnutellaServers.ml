@@ -268,7 +268,7 @@ let server_parse_headers first_line headers =
   let query_key = ref NoUdpSupport in
   List.iter (fun (header, (value, key)) ->
       try
-        match (String.lowercase header) with
+        match (String2.lowercase_utf8 header) with
         
         | "user-agent" ->  
             user_agent := value;
@@ -338,7 +338,7 @@ let server_parse_headers first_line headers =
             ) (String2.split_simplify value ',')
         
         | "x-ultrapeer" ->
-            if String.lowercase value = "true" then ultrapeer := true
+            if String2.lowercase_utf8 value = "true" then ultrapeer := true
         
         | "content-encoding" -> 
             if value = "deflate" then content_deflate := true
@@ -350,7 +350,7 @@ let server_parse_headers first_line headers =
           -> (* value = ip:port *) ()
         | "servent-id" -> (* servent in hexa *) ()
         | "x-ultrapeer-needed" -> 
-            if String.lowercase value = "true" then ultrapeer_needed := true
+            if String2.lowercase_utf8 value = "true" then ultrapeer_needed := true
         | "fp-auth-challenge" -> (* used by BearShare for auth *) ()
         | "machine" -> () (* unknown usage *)
 (* Swapper *)

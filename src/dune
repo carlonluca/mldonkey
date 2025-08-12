@@ -17,15 +17,14 @@
     (flags
         (:standard -w -33)
     )
-    (link_flags
-        (-cclib
-        -lz
+    (link_flags (
+        -cclib -lz
         -cclib -lbz2
         -cclib -lminiupnpc
         -cclib -lnatpmp
         -cclib -lmagic
         -cclib -lgd
         -cclib -lpng
-        -cclib -lcryptopp)
-    )
+        -cclib -lcryptopp
+    ))
 )

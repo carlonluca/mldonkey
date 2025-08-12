@@ -525,7 +525,7 @@ char *encode_he3_data(const char *str, int len, int* final_len)
 value ml_che3_decompress(value s_v)
 {
   const char *s = String_val(s_v);
-  int len = string_length(s_v);
+  int len = caml_string_length(s_v);
   char *result;
   int final_len;
   
@@ -537,7 +537,7 @@ value ml_che3_decompress(value s_v)
 value ml_che3_compress(value s_v)
 {
   const char *s = String_val(s_v);
-  int len = string_length(s_v);
+  int len = caml_string_length(s_v);
   char *result;
   int final_len;
   

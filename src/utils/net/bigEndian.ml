@@ -48,8 +48,8 @@ let buf_int32 oc i =
     *)
 
 let str_int16 s pos i =
-  s.[pos+1] <- char_of_int (i land 0xff);
-  s.[pos] <- char_of_int ((i lsr 8) land 0xff)
+  Bytes.set s (pos + 1) (char_of_int (i land 0xff));
+  Bytes.set s pos (char_of_int ((i lsr 8) land 0xff))
 
 let get_int16 s pos =
   check_string s (pos+1);  
@@ -58,9 +58,9 @@ let get_int16 s pos =
   c1 + c2 lsl 8
 
 let str_int24 s pos i =
-  s.[pos+2] <- char_of_int (i land 0xff);
-  s.[pos+1] <- char_of_int ((i lsr 8) land 0xff);
-  s.[pos] <- char_of_int ((i lsr 16) land 0xff)
+  Bytes.set s (pos + 2) (char_of_int (i land 0xff));
+  Bytes.set s (pos + 1) (char_of_int ((i lsr 8) land 0xff));
+  Bytes.set s pos (char_of_int ((i lsr 16) land 0xff))
 
 let get_int24 s pos =
   check_string s (pos+1);  
@@ -77,10 +77,10 @@ let buf_int buf i =
   buf_int8 buf i
 
 let str_int s pos i =
-  s.[pos+3] <- char_of_int (i land 0xff);
-  s.[pos+2] <- char_of_int ((i lsr 8) land 0xff);
-  s.[pos+1] <- char_of_int ((i lsr 16) land 0xff);
-  s.[pos] <- char_of_int ((i lsr 24) land 0xff)
+  Bytes.set s (pos + 3) (char_of_int (i land 0xff));
+  Bytes.set s (pos + 2) (char_of_int ((i lsr 8) land 0xff));
+  Bytes.set s (pos + 1) (char_of_int ((i lsr 16) land 0xff));
+  Bytes.set s pos (char_of_int ((i lsr 24) land 0xff))
 
 (*      
 let get_int32_8 s pos =

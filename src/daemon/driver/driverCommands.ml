@@ -1160,7 +1160,7 @@ let _ =
         in
         if user2_is_admin o.conn_user.ui_user then begin
         (
-                match (List.map String.lowercase args) with
+                match (List.map String2.lowercase_utf8 args) with
                 | ["high"] ->
                         if !!max_opened_connections < !!max_opened_connections_2 then
                                 change_bw ()
@@ -1180,7 +1180,7 @@ let _ =
 
     "costats", Arg_multiple (fun args o ->
         let filter cs =
-          match (List.map String.lowercase args) with
+          match (List.map String2.lowercase_utf8 args) with
           | [] -> cs.country_total_upload <> 0L || cs.country_total_download <> 0L
           | ["all"] -> true
           | args ->
@@ -1191,7 +1191,7 @@ let _ =
                 ^ (Str.global_replace match_star ".*" a)) "" args)
                 ^ "\\)$") in
               let check_string s =
-                Str.string_match regexp (String.lowercase s) 0 in
+                Str.string_match regexp (String2.lowercase_utf8 s) 0 in
               check_string cs.country_code ||
               check_string cs.country_name ||
               check_string cs.country_continent
@@ -1310,7 +1310,7 @@ let _ =
               Printf.bprintf buf "\\<tr class=\\\"dl-%d\\\"\\>" (html_mods_cntr ());
               html_mods_td buf [
                 ("", "sr ar", Printf.sprintf "%d" i);
-                (Geoip.country_code_array.(i), "sr", CommonPictures.flag_html (String.lowercase Geoip.country_code_array.(i)));
+                (Geoip.country_code_array.(i), "sr", CommonPictures.flag_html (String2.lowercase_utf8 Geoip.country_code_array.(i)));
                 ("", "sr", Geoip.country_name_array.(i));
                 ("", "sr", Geoip.country_continent_code_array.(i));
                 ("", "sr", Geoip.country_continent_name_array.(i));
@@ -3034,7 +3034,7 @@ let () =
     ), "<file number> <random|linear> :\tchange download order of file blocks (default random, with first and last block first)";
 
     "confirm", Arg_one (fun arg o ->
-        match String.lowercase arg with
+        match String2.lowercase_utf8 arg with
           "yes" | "y" | "true" ->
             List.iter (fun file ->
                 try
@@ -3292,7 +3292,7 @@ let _ =
     "useradd", Arg_multiple (fun args o ->
         let group_convert g =
           try
-            if String.lowercase g = "none" || g = "" then None
+            if String2.lowercase_utf8 g = "none" || g = "" then None
             else Some (user2_group_find g).group_name
           with Not_found -> None
         in
@@ -3425,7 +3425,7 @@ let _ =
               let u = user2_user_find user in
                 begin
                   try
-                    let g = if String.lowercase group = "none" then None else Some (user2_group_find group) in
+                    let g = if String2.lowercase_utf8 group = "none" then None else Some (user2_group_find group) in
                     let update_dgroup () =
                       match g with
                         None -> true
@@ -3799,7 +3799,7 @@ class=\\\"sr ac\\\"\\>%s\\</td\\>"
         let num = int_of_string filenum in
         begin try
           let file = file_find num in
-          if String.lowercase group = "none" then
+          if String2.lowercase_utf8 group = "none" then
             begin
               if user2_allow_file_admin file o.conn_user.ui_user then
                 begin

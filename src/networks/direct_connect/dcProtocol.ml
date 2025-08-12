@@ -585,7 +585,7 @@ module Search = struct
             if filetype = 9 then                             (* TTH *)
               dc_replace_str_to_str words s_tth empty_string (* Strip TTH: *)             
             else
-              String.lowercase (String2.replace_char words '$' ' ')
+              String2.lowercase_utf8 (String2.replace_char words '$' ' ')
           in
           let words = dc_to_utf words in 
           let size =

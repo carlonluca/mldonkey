@@ -68,15 +68,15 @@ let make_mylist () =
 let make_xml_mylist root = 
   let buf = Buffer.create 1000 in
   Printf.bprintf buf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>\r\n";
-  Printf.bprintf buf "<FileListing Version=\"1\" CID=\"1,0,2,3,4,5,6\" Base=\"/\" Generator=\"MLDC-%s\">\r\n" (Xml.escape Autoconf.current_version);
+  Printf.bprintf buf "<FileListing Version=\"1\" CID=\"1,0,2,3,4,5,6\" Base=\"/\" Generator=\"MLDC-%s\">\r\n" (Xml2.escape Autoconf.current_version);
   let rec iter ntabs node =
     buf_tabs buf ntabs;
-    Printf.bprintf buf "<Directory Name=\"%s\">\r\n" (Xml.escape node.shared_dirname);
+    Printf.bprintf buf "<Directory Name=\"%s\">\r\n" (Xml2.escape node.shared_dirname);
     List.iter (fun dcsh ->
       buf_tabs buf (ntabs + 1);
       let fname = Filename2.basename dcsh.dc_shared_codedname in
-      Printf.bprintf buf "<File Name=\"%s\" Size=\"%Ld\" TTH=\"%s\"/>\r\n" (Xml.escape fname)
-        dcsh.dc_shared_size (Xml.escape dcsh.dc_shared_tiger_root)
+      Printf.bprintf buf "<File Name=\"%s\" Size=\"%Ld\" TTH=\"%s\"/>\r\n" (Xml2.escape fname)
+        dcsh.dc_shared_size (Xml2.escape dcsh.dc_shared_tiger_root)
     ) node.shared_files;
     List.iter (fun (_, node) -> iter (ntabs+1) node) node.shared_dirs;
     buf_tabs buf ntabs;
@@ -116,7 +116,7 @@ let string_to_che3_to_file str filename =
   (try
     let s = Che3.compress str in
     let wlen = 4096 in
-    (*let str = String.create slen in*)
+    (*let str = Bytes.create slen in*)
     let slen = String.length s in
     let file_fd = Unix32.create_rw filename in
     let rec write pos =
@@ -171,7 +171,7 @@ let file_to_bz2_to_buffer filename =
 let buffer_to_bz2_to_file buf filename =
   (try 
     let slen = 4096 in
-    (*let str = String.create slen in*)
+    (*let str = Bytes.create slen in*)
     let blen = Buffer.length buf in
     let oc = Bzip2.open_out filename in
     let rec compress pos =
@@ -332,7 +332,7 @@ let () =
       let dcsh = {
         dc_shared_fullname = fullname;
         dc_shared_codedname = codedname;
-        dc_shared_searchname = String.lowercase (List.nth (String2.splitn codedname '/' 1) 1);
+        dc_shared_searchname = String2.lowercase_utf8 (List.nth (String2.splitn codedname '/' 1) 1);
         dc_shared_size = size;
         dc_shared_tiger_root = empty_string;
         (*dc_shared_tiger_array = [||];*)

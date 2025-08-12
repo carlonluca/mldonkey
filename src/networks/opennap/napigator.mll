@@ -58,7 +58,7 @@ and quoted = parse
 let lower s =
   for i = 0 to String.length s - 1 do
     match s.[i] with
-      'A' .. 'Z' -> s.[i] <- Char.lowercase s.[i]
+      'A' .. 'Z' -> s.[i] <- Char.lowercase_ascii s.[i]
     | _ -> ()
   done
 

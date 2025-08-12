@@ -146,7 +146,7 @@ let string_xor s1 s2 =
   assert (String.length s1 = String.length s2);
   let s = Bytes.create (String.length s1) in
   for i = 0 to Bytes.length s - 1 do
-    s.[i] <- Char.chr (Char.code s1.[i] lxor Char.code s2.[i]);
+    Bytes.set s i (Char.chr (Char.code s1.[i] lxor Char.code s2.[i]));
   done;
   Bytes.unsafe_to_string s
 
@@ -176,7 +176,7 @@ let sendmail smtp_server smtp_port new_style mail =
     let read_response_auth ic =
       let rec loop () =
         let (n,final,text) = get_response ic in
-        begin match String2.split_simplify (String.uppercase text) ' ' with
+        begin match String2.split_simplify (String.uppercase_ascii text) ' ' with
         | ("AUTH"::methods) ->
           List.iter (function
           | "LOGIN" -> auth_login_enabled := true

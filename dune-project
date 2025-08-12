@@ -22,5 +22,7 @@ interfaces : telnet, web, and binary protocol for third party GUIs.
         camlp-streams
         curl
         num
+        xml-light
+        camomile
     )
 )

@@ -76,7 +76,7 @@ let is_http_ok header =
     http :: code :: ok :: _ -> 
       let code = int_of_string code in
       code >= 200 && code < 299 && 
-      String2.starts_with (String.lowercase http) "http"
+      String2.starts_with (String2.lowercase_utf8 http) "http"
   | _ -> false
 
       

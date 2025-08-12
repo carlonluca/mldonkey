@@ -1127,8 +1127,8 @@ let display_active_file_list buf o list =
                 if stalled f2 then -1 else
                   compare f2.file_download_rate f1.file_download_rate)
         | ByName -> (fun f1 f2 -> String.compare 
-                       (String.lowercase f1.file_name) 
-                       (String.lowercase f2.file_name))
+                       (String2.lowercase_utf8 f1.file_name) 
+                       (String2.lowercase_utf8 f2.file_name))
         | ByDone -> (fun f1 f2 -> 
                        compare f2.file_downloaded f1.file_downloaded)
         | ByPriority -> (fun f1 f2 -> 
@@ -2057,7 +2057,7 @@ let runinfo html buf o =
         Sys.max_string_length
         Sys.word_size
         Sys.max_array_length
-        Pervasives.max_int
+        Stdlib.max_int
     );
   tack list
     (
@@ -2355,7 +2355,7 @@ let filenames_variability o list =
       if i < len then
         if not (is_alphanum s.[i]) then outside_word (i + 1) wl
         else begin (* start of a new word *)
-          Buffer.add_char current_word (Char.lowercase s.[i]);
+          Buffer.add_char current_word (Char.lowercase_ascii s.[i]);
           inside_word (i + 1) wl
         end
       else wl
@@ -2366,7 +2366,7 @@ let filenames_variability o list =
           Buffer.reset current_word;
           outside_word i wl
         end else begin
-          Buffer.add_char current_word (Char.lowercase s.[i]);
+          Buffer.add_char current_word (Char.lowercase_ascii s.[i]);
           inside_word (i + 1) wl
         end
       else Buffer.contents current_word :: wl

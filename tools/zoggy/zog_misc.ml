@@ -102,7 +102,7 @@ let decode s =
   in
   if need_decode 0 then
     let len = compute_len 0 0 in
-    let s1 = String.create len in
+    let s1 = Bytes.create len in
     strip_heading_and_trailing_spaces (copy_decode_in s1 0 0)
   else s
 ;;
@@ -142,7 +142,7 @@ let encode s =
     else s1
   in
   if need_code 0 then
-    let len = compute_len 0 0 in copy_code_in (String.create len) 0 0
+    let len = compute_len 0 0 in copy_code_in (Bytes.create len) 0 0
   else s
 ;;
 

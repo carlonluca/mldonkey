@@ -136,8 +136,8 @@ module Make(Ord: OrderedType) =
       let tree = add_tree x t.tree in
       {
        tree = tree;
-       card = if Lazy.lazy_is_val t.card then
-         Lazy.lazy_from_val ((Lazy.force_val t.card) + 1)
+       card = if Lazy.is_val t.card then
+         Lazy.from_val ((Lazy.force_val t.card) + 1)
        else
          lazy (cardinal_tree tree)
      }
@@ -222,7 +222,7 @@ module Make(Ord: OrderedType) =
 
     (* Implementation of the set operations *)
 
-    let empty = { tree = Empty; card = Lazy.lazy_from_val 0; }
+    let empty = { tree = Empty; card = Lazy.from_val 0; }
 
     let is_empty_tree = function Empty -> true | _ -> false
 
@@ -238,7 +238,7 @@ module Make(Ord: OrderedType) =
 
     let singleton x = 
       { tree = Node(Empty, x, Empty, 1);
-        card = Lazy.lazy_from_val 1; }
+        card = Lazy.from_val 1; }
 
     let rec remove_tree x = function
         Empty -> (Empty, false)
@@ -256,8 +256,8 @@ module Make(Ord: OrderedType) =
       let tree, found = remove_tree x t.tree in
       if found then
         { tree = tree;
-          card = if Lazy.lazy_is_val t.card then
-            Lazy.lazy_from_val ((Lazy.force_val t.card) - 1)
+          card = if Lazy.is_val t.card then
+            Lazy.from_val ((Lazy.force_val t.card) - 1)
           else
             lazy (cardinal_tree tree) }
       else t

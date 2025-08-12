@@ -44,6 +44,10 @@ open G2Protocol
 open G2ComplexOptions
 open G2Proto
 
+let xml_of xml = match xml with
+    Xml.Element (a,b,c) -> a,b,c
+  | _ -> failwith "Xml.xml_of: bad XML type"
+
 (* TODO: try to find a more general function *)
 let g2_tag_of_name name = field_of_string name
   
@@ -456,7 +460,7 @@ XML ("audios",
           | QH2_MD xml ->
               begin
                 try
-                  let xml = Xml.xml_of (Xml.parse_string xml) in
+                  let xml = xml_of (Xml.parse_string xml) in
                   xml_info := Some xml
                 with e ->
                     if !verbose_unknown_messages then
@@ -474,7 +478,7 @@ XML ("audios",
             
             if List.length files = List.length user_files then begin
                 List.map2 (fun (urn, size, name, url, _) file ->
-                    let (file_type, tags, _) = Xml.xml_of file in
+                    let (file_type, tags, _) = xml_of file in
                     (urn, size, name, url, 
                       List.map (fun (tag, v) ->
                           string_tag (g2_tag_of_name tag) v) 

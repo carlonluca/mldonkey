@@ -251,11 +251,11 @@ let udp_read_controler = UdpSocket.new_bandwidth_controler download_control
 let pid = Unix.getpid ()
 
 let do_at_exit f =
-  Pervasives.at_exit (fun _ ->
+  Stdlib.at_exit (fun _ ->
       if Unix.getpid () = pid then
         try f () with e -> ())
 
-let exit_properly n = Pervasives.exit n
+let exit_properly n = Stdlib.exit n
 
 let user_socks = ref ([] : TcpBufferedSocket.t list)
 let dialog_history = ref ([] : (int * string * string) list )
@@ -367,7 +367,7 @@ let string_of_field t =
   | Field_UNKNOWN s -> s
 
 let field_of_string t =
-  match String.lowercase t with
+  match String.lowercase_ascii t with
   | "artist" -> Field_Artist
   | "title" -> Field_Title
   | "album" -> Field_Album
@@ -691,7 +691,7 @@ module CanBeCompressed = struct
     let to_deflate_len = ref 0
 
     let compression_buffer_len = 20000
-    let compression_buffer = String.create compression_buffer_len
+    let compression_buffer = Bytes.create compression_buffer_len
 
     let deflate_connection sock =
       lprintf "Creating deflate connection\n";

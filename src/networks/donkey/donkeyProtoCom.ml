@@ -44,7 +44,7 @@ let client_msg_to_string emule_version msg =
   let magic = DonkeyProtoClient.write emule_version buf msg in
   let s = Buffer.to_bytes buf in
   let len = Bytes.length s - 5 in
-  s.[0] <- char_of_int magic;
+  Bytes.set s 0 (char_of_int magic);
   str_int s 1 len;
   Bytes.unsafe_to_string s
 

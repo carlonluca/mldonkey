@@ -228,7 +228,7 @@ let create_temp_file file_temp file_files file_state =
   file_fd
 
 let make_tracker_url url =
-  let lcurl = String.lowercase url in
+  let lcurl = String2.lowercase_utf8 url in
   if String2.check_prefix lcurl "http://" || String2.check_prefix lcurl "https://" then 
     `Http url (* do not change the case of the url *)
   else

@@ -1537,7 +1537,7 @@ let dc_upload c bytes =
           in 
           let rlen = int64_min_int (c.client_endpos -- c.client_pos) bytes in
           CommonUploads.consume_bandwidth rlen;
-          let upload_buffer = String.create rlen in
+          let upload_buffer = Bytes.create rlen in
           Unix32.read file_fd c.client_pos upload_buffer 0 rlen;
           TcpBufferedSocket.write sock upload_buffer 0 rlen;
           (*lprintf_nl "  Wrote (%d) bytes" rlen;*)

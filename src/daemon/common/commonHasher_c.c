@@ -71,7 +71,7 @@ static void HASH_NAME##_unsafe64_fd_direct (OS_FD fd, OFF_T pos, OFF_T len, \
     nread = os_read (fd, local_hash_buffer, max_nread); \
  \
     if(nread <= 0) { \
-        unix_error(errno, "HASH_NAME##unsafe64_fd_direct: Read", Nothing); \
+        caml_unix_error(errno, "HASH_NAME##unsafe64_fd_direct: Read", Nothing); \
     } \
     if(nread == 0){ \
       HASH_FINISH (&context, digest); \
@@ -107,7 +107,7 @@ static void tiger_tree_fd(OS_FD fd, size_t len, OFF_T pos,
       ssize_t nread = os_read (fd, curs, max_nread);
 
         if(nread <= 0) {
-        unix_error(errno, "tiger_safe_fd: Read", Nothing);
+        caml_unix_error(errno, "tiger_safe_fd: Read", Nothing);
       }
       curs += nread;
       toread -= nread;
@@ -151,7 +151,7 @@ value ml_job_done(value job_v)
   if(job_done){
     value result_v = Field(job_v, JOB_RESULT);
     char *result = String_val(result_v);
-    int result_len = string_length(result_v);
+    int result_len = caml_string_length(result_v);
 
 /*    printf("job len done: %d\n", result_len);     */
     memcpy(result, p_job_result, result_len);
@@ -251,13 +251,13 @@ value ml_job_start(value job_v, value fd_v)
     }
   }
 
-  enter_blocking_section();
+  caml_enter_blocking_section();
   pthread_mutex_lock(&mutex);
 /*  printf("Starting job\n"); */
   job_done = 0; /* Thread can run ... */
   pthread_cond_signal(&cond);  
   pthread_mutex_unlock(&mutex);
-  leave_blocking_section ();
+  caml_leave_blocking_section ();
 
   return Val_unit;
 }

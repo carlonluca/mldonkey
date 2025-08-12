@@ -27,7 +27,7 @@ value HASH_NAME##_unsafe64_fd (value digest_v, value fd_v, value pos_v, value le
     nread = os_read (fd, hash_buffer, max_nread); \
  \
     if(nread < 0) { \
-      unix_error(errno, "md4_safe_fd: Read", Nothing); \
+      caml_unix_error(errno, "md4_safe_fd: Read", Nothing); \
     } \
  \
     if(nread == 0){ \
@@ -67,7 +67,7 @@ value HASH_NAME##_unsafe_file (value digest_v, value filename_v, value file_size
   size_t len; \
  \
   if ((file = fopen (filename, "rb")) == NULL) \
-    raise_not_found(); \
+    caml_raise_not_found(); \
  \
   else { \
     HASH_INIT (&context); \

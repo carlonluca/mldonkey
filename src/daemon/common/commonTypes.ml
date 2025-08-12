@@ -89,7 +89,7 @@ exception Torrent_started of string
 exception Torrent_already_exists of string
 
 let uid_of_string s =
-  let s = String.lowercase s in
+  let s = String2.lowercase_utf8 s in
   let urn = String2.before s 4 in
   let rem = String2.after s 4 in
   let sep = ref ':' in
