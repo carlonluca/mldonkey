@@ -67,7 +67,7 @@ ssize_t os_read(OS_FD fd, char *buf, size_t len)
 void os_ftruncate(OS_FD fd, OFF_T len, /* bool */ int sparse)
 {
   int64_t cursize;
-  if(!fd) failwith("ftruncate32: file is closed");
+  if(!fd) caml_failwith("ftruncate32: file is closed");
   
   cursize = os_getfdsize(fd);
 #ifdef HAVE_POSIX_FALLOCATE 
@@ -166,12 +166,12 @@ value glibc_version(void)
 #ifdef HAVE_GNU_LIBC_VERSION_H
 #include <gnu/libc-version.h>
 
-  v = copy_string (gnu_get_libc_version());
+  v = caml_copy_string (gnu_get_libc_version());
   CAMLreturn (v);
   
 #else
 
-  raise_constant(*(value *)caml_named_value("not supported"));
+  caml_raise_constant(*(value *)caml_named_value("not supported"));
   
 #endif
 }

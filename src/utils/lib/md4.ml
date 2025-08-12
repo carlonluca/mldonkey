@@ -51,8 +51,8 @@ module Base16 = struct
         let n = int_of_char c in
         let i0 = (n/16) land 15 in
         let i1 = n land 15 in
-        p.[2 * i] <- hexa_digit i0;
-        p.[2 * i+1] <- hexa_digit i1;
+        Bytes.set p (2 * i) (hexa_digit i0);
+        Bytes.set p (2 * i+1) (hexa_digit i1);
       done;
       Bytes.unsafe_to_string p
     
@@ -68,8 +68,8 @@ module Base16 = struct
         let n = int_of_char c in
         let i0 = (n/16) land 15 in
         let i1 = n land 15 in
-        p.[2 * i] <- hexa_digit_case upper i0;
-        p.[2 * i+1] <- hexa_digit_case upper i1;
+        Bytes.set p (2 * i) (hexa_digit_case upper i0);
+        Bytes.set p (2 * i+1) (hexa_digit_case upper i1);
       done;
       Bytes.unsafe_to_string p
     
@@ -86,7 +86,7 @@ module Base16 = struct
       for i = 0 to hash_length - 1 do
         let c0 = s.[2*i] in
         let c1 = s.[2*i+1] in
-        p.[i] <- char_of_int ((16 * digit_hexa c0) + digit_hexa c1);
+        Bytes.set p i (char_of_int ((16 * digit_hexa c0) + digit_hexa c1));
       done;
       Bytes.unsafe_to_string p
     
@@ -115,13 +115,13 @@ module Base32 = struct
         let c = int5_of_char r.[i] in
         if bit < 3 then
           let x = c lsl (3-bit) in
-          s.[byte] <- char_of_int (int_of_char (Bytes.get s byte) lor x);
+          Bytes.set s byte (char_of_int (int_of_char (Bytes.get s byte) lor x));
         else
         let x = (c lsr (bit - 3)) land 0xff in
-        s.[byte] <- char_of_int (int_of_char (Bytes.get s byte) lor x);
+        Bytes.set s byte (char_of_int (int_of_char (Bytes.get s byte) lor x));
         if byte+1 < hash_length then
           let y = (c lsl (11 - bit)) land 0xff in
-          s.[byte+1] <- char_of_int (int_of_char (Bytes.get s (byte+1)) lor y);
+          Bytes.set s (byte + 1) (char_of_int (int_of_char (Bytes.get s (byte + 1)) lor y));
       done;
       Bytes.unsafe_to_string s
 
@@ -136,14 +136,14 @@ module Base32 = struct
         if bit < 3 then
           let x = int_of_char s.[byte] in
           let c = (x lsr (3 - bit)) land 0x1f in
-          r.[i] <- char_of_int5 c
+          Bytes.set r i (char_of_int5 c)
         else
         let x = int_of_char s.[byte] in
         let y = if byte + 1 = hash_length then 0 else 
             int_of_char s.[byte+1] in
         let x = (x lsl 8) + y in
         let c = (x lsr (11 - bit)) land 0x1f in
-        r.[i] <- char_of_int5 c
+        Bytes.set r i (char_of_int5 c)
       done;
       Bytes.unsafe_to_string r
 
@@ -162,14 +162,14 @@ module Base32 = struct
         if bit < 3 then
           let x = int_of_char s.[byte] in
           let c = (x lsr (3 - bit)) land 0x1f in
-          r.[i] <- char_of_int5 upper c
+          Bytes.set r i (char_of_int5 upper c)
         else
         let x = int_of_char s.[byte] in
         let y = if byte + 1 = hash_length then 0 else 
             int_of_char s.[byte+1] in
         let x = (x lsl 8) + y in
         let c = (x lsr (11 - bit)) land 0x1f in
-        r.[i] <- char_of_int5 upper c
+        Bytes.set r i (char_of_int5 upper c)
       done;
       Bytes.unsafe_to_string r
       
@@ -183,7 +183,7 @@ module Base6427 = struct
     let to_string _ hashbin =
       let hash64 = Bytes.create 30 in
       let hashbin n = int_of_char hashbin.[n] in
-      hash64.[0] <- '=';
+      Bytes.set hash64 0 '=';
       let j = ref 1 in
       for i = 0 to 6 do
         let tmp = if i < 6 then
@@ -193,17 +193,17 @@ module Base6427 = struct
             ((hashbin(3*i)) lsl 16) lor ((hashbin(3*i+1)) lsl 8)
         in
         for k = 0 to 3 do
-          hash64.[!j] <- base64tbl.[(tmp lsr ((3- k)*6)) land 0x3f];
+          Bytes.set hash64 !j base64tbl.[(tmp lsr ((3 - k) * 6)) land 0x3f];
           incr j
         done
       done;
-      hash64.[!j-1] <- '=';
+      Bytes.set hash64 (!j - 1) '=';
       Bytes.sub_string hash64 0 !j
     
     let base64tbl_inv =
       let table = Bytes.create 126 in
       for i = 0 to 63 do
-        table.[int_of_char base64tbl.[i]] <- char_of_int i
+        Bytes.set table (int_of_char base64tbl.[i]) (char_of_int i)
       done;
       Bytes.unsafe_to_string table
     
@@ -220,9 +220,9 @@ module Base6427 = struct
           for k = 0 to 3 do
             tmp := (!tmp lsl 6) lor (hash64 (i*4+k+1))
           done;
-          hashbin.[!j] <- char_of_int ((!tmp lsr 16) land 0xff);
-          hashbin.[!j+1] <- char_of_int ((!tmp lsr  8) land 0xff);
-          hashbin.[!j+2] <- char_of_int ((!tmp lsr  0) land 0xff);
+          Bytes.set hashbin !j (char_of_int ((!tmp lsr 16) land 0xff));
+          Bytes.set hashbin (!j + 1) (char_of_int ((!tmp lsr 8) land 0xff));
+          Bytes.set hashbin (!j + 2) (char_of_int ((!tmp lsr 0) land 0xff));
           j := !j + 3;
         else
         let tmp = ref 0 in
@@ -230,8 +230,8 @@ module Base6427 = struct
           tmp := (!tmp lsl 6) lor (hash64 (i*4+k+1))
         done;
         tmp := (!tmp lsl 6);
-        hashbin.[!j] <- char_of_int ((!tmp lsr 16) land 0xff);
-        hashbin.[!j+1] <- char_of_int ((!tmp lsr  8) land 0xff);
+        Bytes.set hashbin !j (char_of_int ((!tmp lsr 16) land 0xff));
+        Bytes.set hashbin (!j + 1) (char_of_int ((!tmp lsr 8) land 0xff));
         j := !j + 2;
       done;
       Bytes.unsafe_to_string hashbin
@@ -325,9 +325,7 @@ module Make(M: sig
       for i = 0 to len-1 do
         let c = int_of_char s.[i] in
         for j = 7 downto 0 do
-          digest.[i*8 + (7-j)] <- 
-            (if c land (1 lsl j) <> 0 then '1' else '0')
-            
+          Bytes.set digest (i*8 + (7 - j)) (if c land (1 lsl j) <> 0 then '1' else '0')
         done
       done;
       Bytes.unsafe_to_string digest
@@ -360,7 +358,7 @@ module Make(M: sig
     let random () =
       let s = Bytes.create hash_length in
       for i = 0 to hash_length - 1 do
-        s.[i] <- char_of_int (Random.int 256)
+        Bytes.set s i (char_of_int (Random.int 256))
       done;
       Bytes.unsafe_to_string s
     

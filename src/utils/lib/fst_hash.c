@@ -326,7 +326,7 @@ value fst_hash_file_ml(value digest, value filename, value filesize)
 {
   if(fst_hash_file(Bytes_val(digest), String_val(filename), 
         Int64_val(filesize))) return Val_unit;
-  failwith("Exception during FST computation");
+  caml_failwith("Exception during FST computation");
 }
 
 value fst_hash_string_ml(value digest, value s, value size)

@@ -1157,7 +1157,7 @@ let backup_tar archive files =
               t_prefix = "";
               t_gnu = None;} in
             let s = Bytes.create size in
-            Pervasives.really_input ic s 0 size;
+            Stdlib.really_input ic s 0 size;
             header, Bytes.unsafe_to_string s) in
         Tar.output otar header s
       with

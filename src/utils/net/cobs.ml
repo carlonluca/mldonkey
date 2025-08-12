@@ -38,12 +38,12 @@ let decodeData pdest psrc srclen =
         let code = int_of_char psrc.[srcpos] in
         let srcpos = srcpos + 1 in
         for i = 0 to code - 2 do
-           pdest.[dstpos+i] <- psrc.[srcpos+i]
+           Bytes.set pdest (dstpos + i) psrc.[srcpos + i]
         done;
         let srcpos = srcpos + code - 1 in
         let dstpos = dstpos + code - 1 in
         iter srcpos (if code<255 && srcpos<srclen  then begin
-           pdest.[dstpos] <- '\000';
+           Bytes.set pdest dstpos '\000';
            dstpos+1
         end else dstpos)
   in
@@ -73,17 +73,17 @@ let encodeData pdest psrc srclen =
       let c = psrc.[srcpos] in
       if c = '\000' then
         let srcpos = srcpos + 1 in
-        pdest.[codepos] <- char_of_int code;
+        Bytes.set pdest codepos (char_of_int code);
         let codepos = dstpos in
         let dstpos = dstpos + 1 in
         iter dstpos srcpos codepos 1
       else
       let code = code + 1 in
-      pdest.[dstpos] <- c;
+      Bytes.set pdest dstpos c;
       let dstpos = dstpos+1 in
       let srcpos = srcpos+1 in
       if code = 255 then begin
-          pdest.[codepos] <- char_of_int code;
+          Bytes.set pdest codepos (char_of_int code);
           let codepos = dstpos in
           let dstpos = dstpos+1 in
           iter dstpos srcpos codepos 1
@@ -91,7 +91,7 @@ let encodeData pdest psrc srclen =
       else
         iter dstpos srcpos codepos code
     else
-      pdest.[codepos] <- char_of_int code;
+      Bytes.set pdest codepos (char_of_int code);
   in
   iter 1 0 0 1
 

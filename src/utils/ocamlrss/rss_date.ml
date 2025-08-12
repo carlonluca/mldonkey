@@ -91,7 +91,7 @@ let tokens_of_string str =
         Stream.junk strm__;
         let rest = strm__ in
         let b = Buffer.create 16 in
-        Buffer.add_char b (Char.lowercase c); scan_word b rest
+        Buffer.add_char b (Char.lowercase_ascii c); scan_word b rest
     | Some '(' -> Stream.junk strm__; scan_comment 0 strm__
     | Some (' ' | '\t') -> Stream.junk strm__; scan_any strm__
     | Some '+' ->
@@ -131,7 +131,7 @@ let tokens_of_string str =
       Some ('a'..'z' | 'A'..'Z' as c) ->
         Stream.junk strm__;
         let rest = strm__ in
-        Buffer.add_char b (Char.lowercase c); scan_word b rest
+        Buffer.add_char b (Char.lowercase_ascii c); scan_word b rest
     | Some '.' -> Stream.junk strm__; scan_word b strm__
     | _ ->
         let rest = strm__ in

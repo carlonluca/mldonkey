@@ -22,8 +22,8 @@
 (*    Contact: Maxence.Guesdon@inria.fr                                          *)
 (*********************************************************************************)
 
-open Xml_types
 open Rss_types
+open Xml
 
 (** Parsing/Printing RSS documents. *)
 
@@ -31,7 +31,7 @@ open Rss_types
 
 let find_ele name e =
     match e with
-      Element (e,_,_) when name = String.lowercase e -> true
+      Element (e,_,_) when name = String.lowercase_ascii e -> true
     | _ -> false
 
 let apply_opt f = function
@@ -39,16 +39,16 @@ let apply_opt f = function
   | Some v -> Some (f v)
 
 let get_att ?(required=true) atts name =
-  let name = String.lowercase name in
-  try snd (List.find (fun (s,_) -> String.lowercase s = name) atts)
+  let name = String.lowercase_ascii name in
+  try snd (List.find (fun (s,_) -> String.lowercase_ascii s = name) atts)
   with Not_found -> 
     if required then raise Not_found else ""
 
 let get_opt_att atts name =
-  let name = String.lowercase name in
+  let name = String.lowercase_ascii name in
   try Some 
       (snd (List.find 
-                 (fun (s, _) -> String.lowercase s = name) 
+                 (fun (s, _) -> String.lowercase_ascii s = name) 
                  atts)
       )
   with Not_found -> 
@@ -84,7 +84,7 @@ let get_enclosure xmls =
 let get_categories xmls =
   let f acc = function
       Element (tag,atts,[PCData s]) 
-      when String.lowercase tag = "category"->
+      when String.lowercase_ascii tag = "category"->
         { cat_name = s ;
           cat_domain = get_opt_att atts "domain" ;
         } :: acc
@@ -188,7 +188,7 @@ let items_of_xmls xmls =
        (fun acc e ->
          match e with
            PCData _ -> acc
-         |	Element (s,_,subs) when String.lowercase s = "item" ->
+         |	Element (s,_,subs) when String.lowercase_ascii s = "item" ->
              (item_of_xmls subs) :: acc
          |	Element _ -> acc
        )
@@ -260,13 +260,13 @@ let channel_of_source source =
   match xml with
   | PCData _ -> failwith "Parse error: not an element"
   | Element (e, atts, subs) ->
-      match String.lowercase e with
+      match String.lowercase_ascii e with
         "rss" ->
           (
            match subs with
              [Element (e, atts, subs)] ->
                (
-                match String.lowercase e with
+                match String.lowercase_ascii e with
                   "channel" -> channel_of_xmls subs
                 | _ -> failwith "Parse error: not channel"
                )
@@ -280,7 +280,7 @@ let channel_of_source source =
                failwith "Parse error: no channel"
            | (Element (e, atts, subs)) :: q ->
                (
-                match String.lowercase e with
+                match String.lowercase_ascii e with
                   "channel" -> channel_of_xmls (subs @ q)
                 | _ -> failwith "Parse error: not channel"
                )

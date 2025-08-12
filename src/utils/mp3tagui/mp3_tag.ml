@@ -46,7 +46,7 @@ module Id3v1 =
       let res =
         if len < 128 then false else begin
           seek_in ic (len - 128);
-          let buffer = String.create 3 in
+          let buffer = Bytes.create 3 in
           really_input ic buffer 0 3;
           buffer = (Bytes.of_string "TAG")
         end in
@@ -58,7 +58,7 @@ let read_channel ic =
     if len < 128 then raise Not_found;
     seek_in ic (len - 128);
     let readstring len =
-      let buf = String.create len in
+      let buf = Bytes.create len in
       really_input ic buf 0 len;
       Mp3_misc.chop_whitespace (Bytes.to_string buf) 0 in
     if readstring 3 <> "TAG" then raise Not_found;
@@ -137,18 +137,18 @@ module Id3v2 = struct
   let last_byte_read = ref 0
 
   let input_byte ic =
-    let b = Pervasives.input_byte ic in
+    let b = Stdlib.input_byte ic in
     let b =
       if b = 0 && !unsynchronization && !last_byte_read = 0xFF
-      then Pervasives.input_byte ic
+      then Stdlib.input_byte ic
       else b in
     last_byte_read := b;
     b
 
   let input_buffer ic len =
-    let buff = String.create len in
+    let buff = Bytes.create len in
     for i = 0 to len - 1 do
-      buff.[i] <- Char.chr (input_byte ic)
+      Bytes.set buff i (Char.chr (input_byte ic))
     done;
     buff
 
@@ -231,9 +231,9 @@ module Id3v2 = struct
   let output_byte oc b =
     if !last_byte_written = 0xFF then begin
       if b = 0 || b land 0b11100000 = 0b11100000 then
-        Pervasives.output_byte oc 0
+        Stdlib.output_byte oc 0
     end;
-    Pervasives.output_byte oc b;
+    Stdlib.output_byte oc b;
     last_byte_written := b
 
   let output_int4 oc n =
@@ -243,10 +243,10 @@ module Id3v2 = struct
     output_byte oc n
 
   let output_encoded_int4 oc n =
-    Pervasives.output_byte oc (((n lsr 21) land 0x7F) lsl 24);
-    Pervasives.output_byte oc (((n lsr 14) land 0x7F) lsl 16);
-    Pervasives.output_byte oc (((n lsr 7) land 0x7F) lsl 8);
-    Pervasives.output_byte oc (n land 0x7F)
+    Stdlib.output_byte oc (((n lsr 21) land 0x7F) lsl 24);
+    Stdlib.output_byte oc (((n lsr 14) land 0x7F) lsl 16);
+    Stdlib.output_byte oc (((n lsr 7) land 0x7F) lsl 8);
+    Stdlib.output_byte oc (n land 0x7F)
 
   let output_string oc s =
     for i = 0 to String.length s - 1 do output_byte oc (Char.code s.[i]) done

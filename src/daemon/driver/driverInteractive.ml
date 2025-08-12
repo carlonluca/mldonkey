@@ -2057,7 +2057,7 @@ let runinfo html buf o =
         Sys.max_string_length
         Sys.word_size
         Sys.max_array_length
-        Pervasives.max_int
+        Stdlib.max_int
     );
   tack list
     (

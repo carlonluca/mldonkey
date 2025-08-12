@@ -89,7 +89,7 @@ let create_file t file file_entry_size =
     file_all_pos = [||];
     file_cache = Weak.create 1;
     file_next_pos = 0;
-    file_chunk = String.create file_entry_size;
+    file_chunk = Bytes.create file_entry_size;
   }
     
 let file_store file str = 

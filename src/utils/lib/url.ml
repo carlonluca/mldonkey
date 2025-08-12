@@ -43,11 +43,11 @@ let encode s =
   for i=0 to len-1 do
     match s.[i] with
     | 'a'..'z' | 'A'..'Z' | '0'..'9' | '.' | '-' | '*' | '_' | '\''| '(' | ')'->
-        res.[!pos] <- s.[i]; incr pos
+        Bytes.set res !pos s.[i]; incr pos
     | c ->
-        res.[!pos] <- '%';
-        res.[!pos+1] <- hexa_digit (Char.code c / 16);
-        res.[!pos+2] <- hexa_digit (Char.code c mod 16);
+      Bytes.set res !pos '%';
+      Bytes.set res (!pos + 1) (hexa_digit (Char.code c / 16));
+      Bytes.set res (!pos + 2) (hexa_digit (Char.code c mod 16));
         pos := !pos + 3
   done;
   Bytes.sub_string res 0 !pos

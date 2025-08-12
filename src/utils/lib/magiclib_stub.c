@@ -47,7 +47,7 @@ static void raise_magic_failure(const char * msg)
 {
   static const value* exn = NULL;
   if (!exn) caml_named_value("Magiclib.Failure");
-  raise_with_string(*exn, (char *) msg);
+  caml_raise_with_string(*exn, (char *) msg);
 }
 
 /* [fname] is the function name. */
@@ -60,7 +60,7 @@ static void raise_on_error(const char* fname, magic_t cookie)
   flen = strlen(fname);
   if ((err_magic = magic_error(cookie)) != NULL) {
     if ((errmsg = malloc(flen + strlen(err_magic) + 1)) == NULL)
-      raise_out_of_memory();
+      caml_raise_out_of_memory();
     strcpy(errmsg, fname);
     strcpy(errmsg + flen, err_magic);
     raise_magic_failure(errmsg);
@@ -72,18 +72,18 @@ static void raise_on_error(const char* fname, magic_t cookie)
     /* Allocate buffer [errmsg] until there is enough space for the
      * error message. */
     err = magic_errno(cookie);
-    if ((errmsg = malloc(len)) == NULL) raise_out_of_memory();
+    if ((errmsg = malloc(len)) == NULL) caml_raise_out_of_memory();
     strcpy(errmsg, fname);
 #ifdef HAVE_STRERROR_R
     while (strerror_r(err, errmsg + flen, len - flen) < 0) {
       len *= 2;
       errmsg = realloc(errmsg, len);
-      if (errmsg == NULL) raise_out_of_memory();
+      if (errmsg == NULL) caml_raise_out_of_memory();
     }
 #else
       strcat (errmsg, strerror(err));        
 #endif
-    raise_sys_error(copy_string(errmsg));
+    caml_raise_sys_error(caml_copy_string(errmsg));
   }
 }
 
@@ -124,7 +124,7 @@ static struct custom_operations cookie_ops = {
     /* deserialize */ custom_deserialize_default
 };
 
-#define ALLOC_COOKIE alloc_custom(&cookie_ops, sizeof(magic_t), \
+#define ALLOC_COOKIE caml_alloc_custom(&cookie_ops, sizeof(magic_t), \
                      sizeof(magic_t), 40 * sizeof(magic_t))
 
 /*
@@ -145,17 +145,17 @@ CAMLprim value ocaml_magic_open(value flags)
       raise_magic_failure("Magiclib.create: Preserve_atime not supported");
     else {
       /* No cookie yet, so one cannot use the above generic err fun */
-      if ((errmsg = malloc(len)) == NULL) raise_out_of_memory();
+      if ((errmsg = malloc(len)) == NULL) caml_raise_out_of_memory();
       strcpy(errmsg, "Magiclib.create: "); /* 14 chars */
 #ifdef HAVE_STRERROR_R
       while (strerror_r(errno, errmsg + 14, len - 14) < 0) {
         len *= 2;
-        if ((errmsg = realloc(errmsg, len)) == NULL) raise_out_of_memory();
+        if ((errmsg = realloc(errmsg, len)) == NULL) caml_raise_out_of_memory();
       }
 #else
       strcat (errmsg, strerror(errno));
 #endif
-      raise_sys_error(copy_string(errmsg));
+      caml_raise_sys_error(caml_copy_string(errmsg));
     }
   }
   CAMLreturn(c);
@@ -178,11 +178,11 @@ CAMLprim value ocaml_magic_file(value c, value fname)
   const char * ans;
   magic_t cookie = COOKIE_VAL(c);
 
-  if (cookie == NULL) invalid_argument("Magiclib.file");
+  if (cookie == NULL) caml_invalid_argument("Magiclib.file");
   if ((ans = magic_file(cookie, String_val(fname))) == NULL) {
     raise_on_error("Magiclib.file: ", cookie);
   }
-  CAMLreturn(copy_string(ans));
+  CAMLreturn(caml_copy_string(ans));
 }
 
 CAMLprim value ocaml_magic_buffer(value c, value buf, value len)
@@ -195,7 +195,7 @@ CAMLprim value ocaml_magic_buffer(value c, value buf, value len)
   if ((ans = magic_buffer(cookie, String_val(buf), Int_val(len)))
       == NULL)
     raise_on_error("Magiclib.buffer: ", cookie);
-  CAMLreturn(copy_string(ans));
+  CAMLreturn(caml_copy_string(ans));
 }
 
 

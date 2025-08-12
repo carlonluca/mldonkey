@@ -251,11 +251,11 @@ let udp_read_controler = UdpSocket.new_bandwidth_controler download_control
 let pid = Unix.getpid ()
 
 let do_at_exit f =
-  Pervasives.at_exit (fun _ ->
+  Stdlib.at_exit (fun _ ->
       if Unix.getpid () = pid then
         try f () with e -> ())
 
-let exit_properly n = Pervasives.exit n
+let exit_properly n = Stdlib.exit n
 
 let user_socks = ref ([] : TcpBufferedSocket.t list)
 let dialog_history = ref ([] : (int * string * string) list )

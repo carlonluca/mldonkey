@@ -67,7 +67,7 @@ value HASH_NAME##_unsafe_file (value digest_v, value filename_v, value file_size
   size_t len; \
  \
   if ((file = fopen (filename, "rb")) == NULL) \
-    raise_not_found(); \
+    caml_raise_not_found(); \
  \
   else { \
     HASH_INIT (&context); \

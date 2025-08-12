@@ -9,7 +9,7 @@
         utils
         utils_stubs
         net
-        xmllight
+        xml-light
         ocamlrss
         cdk
         commonstubs

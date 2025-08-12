@@ -65,23 +65,22 @@ let decode64 s =
   let len = String.length s in
   let len_res = len * 3 / 4 in
   let res = Bytes.create len_res in
-  for i=0 to len/4 - 1 do
-    let i1 = 4*i and i2 = 3*i in
+  for i = 0 to len / 4 - 1 do
+    let i1 = 4 * i and i2 = 3 * i in
     let v1 = (val64 s.[i1]) lsl 18 in
     let v2 = (val64 s.[i1 + 1]) lsl 12 in
     let v3 = (val64 s.[i1 + 2]) lsl 6 in
     let v4 = val64 s.[i1 + 3] in
     let v = v1 lor v2 lor v3 lor v4 in
-    res.[i2] <- Char.chr (v lsr 16);
-    res.[i2 + 1] <- Char.chr (v lsr 8 land 0xFF);
-    res.[i2 + 2] <- Char.chr (v land 0xFF)
+    Bytes.set res i2 (Char.chr (v lsr 16));
+    Bytes.set res (i2 + 1) (Char.chr ((v lsr 8) land 0xFF));
+    Bytes.set res (i2 + 2) (Char.chr (v land 0xFF))
   done;
   let nb_cut =
-    if s.[len-1] = '=' then
-      if s.[len-2] = '=' then 2 else 1
+    if s.[len - 1] = '=' then
+      if s.[len - 2] = '=' then 2 else 1
     else 0 in
   Bytes.sub_string res 0 (len_res - nb_cut)
-
 
 let debug = ref false
 
