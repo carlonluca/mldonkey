@@ -26,6 +26,5 @@
         -cclib -lgd
         -cclib -lpng
         -cclib -lcryptopp
-        -cclib -lunix
     ))
 )
