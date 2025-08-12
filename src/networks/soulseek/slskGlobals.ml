@@ -299,7 +299,7 @@ let new_file file_id name file_size =
   file
 
 let new_file file_id name file_size =
-  let key = String.lowercase name in
+  let key = String2.lowercase_utf8 name in
   try
     Hashtbl.find files_by_key key
   with _ ->
@@ -308,7 +308,7 @@ let new_file file_id name file_size =
       file
 
 let find_file file_name file_size =
-  Hashtbl.find files_by_key (String.lowercase file_name)
+  Hashtbl.find files_by_key (String2.lowercase_utf8 file_name)
 
   
       

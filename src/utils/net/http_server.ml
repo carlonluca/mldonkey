@@ -277,7 +277,7 @@ let parse_head sock s =
       let options = List.fold_left (fun options
               (name, value (* , head, args *)) ->
             try
-              match String.lowercase name with
+              match String2.lowercase_utf8 name with
                 "authorization" ->
                 let _, pass = String2.cut_at value ' ' in
                 let pass = decode64 pass in
@@ -482,7 +482,7 @@ let complete_post_request ( f : handler ) buf request =
 (*      complete_multipart_data request ic tail *)
     else
 (*
-    let s = String.create 1000 in
+    let s = Bytes.create 1000 in
     let buf = Buffer.create 1000 in
     let rec iter nleft =
       if nleft > 0 then
@@ -614,7 +614,7 @@ let content_encoding_exts =
   List.map (fun (a,b) -> (b,a)) content_encodings
 
 let add_content_type oc file =
-  let exts = Filename2.extensions (String.lowercase  file) in
+  let exts = Filename2.extensions (String2.lowercase_utf8  file) in
   (try
       let rec iter exts =
         match exts with
@@ -636,7 +636,7 @@ lprint_newline ();
     with _ -> ())
 
 let add_content_encoding oc file =
-  let exts = Filename2.extensions (String.lowercase  file) in
+  let exts = Filename2.extensions (String2.lowercase_utf8  file) in
   (try
       let rec iter exts =
         match exts with

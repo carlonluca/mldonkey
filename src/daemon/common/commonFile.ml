@@ -925,7 +925,7 @@ let recover_bytes file =
   let fd = file_fd file in
   let len = 32768 in
   let len64 = Int64.of_int len in
-  let s = String.create len in
+  let s = Bytes.create len in
   
   let rec iter_file_out file_pos segments =
 

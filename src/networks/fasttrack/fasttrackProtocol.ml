@@ -84,11 +84,11 @@ let int64_80 = 0x80L
 let rec iter len n =
   if n > len2 then
     let s = iter (len+1) (Int64.shift_right_logical n 7) in
-    s.[len] <- char_of_int (0x80 lor (Int64.to_int (Int64.logand n int64_7f)));
+    Bytes.set s len (char_of_int (0x80 lor (Int64.to_int (Int64.logand n int64_7f))));
     s
   else
-  let s = String.create (len+1) in
-  s.[len] <- char_of_int (Int64.to_int n);
+  let s = Bytes.create (len+1) in
+  Bytes.set s len (char_of_int (Int64.to_int n));
   s
 
 let buf_dynint b data =
@@ -97,7 +97,7 @@ let buf_dynint b data =
 
 let buf_dynint b data =
   let data = Int64.logand bits32 data in
-  let buf = String.create 6 in
+  let buf = Bytes.create 6 in
 
   let len =
     if data > len5 then 5 else
@@ -108,12 +108,11 @@ let buf_dynint b data =
   let i = len - 1 in
 
   (* last byte doesn't have high bit set *)
-  buf.[i] <-  char_of_int (Int64.to_int (Int64.logand data int64_7f));
+  Bytes.set buf i (char_of_int (Int64.to_int (Int64.logand data int64_7f)));
   let data = ref (Int64.shift_right_logical data  7) in
 
   for i = i - 1 downto 0 do
-    buf.[i] <- char_of_int (0x80 lor (Int64.to_int
-          (Int64.logand !data int64_7f)));
+    Bytes.set buf i (char_of_int (0x80 lor (Int64.to_int (Int64.logand !data int64_7f))));
     data := Int64.shift_right_logical !data  7;
   done;
   Buffer.add_bytes b (Bytes.sub buf 0 len)

@@ -90,7 +90,7 @@ let parse_line header =
     match String2.split (String.sub header 0 endline_pos) ' ' with
     | http :: code :: ok :: _ ->
       let code = int_of_string code in
-      if not (String2.starts_with (String.lowercase http) "http") 
+      if not (String2.starts_with (String2.lowercase_utf8 http) "http") 
         then failwith "Not in http protocol"; 
       http, code
     | _ -> 
@@ -355,7 +355,7 @@ let http_check_size file url start_download_file =
   H.whead2 r (fun headers ->
       let content_length = ref None in
       List.iter (fun (name, content) ->
-          if String.lowercase name = "content-length" then
+          if String2.lowercase_utf8 name = "content-length" then
         try content_length := Some (Int64.of_string content)
         with _ -> lprintf_nl "bad content length [%s]" content;
       ) headers;

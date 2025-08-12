@@ -153,7 +153,7 @@ let client_to_client c t sock =
 (* Someone wants to upload to us !! *)
       begin
         try
-          let file = Hashtbl.find files_by_key (String.lowercase file_name) in
+          let file = Hashtbl.find files_by_key (String2.lowercase_utf8 file_name) in
           
           lprintf "File Found"; lprint_newline ();
           if size <> file_size file then begin
@@ -201,7 +201,7 @@ let client_to_client c t sock =
         try
           let file = List.assoc req c.client_requests in
           c.client_requests <- List.remove_assoc req c.client_requests;
-          let reason =  String.lowercase reason in
+          let reason =  String2.lowercase_utf8 reason in
           if reason = "queued" then
             set_client_state c (Connected 0)
           else

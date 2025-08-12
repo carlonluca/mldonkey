@@ -176,7 +176,7 @@ let sendmail smtp_server smtp_port new_style mail =
     let read_response_auth ic =
       let rec loop () =
         let (n,final,text) = get_response ic in
-        begin match String2.split_simplify (String.uppercase text) ' ' with
+        begin match String2.split_simplify (String.uppercase_ascii text) ' ' with
         | ("AUTH"::methods) ->
           List.iter (function
           | "LOGIN" -> auth_login_enabled := true

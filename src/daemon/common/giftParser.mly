@@ -13,7 +13,7 @@ open GuiProto
 main:
 | EOF      { GiftCommand("", None, []) }
 | SEMI      { GiftCommand("", None, []) }
-| IDENT opt_arg keys SEMI { GiftCommand(String.lowercase $1, $2, List.rev $3) }
+| IDENT opt_arg keys SEMI { GiftCommand(String2.lowercase_utf8 $1, $2, List.rev $3) }
   ;
   
 opt_arg:
@@ -29,7 +29,7 @@ keys:
 key:
   IDENT args {
     let (opt_arg, opt_keys) = $2 in
-    GiftCommand(String.lowercase $1, opt_arg, opt_keys)
+    GiftCommand(String2.lowercase_utf8 $1, opt_arg, opt_keys)
   }
 ;
 

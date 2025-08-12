@@ -34,7 +34,7 @@ OFF_T os_lseek(OS_FD fd, OFF_T pos, int dir)
 {
   OFF_T result =  lseek(fd, pos, dir);
 
-  if(result < 0) unix_error(errno, "os_lseek", Nothing);
+  if(result < 0) caml_unix_error(errno, "os_lseek", Nothing);
 
   return result;
 }
@@ -51,7 +51,7 @@ ssize_t os_read(OS_FD fd, char *buf, size_t len)
 {
   ssize_t result = read(fd, buf, len);
 
-  if(result < 0) unix_error(errno, "os_read", Nothing);
+  if(result < 0) caml_unix_error(errno, "os_read", Nothing);
 
   return result;
 }

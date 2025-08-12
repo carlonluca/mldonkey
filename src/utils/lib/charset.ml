@@ -1303,7 +1303,7 @@ let charset_from_string s =
 (**********************************************************************************)
 
 let normalize_language s =
-  let s = String.uppercase s in
+  let s = String.uppercase_ascii s in
   if String.length s > 1
   then begin
 (* We have to distinguish between ZH_tw and ZH_cn here

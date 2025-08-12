@@ -62,57 +62,57 @@ module P = struct
 (* This fucking Emule implementation uses 4 32-bits integers instead of
   16 8-bits integers... welcome back to the non-portability problems... *)
     let get_md4 s pos =
-      let ss = String.create 16 in
+      let ss = Bytes.create 16 in
 
-      ss.[0] <- s.[pos+3];
-      ss.[1] <- s.[pos+2];
-      ss.[2] <- s.[pos+1];
-      ss.[3] <- s.[pos+0];
+      Bytes.set ss 0 s.[pos+3];
+      Bytes.set ss 1 s.[pos+2];
+      Bytes.set ss 2 s.[pos+1];
+      Bytes.set ss 3 s.[pos+0];
 
-      ss.[4] <- s.[pos+7];
-      ss.[5] <- s.[pos+6];
-      ss.[6] <- s.[pos+5];
-      ss.[7] <- s.[pos+4];
+      Bytes.set ss 4 s.[pos+7];
+      Bytes.set ss 5 s.[pos+6];
+      Bytes.set ss 6 s.[pos+5];
+      Bytes.set ss 7 s.[pos+4];
 
-      ss.[8] <- s.[pos+11];
-      ss.[9] <- s.[pos+10];
-      ss.[10] <- s.[pos+9];
-      ss.[11] <- s.[pos+8];
+      Bytes.set ss 8 s.[pos+11];
+      Bytes.set ss 9 s.[pos+10];
+      Bytes.set ss 10 s.[pos+9];
+      Bytes.set ss 11 s.[pos+8];
 
-      ss.[12] <- s.[pos+15];
-      ss.[13] <- s.[pos+14];
-      ss.[14] <- s.[pos+13];
-      ss.[15] <- s.[pos+12];
+      Bytes.set ss 12 s.[pos+15];
+      Bytes.set ss 13 s.[pos+14];
+      Bytes.set ss 14 s.[pos+13];
+      Bytes.set ss 15 s.[pos+12];
 
       Md4.direct_of_string @@ Bytes.unsafe_to_string ss
 
     let buf_md4 buf s =
       let s = Md4.direct_to_string s in
-
-      let ss = String.create 16 in
+      let ss = Bytes.create 16 in
       let pos = 0 in
 
-      ss.[0] <- s.[pos+3];
-      ss.[1] <- s.[pos+2];
-      ss.[2] <- s.[pos+1];
-      ss.[3] <- s.[pos+0];
+      Bytes.set ss 0 s.[pos+3];
+      Bytes.set ss 1 s.[pos+2];
+      Bytes.set ss 2 s.[pos+1];
+      Bytes.set ss 3 s.[pos+0];
 
-      ss.[4] <- s.[pos+7];
-      ss.[5] <- s.[pos+6];
-      ss.[6] <- s.[pos+5];
-      ss.[7] <- s.[pos+4];
+      Bytes.set ss 4 s.[pos+7];
+      Bytes.set ss 5 s.[pos+6];
+      Bytes.set ss 6 s.[pos+5];
+      Bytes.set ss 7 s.[pos+4];
 
-      ss.[8] <- s.[pos+11];
-      ss.[9] <- s.[pos+10];
-      ss.[10] <- s.[pos+9];
-      ss.[11] <- s.[pos+8];
+      Bytes.set ss 8 s.[pos+11];
+      Bytes.set ss 9 s.[pos+10];
+      Bytes.set ss 10 s.[pos+9];
+      Bytes.set ss 11 s.[pos+8];
 
-      ss.[12] <- s.[pos+15];
-      ss.[13] <- s.[pos+14];
-      ss.[14] <- s.[pos+13];
-      ss.[15] <- s.[pos+12];
+      Bytes.set ss 12 s.[pos+15];
+      Bytes.set ss 13 s.[pos+14];
+      Bytes.set ss 14 s.[pos+13];
+      Bytes.set ss 15 s.[pos+12];
 
       Buffer.add_bytes buf ss
+
 
 
 (* Strange: why was the IP format changed for Kademlia ? *)

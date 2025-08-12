@@ -177,11 +177,11 @@ let make_br ip_begin ip_end desc =
 
 
 let compare_split a_hi a_low b_hi b_low  = 
-  let hicompare = Pervasives.compare a_hi b_hi in
+  let hicompare = Stdlib.compare a_hi b_hi in
   if hicompare <> 0 then 
     hicompare
   else
-    Pervasives.compare a_low b_low
+    Stdlib.compare a_low b_low
 
 (* increment and then compare *)
 let compare_split_next a_hi a_low b_hi b_low  = 
@@ -207,13 +207,13 @@ let match_ip_aux bl ip =
       short_march_aux a ip_hi ip_lo 0
   | Compact a ->      
       let compare_begin a ip_hi ip_lo n =
-        let cmp_hi = Pervasives.compare ip_hi (Array.get a.compact_begin_high n) in
+        let cmp_hi = Stdlib.compare ip_hi (Array.get a.compact_begin_high n) in
         if cmp_hi <> 0 then cmp_hi
-        else Pervasives.compare ip_lo (begin_low_bits (Array.get a.compact_low_hits n))
+        else Stdlib.compare ip_lo (begin_low_bits (Array.get a.compact_low_hits n))
       and compare_end a ip_hi ip_lo n =
-        let cmp_hi = Pervasives.compare ip_hi (Array.get a.compact_end_high n) in
+        let cmp_hi = Stdlib.compare ip_hi (Array.get a.compact_end_high n) in
         if cmp_hi <> 0 then cmp_hi
-        else Pervasives.compare ip_lo (end_low_bits (Array.get a.compact_low_hits n)) 
+        else Stdlib.compare ip_lo (end_low_bits (Array.get a.compact_low_hits n)) 
       and mark_entry a n =
         Array.set a.compact_low_hits n (succ_hits (Array.get a.compact_low_hits n));
         n in
@@ -398,7 +398,7 @@ let load_merge bl filename remove =
 let load filename =
   lprintf_nl (_b "loading %s") filename;
   if Sys.file_exists filename then
-    let last_ext = String.lowercase (Filename2.last_extension filename) in
+    let last_ext = String2.lowercase_utf8 (Filename2.last_extension filename) in
     if last_ext = ".zip" then
       let filenames_list =
         Unix2.tryopen_read_zip filename (fun ic ->
@@ -437,7 +437,7 @@ let load filename =
           filename;
         bl_empty)
     else     
-      let ext = String.lowercase (Filename2.extension filename) in
+      let ext = String2.lowercase_utf8 (Filename2.extension filename) in
       match ext with
         | ".bz2" | ".p2p.bz2" | ".dat.bz2" 
         | ".gz"  | ".p2p.gz"  | ".dat.gz" ->

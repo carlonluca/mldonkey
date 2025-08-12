@@ -257,7 +257,7 @@ let download_file url referer user group =
 (* I think this is a real bad idea, we should check this by ensuring that the
    bt-url-handler is called first. *)
 let is_http_torrent headers url =
-  let ext = String.lowercase (Filename2.last_extension url) in
+  let ext = String2.lowercase_utf8 (Filename2.last_extension url) in
   ext = ".torrent" || ext = ".tor"
      || (String2.contains headers "content-type application/x-bittorrent")
 

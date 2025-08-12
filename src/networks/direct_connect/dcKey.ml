@@ -65,7 +65,7 @@ let char_z =  int_of_char 'z'
   
 let create_key = "MLDonkey"
 (*  let len = 80 + Random.int 15  in
-  let key = String.create len in
+  let key = Bytes.create len in
   for i = 0 to len - 1 do  
     key.[i] <- char_of_int (char_percent + Random.int (char_z - char_percent))
   done;

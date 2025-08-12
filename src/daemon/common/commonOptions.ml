@@ -1757,7 +1757,7 @@ let filter_search_delay = 5.0
 
 (* Infer which nets to start depending on the name used *)
 let _ =
-  let name = String.lowercase (Filename.basename Sys.argv.(0)) in
+  let name = String2.lowercase_utf8 (Filename.basename Sys.argv.(0)) in
   let name = try
       let pos = String.index name '+' in
       String.sub name 0 pos

@@ -234,13 +234,13 @@ let _ =
   lprintf "calcEncodedLength...\n";
   let blen = calcEncodedLength s slen in
   lprintf "encoded: %d/%d\n" blen slen;
-  let buf = String.create blen in
+  let buf = Bytes.create blen in
   lprintf "encodeData...\n";
   encodeData buf s slen;
   lprintf "calcDecodedLength...\n";
   let olen = calcDecodedLength buf blen in
   assert (olen = slen);
-  let os = String.create olen in
+  let os = Bytes.create olen in
   lprintf "decodeData...\n";
   decodeData os buf blen;
   assert (os = s)

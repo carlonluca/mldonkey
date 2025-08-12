@@ -594,13 +594,13 @@ static int ml_gethostbyname(char *hostname)
 }
 
 // unix/socketaddr.c
-extern value alloc_inet_addr(struct in_addr * a);
+extern value caml_unix_alloc_inet_addr(struct in_addr * a);
 
 static value alloc_one_addr(char volatile *a)
 {
   struct in_addr addr;
   memmove (&addr, (char*)a, entry_h_length);
-  return alloc_inet_addr(&addr);
+  return caml_unix_alloc_inet_addr(&addr);
 }
 
 static value addr_list_of_job(void)

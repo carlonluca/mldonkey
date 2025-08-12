@@ -367,7 +367,7 @@ let string_of_field t =
   | Field_UNKNOWN s -> s
 
 let field_of_string t =
-  match String.lowercase t with
+  match String.lowercase_ascii t with
   | "artist" -> Field_Artist
   | "title" -> Field_Title
   | "album" -> Field_Album
@@ -691,7 +691,7 @@ module CanBeCompressed = struct
     let to_deflate_len = ref 0
 
     let compression_buffer_len = 20000
-    let compression_buffer = String.create compression_buffer_len
+    let compression_buffer = Bytes.create compression_buffer_len
 
     let deflate_connection sock =
       lprintf "Creating deflate connection\n";

@@ -287,7 +287,7 @@ module Id3v2 = struct
       with Not_found | End_of_file ->
         seek_in ic 0
       end;
-      let buffer = String.create 4096 in
+      let buffer = Bytes.create 4096 in
       let rec copy_file () =
         let n = input ic buffer 0 (Bytes.length buffer) in
         if n = 0 then () else begin output oc buffer 0 n; copy_file () end in

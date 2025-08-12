@@ -25,8 +25,7 @@ open Md4
 open AnyEndian
 open LittleEndian
 open TcpBufferedSocket
-open Xml_types
-  
+
 open CommonHosts
 open CommonTypes
 open CommonOptions

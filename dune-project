@@ -23,5 +23,6 @@ interfaces : telnet, web, and binary protocol for third party GUIs.
         curl
         num
         xml-light
+        camomile
     )
 )

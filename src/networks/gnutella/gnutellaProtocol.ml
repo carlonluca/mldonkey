@@ -221,7 +221,7 @@ let bloom_hash_full s pos len bits =
   let xor = ref Int32.zero in
   let j = ref 0 in
   for i = pos to len - 1 do
-    let b = Int32.of_int (int_of_char (Char.lowercase s.[i])) in
+    let b = Int32.of_int (int_of_char (Char.lowercase_ascii s.[i])) in
     let b = Int32.shift_left b (!j * 8) in
     xor := Int32.logxor !xor b;
     j := (!j+1) mod 4;
@@ -543,7 +543,7 @@ let find_file_to_upload gconn url =
       
       | _ -> failwith "Cannot parse /uri-res/N2R request"
     else
-    let get = String.lowercase (String.sub file 0 5) in
+    let get = String2.lowercase_utf8 (String.sub file 0 5) in
     assert (get = "/get/");
     let pos = String.index_from file 5 '/' in
     let num = String.sub file 5 (pos - 5) in

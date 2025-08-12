@@ -97,7 +97,7 @@ let basename filename =
     with _ ->      
         try
           if len > 2 then
-            let c1 = Char.lowercase filename.[0] in
+            let c1 = Char.lowercase_ascii filename.[0] in
             let c2 = filename.[1] in
             match c1,c2 with
               'a'..'z', ':' ->
@@ -106,7 +106,7 @@ let basename filename =
           else raise exit_exn
         with _ -> Filename.basename filename
   in
-  String.lowercase s
+  String2.lowercase_utf8 s
 
 let new_server ip port = 
   let key = (ip,port) in

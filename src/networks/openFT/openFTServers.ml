@@ -71,7 +71,7 @@ let recover_files _ =
           let t = SearchReq {
               Q.id = !nsearches;
               Q.search_type = Q.Search_md5;
-              Q.words = (String.lowercase (Md4.to_string file.file_md5)) ;
+              Q.words = (String2.lowercase_utf8 (Md4.to_string file.file_md5)) ;
               Q.exclude = "";
               Q.realm = "";
               Q.size_min = Int64.zero;
@@ -96,7 +96,7 @@ let recover_files_from_server sock =
           let t = SearchReq {
               Q.id = !nsearches;
               Q.search_type = Q.Search_md5;
-              Q.words = (String.lowercase (Md4.to_string file.file_md5)) ;
+              Q.words = (String2.lowercase_utf8 (Md4.to_string file.file_md5)) ;
               Q.exclude = "";
               Q.realm = "";
               Q.size_min = Int64.zero;
@@ -180,7 +180,7 @@ let rec remove_short list list2 =
         remove_short list (s :: list2)
         
 let stem s =
-  let s = String.lowercase (String.copy s) in
+  let s = String2.lowercase_utf8 (String.copy s) in
       for i = 0 to String.length s - 1 do
         let c = s.[i] in
         match c with
@@ -503,7 +503,7 @@ let basename filename =
     with _ ->      
         try
           if len > 2 then
-            let c1 = Char.lowercase filename.[0] in
+            let c1 = Char.lowercase_ascii filename.[0] in
             let c2 = filename.[1] in
             match c1,c2 with
               'a'..'z', ':' ->
@@ -512,7 +512,7 @@ let basename filename =
           else raise exit_exn
         with _ -> Filename.basename filename
   in
-  String.lowercase s
+  String2.lowercase_utf8 s
 
   
 let server_to_client s t sock =

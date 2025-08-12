@@ -298,7 +298,7 @@ let shared_scan_directory shared_dir local_dir =
                 if size > strategy.sharing_minsize && 
                   size < strategy.sharing_maxsize &&
                   (strategy.sharing_extensions = [] ||
-                    List.mem (String.lowercase (
+                    List.mem (String2.lowercase_utf8 (
                         Filename2.last_extension full_name)) 
                     strategy.sharing_extensions)
                 then

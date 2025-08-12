@@ -47,7 +47,7 @@ let lprintf_nl fmt =
         remove_short list (s :: list2) *)
           
 (*let stem s =
-  let s = String.lowercase (String.copy s) in
+  let s = String2.lowercase_utf8 (String.copy s) in
   for i = 0 to String.length s - 1 do
     let c = s.[i] in
     match c with
@@ -557,7 +557,7 @@ let make_hublist_from_file f =
   if !verbose_msg_servers then lprintf_nl "Found %d valid servers from hublist" !counter;
   !hublist
 
-let xml_tag name = let name = String.lowercase name in fun x -> String.lowercase (Xml.tag x) = name
+let xml_tag name = let name = String2.lowercase_utf8 name in fun x -> String2.lowercase_utf8 (Xml.tag x) = name
 
 let rec xml_select names xs =
   match names with
@@ -577,7 +577,7 @@ let ssplit s sub =
 exception ADC_not_supported
 
 let parse_address s =
-  let s = match ssplit (String.lowercase s) "://" with
+  let s = match ssplit (String2.lowercase_utf8 s) "://" with
   | Some ("dchub",s) -> s
   | None -> s
   | Some (("adc"|"adcs"),_) -> raise ADC_not_supported

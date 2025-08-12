@@ -81,7 +81,7 @@ let rec remove_short list list2 =
         remove_short list (s :: list2)
           
 let stem s =
-  let s = String.lowercase (String.copy s) in
+  let s = String2.lowercase_utf8 (String.copy s) in
   for i = 0 to String.length s - 1 do
     let c = s.[i] in
     match c with

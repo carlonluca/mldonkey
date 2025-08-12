@@ -355,7 +355,7 @@ let cut_headers headers =
         let pos = String.index s ':' in
         let len = String.length s in
         let key = String.sub s 0 pos in
-        String.lowercase key, if pos+1 < len && s.[pos+1] = ' ' then
+        String2.lowercase_utf8 key, if pos+1 < len && s.[pos+1] = ' ' then
           String.sub s (pos+2) (len-pos-2), key
         else
           String.sub s (pos+1) (len-pos-1), key

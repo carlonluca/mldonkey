@@ -933,7 +933,7 @@ let local_search s =
   Local.find s
   
 let result_format_of_name name = 
-  match String.lowercase (Filename2.last_extension name ) with
+  match String2.lowercase_utf8 (Filename2.last_extension name ) with
     ".mpeg" -> "mpg"
   | ".jpeg" -> "jpg"
   | "" -> ""
@@ -942,7 +942,7 @@ let result_format_of_name name =
       n
     
 let result_media_of_name name = 
-  match String.lowercase (Filename2.last_extension name ) with
+  match String2.lowercase_utf8 (Filename2.last_extension name ) with
     ".mpg" | ".mpeg" | ".avi" | ".ogm" | ".divx" | ".mov" -> "Video"
   | ".mp3" | ".wav" | ".ogg" -> "Audio"
   | ".txt" | ".doc" -> "Doc"

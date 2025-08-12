@@ -24,7 +24,7 @@ open Xtypes
   exception BadFile of string * int
 (* To buffer string literals *)
 
-  let initial_string_buffer = String.create 256
+  let initial_string_buffer = Bytes.create 256
   let string_buff = ref initial_string_buffer
   let string_index = ref 0
   let string_start_pos = ref 0
@@ -35,7 +35,7 @@ open Xtypes
   
   let store_string_char c =
     if !string_index >= String.length (!string_buff) then begin
-        let new_buff = String.create (String.length (!string_buff) * 2) in
+        let new_buff = Bytes.create (String.length (!string_buff) * 2) in
         String.blit (!string_buff) 0 new_buff 0 (String.length (!string_buff));
         string_buff := new_buff
       end;
@@ -56,7 +56,7 @@ open Xtypes
   let hot_y = ref 0
   
   let hexcode lexbuf i = 
-    let c = Char.lowercase (Lexing.lexeme_char lexbuf i) in
+    let c = Char.lowercase_ascii (Lexing.lexeme_char lexbuf i) in
     if c>= '0' && c <='9' then (Char.code c) - (Char.code '0')
     else
     if c>= 'a' && c <= 'f' then
@@ -171,7 +171,7 @@ and xbm_file = parse
       xbm_file lexbuf }
   | '{' { 
       let len = (max (!width / 8) 1) * !height  in
-      code := String.create len;
+      code := Bytes.create len;
       read := len;
       read_bits lexbuf
     }
@@ -204,13 +204,13 @@ let readPixmapDataFromFile filename =
     let colors = Array.make ncolors NoColor in
     let codes = Hashtbl.create ncolors in
     for i = 0 to ncolors - 1 do
-      code := String.create nchars;
+      code := Bytes.create nchars;
       read := nchars;
       colors.(i) <- color_def lexbuf;
       Hashtbl.add codes !code i;
     done;
     let table = Array.init dy (fun _ -> Array.make dx 0) in
-    let code = String.create nchars in
+    let code = Bytes.create nchars in
     for y = 0 to dy - 1 do
       let line = xpm_line lexbuf in
       if String.length line <> dx * nchars then raise (BadFile ("size",Lexing.lexeme_start lexbuf));

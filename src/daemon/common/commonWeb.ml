@@ -91,7 +91,7 @@ let mldonkey_wget_url w f =
     begin try
     H.whead2 r1 (fun headers ->
       List.iter (fun (name, content) ->
-        if String.lowercase name = "last-modified" then
+        if String2.lowercase_utf8 name = "last-modified" then
           try
             date := Some content
           with _ -> ()
@@ -260,7 +260,7 @@ let _ =
             Unix.close pipe_in;
             let output = Buffer.create 1024 in
             let buffersize = 1024 in
-            let buffer = String.create buffersize in
+            let buffer = Bytes.create buffersize in
             (try
               while true do
                 let nread = Unix.read pipe_out buffer 0 buffersize in

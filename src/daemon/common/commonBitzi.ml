@@ -103,6 +103,10 @@ val t : Xml.xml =
 
   *)
 
+let xml_of xml = match xml with
+    Xml.Element (a,b,c) -> a,b,c
+  | _ -> failwith "Xml.xml_of: bad XML type"
+
 let make_request url =
 
   let module H = Http_client in
@@ -123,9 +127,9 @@ let parse_bitzi_ticket ticket s =
   lprintf "Bitzi ticket downloaded:%s\n" (String.escaped s);
   let xml = Xml.parse_string s in
   ticket.bitzi_state <- Bitzi_ticket s;
-  let (_,_, list) = Xml.xml_of xml in
+  let (_,_, list) = xml_of xml in
   List.iter (fun xml ->
-      let (header, args, _) = Xml.xml_of xml in
+      let (header, args, _) = xml_of xml in
       match header with
         "rdf:Description" ->
 (*
@@ -157,11 +161,11 @@ let parse_possible_bitzi_ticket sha1 ticket s =
   lprintf "****** parse_possible_bitzi_ticket *******\n";
   lprintf "Bitzi ticket downloaded:%s\n" (String.escaped s);
   let xml = Xml.parse_string s in
-  let (_,_, list) = Xml.xml_of xml in
+  let (_,_, list) = xml_of xml in
   let found_uids = ref [Uid.create (Sha1 sha1)] in
   let found_file_size = ref zero in
   List.iter (fun xml ->
-      let (header, args, _) = Xml.xml_of xml in
+      let (header, args, _) = xml_of xml in
       match header with
         "rdf:Description" ->
 (*

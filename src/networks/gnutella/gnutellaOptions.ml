@@ -92,11 +92,11 @@ let server_connection_timeout =
 let client_uid = define_option gnutella_section ["client_uid"]
     "The UID of this client" Md4.option (Md4.random ())
   
-  let _  =
+let _ =
   option_hook client_uid (fun _ ->
-     let s = Bytes.of_string (Md4.direct_to_string !!client_uid) in
-     s.[8] <- '\255';
-     s.[15] <- '\000';
+    let s = Bytes.of_string (Md4.direct_to_string !!client_uid) in
+    Bytes.set s 8 '\255';
+    Bytes.set s 15 '\000';
   )
   
   (*

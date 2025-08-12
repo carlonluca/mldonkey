@@ -393,7 +393,7 @@ value ml_save_jpeg(value gdw, value filename, value quality) {
 
 /* Taken from the ocaml source... */
 struct channel;
-void really_putblock (struct channel *, char *, long);
+void caml_really_putblock (struct channel *, char *, long);
 
 /* Extract a struct channel * from the heap object representing it */
 #define Channel(v) (*((struct channel **) (Data_custom_val(v))))
@@ -404,7 +404,7 @@ value ml_dump_png(value gdw, value chan) {
   void* dat;
 
   dat = gdImagePngPtr(IM_VAL(gdw), &size);
-  really_putblock(Channel(chan), dat, size);
+  caml_really_putblock(Channel(chan), dat, size);
   free(dat);
   
 #else
@@ -419,7 +419,7 @@ value ml_dump_jpeg(value gdw, value chan, value quality) {
   void* dat;
 
   dat = gdImageJpegPtr(IM_VAL(gdw), &size, Int_val(quality));
-  really_putblock(Channel(chan), dat, size);
+  caml_really_putblock(Channel(chan), dat, size);
   free(dat);
   
 #else

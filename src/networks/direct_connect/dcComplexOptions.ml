@@ -67,7 +67,7 @@ module SharedDcFileOption = struct
         in
         let sh_sname =
           (try
-            String.lowercase (List.nth (String2.splitn sh_cname '/' 1) 1) (* strip the "shared##" *)
+            String2.lowercase_utf8 (List.nth (String2.splitn sh_cname '/' 1) 1) (* strip the "shared##" *)
           with _ -> failwith "Bad DC shared file codedname" )
         in 
         let sh_root =

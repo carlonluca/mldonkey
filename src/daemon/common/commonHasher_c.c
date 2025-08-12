@@ -71,7 +71,7 @@ static void HASH_NAME##_unsafe64_fd_direct (OS_FD fd, OFF_T pos, OFF_T len, \
     nread = os_read (fd, local_hash_buffer, max_nread); \
  \
     if(nread <= 0) { \
-        unix_error(errno, "HASH_NAME##unsafe64_fd_direct: Read", Nothing); \
+        caml_unix_error(errno, "HASH_NAME##unsafe64_fd_direct: Read", Nothing); \
     } \
     if(nread == 0){ \
       HASH_FINISH (&context, digest); \
@@ -107,7 +107,7 @@ static void tiger_tree_fd(OS_FD fd, size_t len, OFF_T pos,
       ssize_t nread = os_read (fd, curs, max_nread);
 
         if(nread <= 0) {
-        unix_error(errno, "tiger_safe_fd: Read", Nothing);
+        caml_unix_error(errno, "tiger_safe_fd: Read", Nothing);
       }
       curs += nread;
       toread -= nread;
