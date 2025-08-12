@@ -877,3 +877,7 @@ let _ =
       Printf.bprintf buf " dummy_sample: %d\n" (Array.length dummy_sample);
       Printf.bprintf buf " activities: %d\n" (Fifo.length activities);
   )
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

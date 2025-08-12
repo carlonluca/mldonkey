@@ -569,3 +569,7 @@ onClick=\\\"location.href='submit?q=server_shares+%d'\\\"\\>%d\\</TD\\>"
   with e ->
       lprintf_nl "Exception %s in CommonServer.server_print"
         (Printexc2.to_string e)
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

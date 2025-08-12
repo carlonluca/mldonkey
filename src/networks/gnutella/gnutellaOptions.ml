@@ -174,3 +174,7 @@ let old_files =
   define_option gnutella_section ["old_files"]
     "" (list_option (tuple2_option (string_option, int64_option))) []
 
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

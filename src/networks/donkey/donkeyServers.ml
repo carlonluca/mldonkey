@@ -917,3 +917,7 @@ let _ =
   server_ops.op_server_sort <- ( fun s ->
     (3600 * s.server_score) + connection_last_conn s.server_connection_control
   )
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

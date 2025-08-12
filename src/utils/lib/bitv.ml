@@ -457,7 +457,7 @@ let to_string v =
   let n = v.length in
   let s = Bytes.make n '0' in
   for i = 0 to n - 1 do
-    if unsafe_get v i then s.[i] <- '1'
+    if unsafe_get v i then Bytes.set s i '1'
   done;
   Bytes.unsafe_to_string s
 
@@ -615,4 +615,8 @@ let select_to f32 f64 = match Sys.word_size with
 let to_nativeint_s = select_to to_int32_s to_int64_s
 let to_nativeint_us = select_to to_int32_us to_int64_us
 
+
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
 

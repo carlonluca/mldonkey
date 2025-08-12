@@ -25,3 +25,5 @@ val get_string : string -> int -> string * int
   
 val gui_cut_messages : (int -> string -> unit) -> TcpBufferedSocket.t -> 'a -> unit
   
+
+val force_link: unit -> unit

@@ -32,3 +32,4 @@ type connections_controler
 val set_accept_controler : t -> connections_controler -> unit
 val create_connections_controler : string -> (int -> int -> bool) -> connections_controler
   
+val force_link: unit -> unit

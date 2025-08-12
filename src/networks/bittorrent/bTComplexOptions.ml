@@ -341,3 +341,7 @@ let () =
   network.op_network_save_complex_options <- save;
   network.op_network_update_options <- update_options;
   network.op_network_save_sources <- (fun _ -> ())
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

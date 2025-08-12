@@ -1,4 +1,4 @@
-#include "../../../config/config.h"
+#include <config/config.h>
 
 exception Error of string
 
@@ -38,13 +38,13 @@ and gnu_extras = {
 
 class in_chan i = object
   method really_input str pos len = 
-    try Pervasives.really_input i str pos len with
+    try Stdlib.really_input i str pos len with
         End_of_file -> raise (Error "Unexpected end of file")
   method input str pos len = 
-    try Pervasives.input i str pos len with
+    try Stdlib.input i str pos len with
         End_of_file -> raise (Error "Unexpected end of file")
   method dispose () = ()
-  method close () = Pervasives.close_in i
+  method close () = Stdlib.close_in i
 end
 
 class gzin_chan i = object
@@ -169,7 +169,7 @@ let align_at_header t =
     | None -> ()
     | Some h ->
         let entry_size = ((h.t_size/blocksize) + 1) * blocksize
-        and buf = String.create blocksize
+        and buf = Bytes.create blocksize
         and discarded = ref 0 in
           while !discarded < entry_size do
             let read = t.chan#input buf 0 blocksize in
@@ -278,9 +278,9 @@ let read_entry t =
     head, read_body t
 
 class out_chan o = object
-  method output str pos len = Pervasives.output o str pos len
-  method flush () = Pervasives.flush o
-  method close () = Pervasives.close_out o
+  method output str pos len = Stdlib.output o str pos len
+  method flush () = Stdlib.flush o
+  method close () = Stdlib.close_out o
 end
 
 class gzout_chan o = object
@@ -397,7 +397,7 @@ let output t head body =
     write_num8 buf 116 head.t_gid;
     write_num12 buf 124 size;
     write_int32 buf 136 head.t_mtime;
-    buf.[156] <- typeflag_to_char head.t_typeflag;
+    Bytes.set buf 156 (typeflag_to_char head.t_typeflag);
     write_str buf 157 100 head.t_linkname;
     write_magic buf 257 head.t_format;
     write_str buf 265 32 head.t_uname;

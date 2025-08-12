@@ -173,3 +173,5 @@ val mk_usenet_date : ?zone:int -> float -> string
 
 val mk_timezone : float -> string
   (* Return a string with the current timezone as string, example "-0500" *)
+
+val force_link: unit -> unit

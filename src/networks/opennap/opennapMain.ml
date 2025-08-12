@@ -104,3 +104,7 @@ let _ =
   network.op_network_share <- add_shared;
   CommonInteractive.register_gui_options_panel 
     "Napster" gui_opennap_options_panel;
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

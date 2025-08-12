@@ -86,3 +86,7 @@ let gui_opennap_options_panel =
     "Use Napigator", shortname use_napigator, "B";
     "Napigator List URL", shortname servers_list_url, "T";
   ]
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

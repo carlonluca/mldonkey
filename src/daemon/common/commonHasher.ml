@@ -131,3 +131,7 @@ let compute_tiger name begin_pos len f =
       job_error = false;
     } in
   Fifo.put fifo (Obj.magic job)
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

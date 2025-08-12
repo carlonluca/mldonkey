@@ -112,3 +112,5 @@ val filesystem_type : string -> fstype
 val subfile_tree_map : t -> (string -> int64 -> int64 -> int64-> unit)  ->  unit
 val find_file : t -> int64 -> (string * int64 * int64)
 val find_file_index : t -> int -> (string * int64 * int64)
+
+val force_link: unit -> unit

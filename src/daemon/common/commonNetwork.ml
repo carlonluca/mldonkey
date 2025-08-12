@@ -321,3 +321,7 @@ let new_network shortname name ?comment flags =
     else Printf.sprintf "%s %s" !networks_string display_name;
   (*  lprintf_nl "Network %s registered" r.network_name; *)
   r
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

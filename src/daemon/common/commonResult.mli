@@ -85,3 +85,5 @@ val update_result2 :
   StoredResult.stored_result -> StoredResult.result -> unit
 val increment_avail : StoredResult.stored_result -> StoredResult.stored_result
 val update_or_create_avail : CommonTypes.tag list -> CommonTypes.tag list
+
+val force_link: unit -> unit

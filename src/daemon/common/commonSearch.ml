@@ -969,3 +969,7 @@ let _ =
       Printf.bprintf buf "  Memorized searches: %d\n" !counter;
       Printf.bprintf buf "  Memorized items: %d\n" !items;
   )
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

@@ -121,3 +121,7 @@ Download the server list from:
   
 http://www.soulseek.org/slskinfo
 *)
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

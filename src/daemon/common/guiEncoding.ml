@@ -1378,3 +1378,7 @@ let _ =
     assert (check_from_gui (Password ("mldonkey", "toto")));
   done
   
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

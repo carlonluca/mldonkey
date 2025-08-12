@@ -73,12 +73,12 @@ let inside node hash = not (cmp hash node.lo = LT || cmp hash node.hi = GT)
 
 let middle =
   let s = Bytes.make 20 (Char.chr 0xFF) in
-  s.[0] <- Char.chr 0x7F;
+  Bytes.set s 0 (Char.chr 0x7F);
   H.direct_of_string @@ Bytes.unsafe_to_string s
 
 let middle' =
   let s = Bytes.make 20 (Char.chr 0x00) in
-  s.[0] <- Char.chr 0x80;
+  Bytes.set s 0 (Char.chr 0x80);
   H.direct_of_string @@ Bytes.unsafe_to_string s
 
 let last =
@@ -100,7 +100,7 @@ let hash_of_big_int n =
   let div = big_int_of_int 256 in
   for i = Bytes.length s - 1 downto 0 do
     let (d,m) = quomod_big_int !n div in
-    s.[i] <- Char.chr (int_of_big_int m);
+    Bytes.set s i (Char.chr (int_of_big_int m));
     n := d
   done;
   assert (eq_big_int zero_big_int !n);
@@ -431,4 +431,8 @@ let table_to_value t =
 let t = define_option_class "RoutingTable" value_to_table table_to_value
 
 end
+
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
 

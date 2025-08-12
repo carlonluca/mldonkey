@@ -27,3 +27,6 @@
 *.cm*
 *.o
 *.a
+
+_build
+src/utils/lib/autoconf.ml

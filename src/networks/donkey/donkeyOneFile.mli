@@ -32,3 +32,5 @@ val remove_client_slot : DonkeyTypes.client -> unit
   
 val search_found : bool -> 
   CommonTypes.search -> Md4.t -> CommonTypes.tag list -> unit
+
+val force_link: unit -> unit

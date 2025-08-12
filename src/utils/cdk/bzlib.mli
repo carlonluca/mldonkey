@@ -23,3 +23,5 @@ external decompress:
 external decompress_end: stream -> unit = "camlzip_bzDecompressEnd"
 
 external bzlib_version : unit -> string = "camlzip_bzlibversion"
+
+val force_link: unit -> unit

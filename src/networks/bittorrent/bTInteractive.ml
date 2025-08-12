@@ -1555,3 +1555,7 @@ let _ =
             T.shared_sub_files = file.file_files;
             }
   )
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

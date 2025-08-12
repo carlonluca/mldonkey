@@ -160,3 +160,7 @@ let _ =
             lprintf "[BW3 %6d] %20s: stop accepting connections\n" (last_time ()) cc.cc_name
       ) !connections_controlers
   )
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

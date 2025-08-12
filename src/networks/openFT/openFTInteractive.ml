@@ -233,3 +233,7 @@ let _ =
         P.user_server = 0;
       })
 
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

@@ -33,3 +33,6 @@ let _ = List.iter
         Sys_error s -> prerr_endline s 
     )
     !Mp3_args.files
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()

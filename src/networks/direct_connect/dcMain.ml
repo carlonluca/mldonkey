@@ -239,7 +239,7 @@ let _ =
   network.op_network_porttest_result <- (fun _ -> PorttestNotAvailable);
   network.op_network_check_upload_slots <- (fun _ -> ());
 
-  CommonInteractive.register_gui_options_panel "DC" gui_dc_options_panel; 
+  CommonInteractive.register_gui_options_panel "DC" gui_dc_options_panel
   
 (*
 let _ =
@@ -249,3 +249,6 @@ let _ =
   )
 *)
 
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()

@@ -345,3 +345,7 @@ let _ =
         network_downloaded = Int64.zero;
       })
   
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

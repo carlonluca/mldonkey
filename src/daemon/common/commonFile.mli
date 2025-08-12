@@ -160,3 +160,5 @@ val lprintf_file_nl : ?exn:exn -> CommonTypes.file -> ('a, unit, string, unit) P
 (** [concat_file dir filename] sanitizes [filename] and appends it to [dir] *)
 val concat_file : string -> string -> string
 
+
+val force_link: unit -> unit

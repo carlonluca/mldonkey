@@ -66,3 +66,5 @@ module Make :
   end
   
   
+
+val force_link: unit -> unit

@@ -1,0 +1,95 @@
+(library
+    (name autoconf)
+    (flags
+        (:standard -w -3 -w -50 -w -27 -w -67 -w -69)
+    )
+    (wrapped false)
+    (modules
+        autoconf
+    )
+)
+
+(library
+    (name utils_stubs)
+    (modules)
+    (foreign_stubs
+        (language c)
+        (names
+            md4_c
+            md4_comp
+            charsetstubs
+            tiger
+            tiger_stubs
+            hashes_stubs
+            sha1_c
+            md5_c
+            fst_hash
+            magiclib_stub
+            CryptoPP_stubs
+        )
+        (flags (:standard -I%{project_root}/../.. -I../cdk))
+    )
+    (foreign_stubs
+        (language cxx)
+        (names CryptoPP)
+    )
+)
+
+(rule
+    (targets options.ml)
+    (deps options.ml4)
+    (action
+        (run camlp4o pa_o.cmo pa_op.cmo pr_o.cmo -impl %{deps} -o %{targets})
+    )
+)
+
+(rule
+    (targets gettext.ml)
+    (deps gettext.ml4)
+    (action
+        (run camlp4o pa_o.cmo pa_op.cmo pr_o.cmo -impl %{deps} -o %{targets})
+    )
+)
+
+(rule
+    (targets misc2.ml)
+    (deps misc2.mlcpp)
+    (action
+        (run cpp -x c -DOCAMLVERSION_MAJOR=%{env:OCAMLVERSION_MAJOR=4122} -I%{project_root}/../.. -P misc2.mlcpp -o misc2.ml)
+    )
+)
+
+(library
+    (name utils)
+    (flags
+        (:standard -w -3 -w -27 -w -67 -w -35 -w -69 -w -32)
+    )
+    (wrapped false)
+    (libraries cdk autoconf utils_stubs ocamlrss)
+    (modules
+        bitv
+        charset
+        date
+        gettext
+        indexer
+        indexer1
+        indexer2
+        intmap
+        intset
+        levenshtein
+        magic
+        magic_magic
+        magiclib
+        md4
+        misc
+        misc2
+        Options
+        queues
+        set2
+        store
+        stringMap
+        threadPool
+        url
+        verificationBitmap
+    )
+)

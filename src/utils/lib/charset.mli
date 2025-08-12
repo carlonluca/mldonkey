@@ -191,3 +191,5 @@ val conversion_enabled : bool ref
 
 end
 
+
+val force_link: unit -> unit

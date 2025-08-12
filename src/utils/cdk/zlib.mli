@@ -60,3 +60,5 @@ external update_crc: int32 -> bytes -> int -> int -> int32
                    = "camlzip_update_crc32"
 external update_crc_string: int32 -> string -> int -> int -> int32
                    = "camlzip_update_crc32"
+
+val force_link: unit -> unit

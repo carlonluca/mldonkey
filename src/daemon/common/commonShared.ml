@@ -393,3 +393,7 @@ let shareds_by_num = ()
   Options.set_string_wrappers shared_directories
     Filepath.semipath_to_string
     Filepath.string_to_semipath*)
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

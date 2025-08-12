@@ -25,8 +25,8 @@
 /**************************************************************************/
 /* wraps for libminiupnpc libnatpmp*/
 
-#include "../../../config/config.h"
-#include "../../utils/lib/os_stubs.h"
+#include <config/config.h>
+#include <os_stubs.h>
 
 #ifdef ENABLE_UPNP_NATPMP
 

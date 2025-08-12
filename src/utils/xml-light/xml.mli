@@ -156,3 +156,5 @@ val to_string_fmt : xml -> string
 
 val xml_of : xml -> string * (string * string) list * xml list
   
+
+val force_link: unit -> unit

@@ -125,3 +125,7 @@ let uncompress ?(header = true) refill flush =
   in
     uncompr 0 0;
     inflate_end zs
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

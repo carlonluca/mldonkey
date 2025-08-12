@@ -525,3 +525,7 @@ let impl_client_info impl =
      T.client_sui_verified = None;
      T.client_file_queue = [];
   }
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

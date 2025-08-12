@@ -315,3 +315,7 @@ let gui_donkey_options_panel =
 let old_files = define_option donkey_section ["old_files"]
   "The files that were downloaded"
     (list_option Md4.option) []
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

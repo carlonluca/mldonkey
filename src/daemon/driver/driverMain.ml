@@ -363,8 +363,7 @@ let load_config () =
   Unix2.safe_mkdir !!temp_directory;
   Unix2.can_write_to_directory !!temp_directory
 
-let _ =
-
+let init_1 () =
   let t = Unix.localtime (Unix.time ()) in
   if (t.Unix.tm_year<=104) then
     begin
@@ -677,7 +676,7 @@ or getting a binary compiled with glibc %s.\n\n")
 
   if !verbose then lprintf_nl (_b "Activated system signal handling")
 
-let _ =
+let init_2 () =
   let security_space_oc = ref None in
   begin
 (* Create a 'config_files_security_space' megabytes file to protect some space

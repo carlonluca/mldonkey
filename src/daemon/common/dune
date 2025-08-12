@@ -1,0 +1,32 @@
+(library
+    (name commonstubs)
+    (wrapped false)
+    (modules)
+    (foreign_stubs
+        (language c)
+        (names
+            commonHasher_c
+        )
+        (flags (:standard -I%{project_root}/../.. -I../../utils/cdk))
+    )
+)
+
+(library
+    (name daemoncommon)
+    (flags
+        (:standard -w -3 -w -27 -w -67 -w -35 -w -69 -w -32)
+    )
+    (wrapped false)
+    (libraries
+        utils
+        net
+        xmllight
+        ocamlrss
+        cdk
+        commonstubs
+        mp3tagui
+    )
+)
+
+(ocamllex giftLexer)
+(ocamlyacc giftParser)

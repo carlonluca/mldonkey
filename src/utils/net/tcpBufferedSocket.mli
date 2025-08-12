@@ -179,3 +179,5 @@ val get_latencies : bool ref -> string
 
 val string_of_event : event -> string
 
+
+val force_link: unit -> unit

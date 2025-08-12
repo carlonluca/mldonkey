@@ -2163,3 +2163,7 @@ Define a function to be called when the "mem_stats" command
       Printf.bprintf buf "  n_overnet_searches: %d\n" !n_overnet_searches;
   );
 end
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

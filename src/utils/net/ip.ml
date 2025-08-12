@@ -422,3 +422,7 @@ let value_to_iprange v = range_of_string (value_to_string v)
 let iprange_to_value ip = string_to_value (string_of_range ip)
 
 let range_option = define_option_class "Range" value_to_iprange iprange_to_value
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

@@ -28,3 +28,5 @@ val count_upload : BTTypes.client -> Int64.t -> unit
 val print_stats : ui_conn -> CommonStats.style -> unit
 
 (*val save_download_history : BTTypes.file -> unit*)
+
+val force_link: unit -> unit

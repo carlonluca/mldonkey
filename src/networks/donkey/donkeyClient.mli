@@ -45,3 +45,5 @@ val clean_requests : unit -> unit
 val disconnect_client : DonkeyTypes.client -> BasicSocket.close_reason -> unit
 
 val add_source : DonkeyTypes.file -> Ip.t -> int -> Ip.t -> int -> unit
+
+val force_link: unit -> unit

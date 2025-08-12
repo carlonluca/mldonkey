@@ -849,3 +849,7 @@ let _ =
       connection_last_conn s.server_connection_control
   )
   
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

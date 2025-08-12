@@ -24,3 +24,5 @@ val check_shared_files : unit -> unit
 val all_shared : unit -> DonkeyTypes.file list
 val send_new_shared : unit -> unit
 val remember_shared_info : DonkeyTypes.file -> string -> unit
+
+val force_link: unit -> unit

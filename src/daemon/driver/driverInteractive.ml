@@ -2194,10 +2194,11 @@ let diskinfo html buf =
               \\<td class=\\\"sr ar\\\"\\>%s\\</td\\>\\<td class=\\\"sr\\\"\\>%s\\</td\\>\\</tr\\>"
             (html_mods_cntr ()) dir strategy diskused diskfree percentfree filesystem
         else
-          Printf.bprintf buf "%-*s|%-*s|%8s|%8s|%5s|%-s\n"
+          Printf.bprintf buf "%-*s|%-*s|%8s|%8s|%5s|%s\n"
             (max !len_dir (!len_dir - String.length dir)) dir
             (max !len_strategy (!len_strategy - String.length strategy)) strategy
             diskused diskfree percentfree filesystem
+
         ) !list;
   if html then
     Printf.bprintf buf "\\</table\\>\\</td\\>\\<tr\\>\\</table\\>\\</div\\>"
@@ -2424,7 +2425,7 @@ let filenames_variability o list =
     (List.map (fun (fileinfo, nc) ->
       let n = network_find_by_num fileinfo.file_network in
       [| 
-        Printf.sprintf "[%-s %5d]" n.network_name (fileinfo.file_num);
+        Printf.sprintf "[%-10s %5d]" n.network_name fileinfo.file_num;
         shorten fileinfo.file_name 80;
         string_of_int nc |]
     ) sorted_score_list)

@@ -1808,3 +1808,7 @@ let to_gui (proto : int array)  opcode s =
       
       dump s;
       raise e
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

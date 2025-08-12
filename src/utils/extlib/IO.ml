@@ -18,10 +18,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *)
 
-(* #if OCAML < 407 *)
-module Stdlib = Pervasives
-(* #endif *)
-
 (* open ExtBytes *)
 
 type input = {
@@ -43,8 +39,6 @@ exception Output_closed
 
 (* -------------------------------------------------------------- *)
 (* API *)
-
-let default_close = (fun () -> ())
 
 let create_in ~read ~input ~close =
   {
@@ -803,7 +797,7 @@ let rec write_bits b ~nbits x =
   end
 
 let flush_bits b =
-  if b.nbits > 0 then write_bits b (8 - b.nbits) 0
+  if b.nbits > 0 then write_bits b ~nbits:(8 - b.nbits) 0
 
 (* -------------------------------------------------------------- *)
 (* Generic IO *)

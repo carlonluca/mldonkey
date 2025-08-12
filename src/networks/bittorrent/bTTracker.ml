@@ -768,3 +768,7 @@ Events
 2: started
 3: stopped
 *)
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
+

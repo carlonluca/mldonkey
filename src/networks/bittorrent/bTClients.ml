@@ -2004,4 +2004,7 @@ let _ =
       if !verbose_msg_clients then
         lprintf_nl "Client %d: client_enter_upload_queue" (client_num c);
       ready_for_upload (as_client c));
-  network.op_network_connected_servers <- (fun _ -> []);
+  network.op_network_connected_servers <- (fun _ -> [])
+
+(* Dummy function to ensure this module is linked by Dune *)
+let force_link () = ()
