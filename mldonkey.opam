@@ -30,6 +30,7 @@ depends: [
   "bitstring"
   "xml-light"
   "camomile"
+  "syslog"
 ]
 build: [
   ["./configure" "--enable-debug" "--prefix" prefix]

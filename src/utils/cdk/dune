@@ -46,7 +46,6 @@
         printf2
         string2
         tar
-        syslog
         unix2
         unix32
         zip
@@ -56,6 +55,6 @@
         int64ops
         mlUnix
     )
-    (libraries IO unix str threads camlp-streams autoconf cdkstubs camomile)
+    (libraries IO unix str threads camlp-streams autoconf cdkstubs camomile syslog)
     (flags (:standard -w -32 -w -50 -w -27 -w -35 -w -69))
 )

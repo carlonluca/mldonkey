@@ -24,5 +24,6 @@ interfaces : telnet, web, and binary protocol for third party GUIs.
         num
         xml-light
         camomile
+        syslog
     )
 )
