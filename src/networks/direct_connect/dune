@@ -7,7 +7,7 @@
         (names
             che3_c
         )
-        (flags (:standard -I%{project_root}/../.. -I../../utils/cdk))
+        (flags (:standard -I%{project_root}/../.. -I../../utils/cdk -DPROTOTYPES=1))
     )
 )
 

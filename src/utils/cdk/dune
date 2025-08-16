@@ -12,7 +12,7 @@
             stubs_c
             unix_stubs_c
         )
-        (flags (:standard -I%{project_root}/../..))
+        (flags (:standard -I%{project_root}/../.. -DPROTOTYPES=1))
     )
 )
 

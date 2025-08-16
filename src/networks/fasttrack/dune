@@ -12,7 +12,7 @@
             fst_crypt_ml
             fst_crypt
         )
-        (flags (:standard -I%{project_root}/../.. -I../../utils/cdk))
+        (flags (:standard -I%{project_root}/../.. -I../../utils/cdk -DPROTOTYPES=1))
     )
 )
 

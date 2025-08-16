@@ -793,8 +793,9 @@ upnpPulse( ml_upnpmp_t * map )
 
 
 static void *
-upnpNatpmpThread( )
+upnpNatpmpThread(void* arg)
 {
+	(void)arg;
 	int oldStatus, newStatus;
 	int i, err;
 	time_t now;

@@ -7,7 +7,7 @@
         (names
             upnp_stubs
         )
-        (flags (:standard -I%{project_root}/../.. -I../cdk))
+        (flags (:standard -I%{project_root}/../.. -I../cdk -DPROTOTYPES=1))
     )
 )
 
