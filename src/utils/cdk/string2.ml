@@ -324,7 +324,28 @@ let dehtmlize =
     |> Str.global_replace br_regexp "\n"
     |> Str.global_replace tag_regexp ""
 
-open Camomile
-module CM = CaseMap.Make(UTF8)
-let lowercase_utf8 s = CM.lowercase s
-let capitalize_utf8 s = CM.capitalize s
+let case casing s =
+  try
+    let b = Buffer.create 17 in
+    let encoder = Uutf.encoder `UTF_8 (`Buffer b) in
+    let encode scalar = match Uutf.encode encoder (`Uchar scalar) with
+      | `Ok | `Partial -> ()
+    in
+    Uutf.String.fold_utf_8 (fun () _ c -> match c with
+        | `Malformed _ -> raise Exit
+        | `Uchar u -> casing encode u
+      ) () s;
+    ignore (Uutf.encode encoder `End);
+    Buffer.contents b
+  with Exit -> s
+
+let upper encode c = match Uucp.Case.Map.to_upper c with
+  | `Self -> encode c
+  | `Uchars l -> List.iter encode l
+
+let lower encode c = match Uucp.Case.Map.to_lower c with
+  | `Self -> encode c
+  | `Uchars l -> List.iter encode l
+
+let uppercase_utf8 x = case upper x
+let lowercase_utf8 x = case lower x

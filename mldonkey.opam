@@ -29,8 +29,9 @@ depends: [
   "camlp-streams"
   "bitstring"
   "xml-light"
-  "camomile"
   "syslog"
+  "uutf"
+  "uucp"
 ]
 build: [
   ["./configure" "--enable-debug" "--prefix" prefix]

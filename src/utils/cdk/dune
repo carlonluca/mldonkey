@@ -55,6 +55,6 @@
         int64ops
         mlUnix
     )
-    (libraries IO unix str threads camlp-streams autoconf cdkstubs camomile syslog)
+    (libraries IO unix str threads camlp-streams autoconf cdkstubs syslog uutf uucp)
     (flags (:standard -w -32 -w -50 -w -27 -w -35 -w -69))
 )

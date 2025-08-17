@@ -602,7 +602,7 @@ let dc_info_print info data line o =
 
 let show_dc_buttons o =
   let buf = o.conn_buf in
-  let button id ?(cmd="dc"^id) ?(txt=String2.capitalize_utf8 id) () =
+  let button id ?(cmd="dc"^id) ?(txt=String2.uppercase_utf8 id) () =
     Printf.bprintf buf "\\<form style=\\\"margin: 0px;\\\" id=\\\"%s\\\" name=\\\"%s\\\"
       action=\\\"javascript:parent.output.location.href='submit?q=%s'\\\"\\>
       \\<td\\>\\<input style=\\\"font-family: verdana; font-size: 12px;\\\" type=submit

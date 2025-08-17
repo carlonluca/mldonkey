@@ -109,4 +109,4 @@ val hex_string_of_string : string -> string
 val dehtmlize: string -> string
 
 val lowercase_utf8: string -> string
-val capitalize_utf8: string -> string
+val uppercase_utf8: string -> string
