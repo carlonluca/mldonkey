@@ -39,6 +39,11 @@
 
 #define CAML_MAGIC_VERSION "0.2"
 
+#ifdef MLDONKEY_MAGIC_LOAD_FROM_BUFF
+extern unsigned char _usr_share_misc_magic_mgc[];
+extern unsigned int _usr_share_misc_magic_mgc_len;
+#endif
+
 /*
  * Failure
  */
@@ -254,15 +259,25 @@ CAMLprim value ocaml_magic_compile(value c, value filenames)
   COMPILE(String_val(filenames));
 }
 
-
-
+#ifdef MLDONKEY_MAGIC_LOAD_FROM_BUFF
 #define LOAD(fname) \
   magic_t cookie = COOKIE_VAL(c); \
-  \
+  if (cookie == NULL) caml_invalid_argument("Magiclib.load"); \
+  do { \
+    void *buffers[1] = { _usr_share_misc_magic_mgc }; \
+    size_t sizes[1]  = { _usr_share_misc_magic_mgc_len }; \
+    if (magic_load_buffers(cookie, buffers, sizes, 1) < 0) \
+      raise_on_error("Magiclib.load: ", cookie); \
+  } while (0); \
+  CAMLreturn(Val_unit)
+#else
+#define LOAD(fname) \
+  magic_t cookie = COOKIE_VAL(c); \
   if (cookie == NULL) caml_invalid_argument("Magiclib.load"); \
   if (magic_load(cookie, fname) < 0) \
     raise_on_error("Magiclib.load: ", cookie);  \
   CAMLreturn(Val_unit)
+#endif
 
 CAMLprim
 value ocaml_magic_load_default(value c)

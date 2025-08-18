@@ -25,6 +25,7 @@
             md5_c
             fst_hash
             magiclib_stub
+            magic_data
             CryptoPP_stubs
         )
         (flags (:standard -I%{project_root}/../.. -I../cdk -DPROTOTYPES=1))

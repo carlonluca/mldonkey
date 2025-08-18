@@ -5,36 +5,92 @@ on:
   - pull_request
 
 jobs:
+  static-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x86_64, arm-v7, aarch64]
+    container:
+      image: alpine:3.22
+    steps:
+      - name: Install build dependencies
+        run: |
+          apk add --no-cache \
+            bash git build-base pkgconfig \
+            ocaml ocaml-compiler-libs ocaml-findlib dune \
+            opam curl-dev zlib-dev bzip2-dev \
+            libidn2-dev libunistring-dev libpsl-dev \
+            brotli-dev zstd-dev c-ares-dev \
+            openssl-dev \
+            miniupnpc-dev libnatpmp-dev file-dev \
+            gd-dev libpng-dev jpeg-dev python3 m4 curl-dev \
+            curl-static zlib-static bzip2-static libmagic-static \
+            libpng openssl-libs-static libpng-static libjpeg-turbo-static \
+            nghttp2-static openssl-dev openssl-libs-static \
+            libidn2-static brotli-static libpsl-static libunistring-static \
+            zstd-static c-ares-dev brotli-static git git-lfs musl
+          apk add m4
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Init opam
+        run: |
+          opam init --disable-sandboxing --bare --yes --jobs=$(nproc)
+          eval $(opam env)
+          opam switch create musl-static ocaml-variants.5.3.0+options --no-install
+      - name: Install OCaml deps
+        run: |
+          git config --global --add safe.directory .
+          eval $(opam env --switch=musl-static)
+          opam install . --deps-only --yes --jobs=$(nproc)
+      - name: Build cryptopp statically
+        run: |
+          git clone https://github.com/weidai11/cryptopp.git
+          cd cryptopp
+          make static
+          make install
+          cd ..
+      - name: Embed libmagic db
+        run: |
+          apk add file
+          xxd -i /usr/share/misc/magic.mgc > src/utils/lib/magic_data.c
+      - name: Build
+        run: |
+          eval $(opam env --switch=musl-static)
+          python autoconf.py
+          opam exec -- dune build --profile=static
+      
+      - name: Set short SHA
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlnet-static-${{ matrix.arch }}-${{ env.SHORT_SHA }}
+          path: _build/default/src/mlnet.exe
+
   build:
     continue-on-error: ${{ ! matrix.required }}
     strategy:
       fail-fast: false
       matrix:
         ocaml-version:
-          - 4.03.0
-          - 4.04.2
-          - 4.05.0
-          - 4.06.1
-          - 4.07.1
-          - 4.08.1
-          - 4.09.1
-          - 4.10.0
-          - 4.11.1
-          - 4.12.1
-          - 4.13.1
-          - 4.14.1
+          - 5.3.0
         required:
           - true
         os:
           - ubuntu-latest
         include:
-          - ocaml-version: 4.14.1
-            required: true
-            os: macos-latest
-          - ocaml-version: 4.14.1
-            required: false
-            os: windows-latest
-          - ocaml-version: 5.2.0
+          #- ocaml-version: 5.3.0
+          #  required: true
+          #  os: macos-latest
+          #- ocaml-version: 5.3.0
+          #  required: false
+          #  os: windows-latest
+          - ocaml-version: 5.3.0
             required: false
             os: ubuntu-latest
 
@@ -43,13 +99,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Use OCaml ${{ matrix.ocaml-version }}
         uses: ocaml/setup-ocaml@v3
         with:
           ocaml-compiler: ${{ matrix.ocaml-version }}
 
-      - run: sudo apt install libcrypto++-dev libminiupnpc-dev libnatpmp-dev libgd-dev libcurl-ocaml-dev
+      - run: sudo apt install libcrypto++-dev libminiupnpc-dev libnatpmp-dev libgd-dev libcurl4-gnutls-dev zlib1g-dev m4 build-essential libz-dev libbz2-dev libmagic-dev libupnp-dev librsvg2-dev libc6-dev python-is-python3 libcrypto++-dev git git-lfs libnghttp2-dev libc-ares-dev libidn2-dev libunistring-dev libpsl-dev
         if: matrix.os == 'ubuntu-latest'
 
       - run: brew install cryptopp miniupnpc libnatpmp gd
@@ -78,24 +137,20 @@ jobs:
         name: show build environment
         continue-on-error: true
 
-      - run: opam pin add mldonkey.dev . --no-action
-
       # not needed, opam install will do it automatically
       # - run: opam depext mldonkey --yes --with-doc --with-test
 
+      - name: Show git status
+        run: |
+          git status
+          git log -1
+      - run: python autoconf.py
       - run: opam install . --deps-only --with-doc --with-test
-
-      # https://github.com/ocaml/setup-ocaml/issues/815#issuecomment-2204838759
-      # SHELLOPTS workaround for windows
-      # setting SHELLOPTS via GITHUB_ENV didn't work for some reason
-      - run: opam exec -- env SHELLOPTS=igncr sh ./configure --enable-debug --enable-upnp-natpmp
-
-      - run: opam exec -- make
-
-      - run: opam exec -- make utils
+      - run: opam install . --deps-only --yes
+      - run: opam exec -- dune build --profile=release
 
       - name: Upload the build artifact
-        if: ${{ matrix.ocaml-version == '4.14.1' }}
+        if: ${{ matrix.ocaml-version == '4.14.2' }}
         uses: actions/upload-artifact@v4
         with:
           name: mlnet-${{ matrix.os }}.exe

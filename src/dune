@@ -1,3 +1,7 @@
+(env
+  (static (link_flags (:standard -ccopt -static)))
+)
+
 (executable
     (name mlnet)
     (libraries
@@ -17,14 +21,26 @@
     (flags
         (:standard -w -33)
     )
-    (link_flags (
+    (link_flags (:standard
+        -cclib -lcurl
+        -cclib -lnghttp2
+        -cclib -lssl
+        -cclib -lcrypto
+        -cclib -lcares
+        -cclib -lbrotlidec
+        -cclib -lbrotlicommon
         -cclib -lz
         -cclib -lbz2
+        -cclib -lzstd
+        -cclib -lidn2
+        -cclib -lunistring
+        -cclib -lpsl
+        -cclib -lcryptopp
         -cclib -lminiupnpc
         -cclib -lnatpmp
         -cclib -lmagic
         -cclib -lgd
         -cclib -lpng
-        -cclib -lcryptopp
+        -cclib -ljpeg
     ))
 )

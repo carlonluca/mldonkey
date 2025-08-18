@@ -64,7 +64,9 @@ everything is compiled in the final binary.
 #define HAVE_GETRLIMIT 1
 
 /* Define to 1 if you have the <gnu/libc-version.h> header file. */
+#ifdef __GLIBC__
 #define HAVE_GNU_LIBC_VERSION_H 1
+#endif
 
 /* Define if you have the iconv() function and it works. */
 #define HAVE_ICONV 1
