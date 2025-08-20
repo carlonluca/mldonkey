@@ -25,16 +25,17 @@
 
 #include <stdio.h>
 
-value md4_xor(value m1_v, value m2_v, value m3_v) 
+value md4_xor(value m1_v, value m2_v, value m3_v)
 {
-  int len = caml_string_length(m1_v);
-  const char *m1 = String_val(m1_v);
-  const char *m2 = String_val(m2_v);
-  char *m3 = Bytes_val(m3_v);
-  int i;
+    int len = caml_string_length(m1_v);
+    const unsigned char *m1 = (const unsigned char *) String_val(m1_v);
+    const unsigned char *m2 = (const unsigned char *) String_val(m2_v);
+    unsigned char *m3 = (unsigned char *) Bytes_val(m3_v);
 
-  for(i = 0; i<len; i++) m3[i] = m1[i] ^ m2[i];
+    const unsigned char *end = m1 + len;
 
-  return Val_unit;
+    while (m1 < end)
+        *m3++ = *m1++ ^ *m2++;
+
+    return Val_unit;
 }
-
