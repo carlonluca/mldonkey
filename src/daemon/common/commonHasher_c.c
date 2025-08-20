@@ -51,7 +51,7 @@
 
 
 /* Use a different buffer to avoid sharing it between the two threads !! */
-static unsigned char local_hash_buffer[HASH_BUFFER_LEN];
+static char local_hash_buffer[HASH_BUFFER_LEN];
 
 
 

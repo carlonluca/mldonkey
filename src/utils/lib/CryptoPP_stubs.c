@@ -51,7 +51,7 @@ ml_createSignature(value m_key, value m_keyLen, value m_cInt, value m_ipType, va
 
 	int len = createSignature(buf, 200, key, keyLen, cInt, ipType, ip);
 
-	return caml_alloc_initialized_string(len, buf);
+	return caml_alloc_initialized_string(len, (const char*)buf);
 }
 
 value 

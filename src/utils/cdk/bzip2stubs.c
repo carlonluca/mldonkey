@@ -36,7 +36,6 @@ static const value * camlzip_bzerror_exn = NULL;
 #ifdef USE_BZIP2
 static void camlzip_bzerror(char * fn, int err)
 {
-  char * msg;
   value s1 = Val_unit, s2 = Val_unit, bucket = Val_unit;
 
   if (camlzip_bzerror_exn == NULL) {

@@ -80,10 +80,11 @@ void os_ftruncate(OS_FD fd, OFF_T len, /* bool */ int sparse)
     OFF_T result = lseek(fd, len-1, SEEK_SET);
     if(result < 0) unix_error(errno, "os_ftruncate", Nothing);
 
-    write(fd, &zero, 1);
+    if (write(fd, &zero, 1) != 1)
+      unix_error(errno, "os_ftruncate", Nothing);
   } else
     if((cursize != len) && (ftruncate(fd, len) < 0)) {
-      fprintf(stderr, "ftruncate(%d,%Ld)\n", fd, len);
+      fprintf(stderr, "ftruncate(%d, %jd)\n", fd, (intmax_t)len);
       uerror("ml_truncate32: error in ftruncate",Nothing);
     }
 }
@@ -160,9 +161,6 @@ void os_set_nonblock(OS_SOCKET fd)
 
 value glibc_version(void)
 {
-  CAMLparam0 ();
-  CAMLlocal1 (v);
-
 #ifdef HAVE_GNU_LIBC_VERSION_H
 #include <gnu/libc-version.h>
 

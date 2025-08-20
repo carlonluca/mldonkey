@@ -70,6 +70,10 @@ value ml_change_fd_event_setting(value task_v)
     (Field(Field(task_v, FD_TASK_READ_ALLOWED),0) == Val_true));
   int must_write = ( (Field(task_v, FD_TASK_WLEN) != Val_int(0)) &&
     (Field(Field(task_v, FD_TASK_WRITE_ALLOWED),0) == Val_true));
+
+  (void)fd;
+  (void)must_read;
+  (void)must_write;
   
   return Val_unit;
 }
@@ -82,12 +86,18 @@ value ml_add_fd_to_event_set(value task_v)
   int must_write = ( (Field(task_v, FD_TASK_WLEN) != Val_int(0)) &&
     (Field(Field(task_v, FD_TASK_WRITE_ALLOWED),0) == Val_true));
 
+  (void)fd;
+  (void)must_read;
+  (void)must_write;
+
   return Val_unit;
 }
 
 value ml_remove_fd_from_event_set(value task_v)
 {
   int fd = Socket_val(Field(task_v,FD_TASK_FD));
+
+  (void)fd;
 
   return Val_unit;
 }
@@ -658,7 +668,8 @@ static void * dns_thread(void * arg)
   sigfillset(&mask);
   pthread_sigmask(SIG_BLOCK, &mask, NULL);
   
-  nice(19);
+  if (nice(19) == -1)
+    perror("nice");
 #endif  /* !defined(PTW32_STATIC_LIB) */
   
   pthread_mutex_lock(&mutex);
