@@ -6,10 +6,7 @@ on:
 
 jobs:
   static-build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        arch: [x86_64, arm-v7, aarch64]
+    runs-on: 'ubuntu-latest'
     container:
       image: alpine:3.22
     steps:
@@ -69,7 +66,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mlnet-static-${{ matrix.arch }}-${{ env.SHORT_SHA }}
+          name: mlnet-static-${{ env.SHORT_SHA }}
           path: _build/default/src/mlnet.exe
 
   build:
@@ -83,16 +80,16 @@ jobs:
           - true
         os:
           - ubuntu-latest
-        include:
+        #include:
           #- ocaml-version: 5.3.0
           #  required: true
           #  os: macos-latest
           #- ocaml-version: 5.3.0
           #  required: false
           #  os: windows-latest
-          - ocaml-version: 5.3.0
-            required: false
-            os: ubuntu-latest
+          #- ocaml-version: 5.3.0
+          #  required: false
+          #  os: ubuntu-latest
 
     runs-on: ${{ matrix.os }}
 
