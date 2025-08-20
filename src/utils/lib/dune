@@ -1,3 +1,9 @@
+(env
+    (static (
+        c_flags (:standard -DMLDONKEY_MAGIC_LOAD_FROM_BUFF)
+    ))
+)
+
 (library
     (name autoconf)
     (flags
