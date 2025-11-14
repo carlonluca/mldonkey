@@ -62,6 +62,9 @@ open TcpMessages
 
 module VB = VerificationBitmap
 
+let ten_mb = Int64.of_int (10 * 1024 * 1024)  (* 10 MiB = 10 * 1024 * 1024 = 10,485,760 *)
+exception Size_too_large of int64
+
 let http_ok = "HTTP 200 OK"
 let http11_ok = "HTTP/1.1 200 OK"
 
@@ -481,6 +484,8 @@ let disconnect_client c reason =
 
 (** Disconnect all clients of a file
   @param file The file to which we must disconnects all clients
+
+  (* lcarlon: maybe also remove all tokens? diconnect_client does not cancel tokens in not connected *)
 *)
 let disconnect_clients file =
   let must_keep = ref true in
@@ -1301,7 +1306,10 @@ and client_to_client c sock msg =
                         | "metadata_size", B.Int n ->
                             if !verbose_msg_clients then
                               lprintf_file_nl (as_file file) "Got metadata size %Ld" n;
+                            if Int64.compare n ten_mb > 0 then
+                              raise (Size_too_large n);
                             c.client_file.file_metadata_size <- n;
+                            c.client_file.file_metadata_chunks <- (Array.make (Int64.to_int n) "");
                         | "m", B.Dictionary  mdict ->
                           if !verbose_msg_clients then
                             lprintf_file_nl (as_file file) "Got meta dict";
