@@ -84,10 +84,10 @@ jobs:
           - true
         os:
           - ubuntu-latest
-        #include:
-          #- ocaml-version: 5.3.0
-          #  required: true
-          #  os: macos-latest
+        include:
+          - ocaml-version: 5.4.1
+            required: true
+            os: macos-latest
           #- ocaml-version: 5.3.0
           #  required: false
           #  os: windows-latest
@@ -109,7 +109,7 @@ jobs:
       - run: sudo apt install libcrypto++-dev libminiupnpc-dev libnatpmp-dev libgd-dev libcurl4-gnutls-dev zlib1g-dev m4 build-essential libz-dev libbz2-dev libmagic-dev libupnp-dev librsvg2-dev libc6-dev python-is-python3 libcrypto++-dev git git-lfs libnghttp2-dev libc-ares-dev libidn2-dev libunistring-dev libpsl-dev
         if: matrix.os == 'ubuntu-latest'
 
-      - run: brew install cryptopp miniupnpc libnatpmp gd
+      - run: brew install cryptopp miniupnpc libnatpmp gd curl zlib bzip2 libmagic librsvg nghttp2 c-ares libidn2 libunistring libpsl git git-lfs m4
         if: matrix.os == 'macos-latest'
 
       - run: |
