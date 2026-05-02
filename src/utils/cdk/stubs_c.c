@@ -890,12 +890,18 @@ statfs_statfs (value pathv)
 #endif  /* (defined HAVE_SYS_PARAM_H && HAVE_SYS_MOUNT_H) */
 
 #ifdef HAVE_SYS_VFS_H
-#  include <sys/vfs.h>
+#if defined(__linux__)
+#include <sys/vfs.h>
+#elif defined(__APPLE__)
+#include <sys/mount.h>
+#endif
 #  define HAVE_STATS 1
 #endif  /* HAVE_SYS_VFS_H */
 
 #ifdef HAVE_SYS_STATVFS_H
-#  include <sys/statvfs.h>
+#if defined(__linux__)
+#include <sys/statvfs.h>
+#endif
 #endif
 
 #ifdef HAVE_STATS

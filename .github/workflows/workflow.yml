@@ -84,10 +84,10 @@ jobs:
           - true
         os:
           - ubuntu-latest
-        include:
-          - ocaml-version: 5.4.1
-            required: true
-            os: macos-latest
+        #include:
+          #- ocaml-version: 5.4.1
+          #  required: true
+          #  os: macos-latest
           #- ocaml-version: 5.3.0
           #  required: false
           #  os: windows-latest
@@ -148,7 +148,7 @@ jobs:
       - run: opam exec -- dune build --profile=release
 
       - name: Upload the build artifact
-        if: ${{ matrix.ocaml-version == '4.14.2' }}
+        if: ${{ matrix.ocaml-version == '5.4.1' }}
         uses: actions/upload-artifact@v4
         with:
           name: mlnet-${{ matrix.os }}.exe
