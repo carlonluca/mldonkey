@@ -57,9 +57,9 @@ typedef struct font_wrapper GdFWrapper;
 #define FONT_VAL(X) ((*((GdFWrapper *)(Data_custom_val(X)))).font)
 
 static void ml_gd_finalize(value);
-static long ml_gd_hash(value);
+static intnat ml_gd_hash(value);
 static int ml_font_cmp(value, value);
-static long ml_font_hash(value);
+static intnat ml_font_hash(value);
 
 static struct custom_operations image_t_custom_operations = {
   "GD image/0.1",
@@ -95,16 +95,26 @@ void ml_gd_finalize(value v) {
     gdImageDestroy(IM_VAL(v));
 }
 
-long ml_gd_hash(value v) {
+static intnat ml_gd_hash(value v) {
   return gdImageSX(IM_VAL(v));
 }
 
-int ml_font_cmp(value v1, value v2) {
-  return (int)FONT_VAL(v1) - (int)FONT_VAL(v2);
+static int ml_font_cmp(value v1, value v2) {
+  const uintptr_t p1 = (uintptr_t)FONT_VAL(v1);
+  const uintptr_t p2 = (uintptr_t)FONT_VAL(v2);
+
+  if (p1 < p2) return -1;
+  if (p1 > p2) return 1;
+  return 0;
 }
 
-static long ml_font_hash(value v) {
-  return (long)FONT_VAL(v);
+/*
+  ref. ocaml specs 4.2: The header <caml/config.h> defines a C
+  integer type intnat of signed 64-bit integers (32-bit integers
+  on 32-bit architectures).
+*/
+static intnat ml_font_hash(value v) {
+    return (intnat)FONT_VAL(v);
 }
 
 value ml_get_font(value i) {
