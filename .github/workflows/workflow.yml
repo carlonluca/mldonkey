@@ -107,7 +107,9 @@ jobs:
         with:
           ocaml-compiler: ${{ matrix.ocaml-version }}
 
-      - run: sudo apt install libcrypto++-dev libminiupnpc-dev libnatpmp-dev libgd-dev libcurl4-gnutls-dev zlib1g-dev m4 build-essential libz-dev libbz2-dev libmagic-dev libupnp-dev librsvg2-dev libc6-dev python-is-python3 libcrypto++-dev git git-lfs libnghttp2-dev libc-ares-dev libidn2-dev libunistring-dev libpsl-dev
+      - run: |
+          sudo apt update
+          sudo apt install libcrypto++-dev libminiupnpc-dev libnatpmp-dev libgd-dev libcurl4-gnutls-dev zlib1g-dev m4 build-essential libz-dev libbz2-dev libmagic-dev libupnp-dev librsvg2-dev libc6-dev python-is-python3 libcrypto++-dev git git-lfs libnghttp2-dev libc-ares-dev libidn2-dev libunistring-dev libpsl-dev gzip
         if: matrix.os == 'ubuntu-latest'
 
       - run: brew install cryptopp miniupnpc libnatpmp gd curl zlib bzip2 libmagic librsvg nghttp2 c-ares libidn2 libunistring libpsl git git-lfs m4
