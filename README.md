@@ -5,7 +5,7 @@ Introduction
 
 This repo is a fork on the official mldonkey software. It includes new features that are still not upstreamed:
 
-* port to **ocaml5** (latest tested is 5.4.1);
+* port to **ocaml5** (latest tested is 5.5.0);
 * port to the latest **Ubuntu version 26.04**;
 * port to dune build system;
 * many external libs were extracted from the repo and updated;
