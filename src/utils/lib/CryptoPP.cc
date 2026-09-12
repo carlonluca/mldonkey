@@ -52,7 +52,7 @@ static Signer* s_signer = NULL;
 static CryptoPP::byte m_publicKey[MAXPUBKEYSIZE+1];
 static unsigned long m_publicKeyLen = 0;
 
-void cc_lprintf_nl(const char * msg, bool verb);
+void cc_lprintf_nl(const char * msg, int verb);
 
 void crypto_exit () {
 	if (s_signer) {
