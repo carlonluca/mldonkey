@@ -219,4 +219,4 @@ with open(target_path, "w") as f:
     f.write(f'let magic_works = {magic_works}\n')
     f.write(f'let upnp_natpmp = {str(upnp_natpmp).lower()}\n')
 
-print("Wrote OCaml config to config.ml")
+print(f"Wrote OCaml config to {target_path}")
