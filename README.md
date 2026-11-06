@@ -33,3 +33,5 @@ opam exec -- dune build
 ```
 
 Dependencies must already be in place.
+
+Run `python autoconf.py --help` for the list of options and their defaults.

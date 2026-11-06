@@ -23,13 +23,90 @@ import subprocess
 import re
 import ctypes
 import platform
+import argparse
 
 current_script_dir = os.path.dirname(os.path.abspath(__file__))
-target_path = os.path.join(current_script_dir, "src", "utils", "lib", "autoconf.ml")
+target_path = os.path.join(current_script_dir,
+                           "src", "utils", "lib", "autoconf.ml")
+networks_target_path = os.path.join(current_script_dir,
+                                    "src", "networks", "dune")
+enabled_networks = ""
+disabled_dirs = ""
+
+# Dictionary with the list of networks that can be enabled and disabled.
+# "directory" refers to the corresponding directory in src/networks
+# "library" referst to the library name defined in src/networks/*/dune
+# If "directory" or "library" are not set, they default to the network key
+
+networks = {
+    "gnutella": {
+        "description": "Gnutella",
+        "default": True
+    },
+    "gnutella2": {
+        "description": "Gnutella2",
+        "default": False
+    },
+    "direct_connect": {
+        "library": "directconnect",
+        "description": "Direct Connect",
+        "default": True
+    },
+    "fasttrack": {
+        "description": "FastTrack",
+        "default": True
+    },
+    "filetp": {
+        "directory": "fileTP",
+        "description": "FileTP",
+        "default": True
+    },
+    "bittorrent": {
+        "description": "BitTorrent",
+        "default": True
+    },
+    "donkey": {
+        "description": "eDonkey",
+        "default": True
+    }
+}
+
+argparser = argparse.ArgumentParser(description="Configure MLDonkey build")
+
+for k, v in networks.items():
+    argparser.add_argument(f"--enable-{v['library'] if 'library' in v else k}",
+                           action="store_const",
+                           const=True,
+                           default=v["default"],
+                           help=f"Enable {v['description']} network{' (default)' if v['default'] else ''}",
+                           dest=k)
+    argparser.add_argument(f"--disable-{v['library'] if 'library' in v else k}",
+                           action="store_const",
+                           const=False,
+                           default=v["default"],
+                           help=f"Disable {v['description']} network{' (default)' if not v['default'] else ''}",
+                           dest=k)
+
+argparser.add_argument("--enable-upnp-natpmp",
+                       action="store_const",
+                       const=True,
+                       default=True,
+                       help="Enable the use of libminiupnpc and libnatpmp",
+                       dest="upnp_natpmp")
+argparser.add_argument("--disable-upnp-natpmp",
+                       action="store_const",
+                       const=False,
+                       default=True,
+                       help="Disable the use of libminiupnpc and libnatpmp",
+                       dest="upnp_natpmp")
+
+args = vars(argparser.parse_args())
+
 
 def get_perl_path():
     """Return the path to the perl executable, or None if not found."""
     return shutil.which("perl")
+
 
 def get_latest_semver_tag():
     try:
@@ -41,6 +118,7 @@ def get_latest_semver_tag():
         return match.group(1) if match else None
     except subprocess.CalledProcessError:
         return None
+
 
 def get_git_version_description():
     try:
@@ -56,12 +134,14 @@ def get_git_version_description():
         print(f"Error running git describe: {e.stderr.strip()}")
         return None
 
+
 def extract_semver(s):
     match = re.search(r'v?(\d+)\.(\d+)\.(\d+)', s)
     if match:
         major, minor, patch = map(int, match.groups())
         return major, minor, patch
     return None
+
 
 def get_glibc_version():
     try:
@@ -73,6 +153,7 @@ def get_glibc_version():
     except Exception as e:
         print(f"Could not determine glibc version: {e}")
         return None
+
 
 def get_gcc_versions():
     def get_version(cmd):
@@ -88,11 +169,13 @@ def get_gcc_versions():
     gpp_version = get_version("g++")  # g++ is the GNU C++ compiler
     return gcc_version, gpp_version
 
+
 def get_machine_type() -> str:
     system = platform.system()        # e.g. "Linux"
     machine = platform.machine()      # e.g. "x86_64"
     kernel = platform.release()       # e.g. "6.12.38-1-lts"
     return f"{system} {machine} {kernel}"
+
 
 def is_commit_tagged():
     try:
@@ -103,6 +186,7 @@ def is_commit_tagged():
         return bool(tags)
     except subprocess.CalledProcessError:
         return False
+
 
 perl_path = get_perl_path()
 if perl_path is None:
@@ -142,20 +226,13 @@ if build_system is None:
     sys.stderr.write("Error: cannot get machine type.\n")
     sys.exit(1)
 
-configure_arguments = "-"
+configure_arguments = " ".join(sys.argv[1:] or "-")
 system = platform.system()
 windows = 'system = "cygwin" || system = "mingw"'
 
 opennapster = "no"
-gnutella = "yes"
-gnutella2 = "no"
-direct_connect = "yes"
 soulseek = "no"
 openft = "no"
-fasttrack = "yes"
-filetp = "yes"
-bittorrent = "yes"
-donkey = "yes"
 donkey_sui = "yes"
 donkey_sui_urandom = "ref false"
 donkey_sui_works = 'donkey_sui = "yes" && !donkey_sui_urandom'
@@ -167,7 +244,7 @@ has_gd_jpg = True
 bzip2 = True
 magic = True
 magic_works = "ref false"
-upnp_natpmp = True
+upnp_natpmp = args["upnp_natpmp"]
 
 with open(target_path, "w") as f:
     f.write(f'let perl_path = "{perl_path}"\n')
@@ -186,16 +263,15 @@ with open(target_path, "w") as f:
     f.write(f'let system = "{system}"\n')
     f.write(f'let windows = {windows}\n\n')
 
+    for k, v in networks.items():
+        f.write(f'let {k} = "{"yes" if args[k] else "no"}"\n')
+        if args[k]:
+            enabled_networks += f"{v['library'] if 'library' in v else k}\n"
+        else:
+            disabled_dirs += f"{v['directory'] if 'directory' in v else k} "
     f.write(f'let opennapster = "{opennapster}"\n')
-    f.write(f'let gnutella = "{gnutella}"\n')
-    f.write(f'let gnutella2 = "{gnutella2}"\n')
-    f.write(f'let direct_connect = "{direct_connect}"\n')
     f.write(f'let soulseek = "{soulseek}"\n')
     f.write(f'let openft = "{openft}"\n')
-    f.write(f'let fasttrack = "{fasttrack}"\n')
-    f.write(f'let filetp = "{filetp}"\n')
-    f.write(f'let bittorrent = "{bittorrent}"\n')
-    f.write(f'let donkey = "{donkey}"\n')
     f.write(f'let donkey_sui = "{donkey_sui}"\n')
     f.write(f'let donkey_sui_urandom = {donkey_sui_urandom}\n')
     f.write(f'let donkey_sui_works () = {donkey_sui_works}\n\n')
@@ -220,3 +296,23 @@ with open(target_path, "w") as f:
     f.write(f'let upnp_natpmp = {str(upnp_natpmp).lower()}\n')
 
 print(f"Wrote OCaml config to {target_path}")
+
+with open(networks_target_path, "w") as f:
+    if disabled_dirs:
+        f.write(f'(dirs :standard \\ {disabled_dirs})\n')
+    f.write(f"""(library
+    (name networks)
+    (wrapped false)
+    (modules)
+    (libraries
+        {enabled_networks}
+    ))""")
+
+print(f"Wrote dune network selection to {networks_target_path}")
+
+with open(os.path.join(current_script_dir,
+                       "src", "utils", "net", "upnp_cflags.sexp"), "w") as f:
+    f.write("(-DENABLE_UPNP_NATPMP)" if args["upnp_natpmp"] else "()")
+with open(os.path.join(current_script_dir,
+                       "src", "upnp_link_flags.sexp"), "w") as f:
+    f.write("(-cclib -lminiupnpc -cclib -lnatpmp)" if args["upnp_natpmp"] else "()")
