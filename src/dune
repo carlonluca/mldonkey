@@ -31,8 +31,7 @@
         -cclib -lunistring
         -cclib -lpsl
         -cclib -lcryptopp
-        -cclib -lminiupnpc
-        -cclib -lnatpmp
+        (:include upnp_link_flags.sexp)
         -cclib -lmagic
         -cclib -lgd
         -cclib -lpng

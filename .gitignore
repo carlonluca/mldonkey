@@ -31,3 +31,5 @@
 _build
 src/utils/lib/autoconf.ml
 /src/networks/dune
+/src/utils/net/upnp_cflags.sexp
+/src/upnp_link_flags.sexp

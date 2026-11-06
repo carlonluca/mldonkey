@@ -32,10 +32,6 @@ everything is compiled in the final binary.
 /* Define to 1 if you want to replace iconv and related with stubs. */
 /* #undef DISABLE_ICONV */
 
-/* Define to 1 if you have libminiupnpc & libnatpmp for port forwarding
-   support. */
-#define ENABLE_UPNP_NATPMP 1
-
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #define HAVE_ARPA_INET_H 1
 
