@@ -33,3 +33,11 @@ opam exec -- dune build
 ```
 
 Dependencies must already be in place.
+
+You can configure the networks that will be built by using the `--enable-<network>`/`--disable-<network>` parameters for `autoconf.py`, e.g.:
+
+```
+python autoconf.py --disable-bittorrent
+```
+
+Run `python autoconf.py --help` for the list of options and their defaults.

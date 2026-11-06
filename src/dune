@@ -10,13 +10,8 @@
         unix
         daemoncommon
         driver
-        donkey
         mp3tagui
-        bittorrent
-        gnutella
-        fasttrack
-        filetp
-        directconnect
+        networks
     )
     (flags
         (:standard -w -33)
