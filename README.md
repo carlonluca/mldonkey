@@ -32,6 +32,14 @@ opam exec -- dune build
 
 Dependencies must already be in place.
 
+You can configure the networks that will be built by using the `--enable-<network>`/`--disable-<network>` parameters for `autoconf.py`, e.g.:
+
+```
+python autoconf.py --disable-bittorrent
+```
+
+Run `python autoconf.py --help` for the list of options and their defaults.
+
 ## Docker Image
 
 The best way to use mldonkey is to use it in docker. For an updated docker image, which includes all the changes from this mldonkey fork, you can use the [image I provide](https://bugfreeblog.duckdns.org/docker-images-for-the-mldonkey-service). You have many tags available, from the official mldonkey version (which is very outdated), to the most recent version of this repo.
