@@ -36,6 +36,16 @@ Dependencies must already be in place.
 
 The best way to use mldonkey is to use it in docker. For an updated docker image, which includes all the changes from this mldonkey fork, you can use the [image I provide](https://bugfreeblog.duckdns.org/docker-images-for-the-mldonkey-service). You have many tags available, from the official mldonkey version (which is very outdated), to the most recent version of this repo.
 
+## Compatibility
+
+Unfortunately, I cannot guarantee full backward compatibility between this fork and the original mldonkey version.
+
+That said, I am not aware of any changes that should introduce incompatibilities. Therefore, I expect this version to be fully compatible with your existing data directory, and you should be able to revert to the original version at any time if you are not satisfied.
+
+In particular, there should be no differences in configuration files, persisted application state, or currently downloading files. In fact, I still use my original configuration and regularly switch between the two versions without encountering any issues.
+
+As a precaution, however, I strongly recommend making a backup of your data directory before switching versions.
+
 ## UI
 
 There are several user interfaces available for mldonkey, but they tend to be a bit outdated. mldonkey includes a powerful web interface, but it is a bit old fashioned as well.
