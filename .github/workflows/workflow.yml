@@ -1,17 +1,23 @@
+
 name: Build
 
 on:
-  - push
-  - pull_request
+  push:
+    branches: ['**']
+    tags:
+      - 'v*'
+  pull_request:
+
+permissions:
+  contents: read
 
 jobs:
+  # Native x86_64 static build
   static-build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        arch: [x86_64, arm-v7, aarch64]
     container:
       image: alpine:3.22
+
     steps:
       - name: Install build dependencies
         run: |
@@ -23,13 +29,12 @@ jobs:
             brotli-dev zstd-dev c-ares-dev \
             openssl-dev \
             miniupnpc-dev libnatpmp-dev file-dev \
-            gd-dev libpng-dev jpeg-dev python3 m4 curl-dev \
+            gd-dev libpng-dev jpeg-dev python3 m4 \
             curl-static zlib-static bzip2-static libmagic-static \
             libpng openssl-libs-static libpng-static libjpeg-turbo-static \
-            nghttp2-static openssl-dev openssl-libs-static \
-            libidn2-static brotli-static libpsl-static libunistring-static \
-            zstd-static c-ares-dev brotli-static git git-lfs musl
-          apk add m4
+            nghttp2-static libidn2-static brotli-static \
+            libpsl-static libunistring-static zstd-static \
+            git-lfs musl
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -42,36 +47,114 @@ jobs:
           opam init --disable-sandboxing --bare --yes --jobs=$(nproc)
           eval $(opam env)
           opam switch create musl-static ocaml-variants.5.3.0+options --no-install
+
       - name: Install OCaml deps
         run: |
           git config --global --add safe.directory .
           eval $(opam env --switch=musl-static)
           opam install . --deps-only --yes --jobs=$(nproc)
+
       - name: Build cryptopp statically
         run: |
           git clone https://github.com/weidai11/cryptopp.git
           cd cryptopp
           make static
           make install
-          cd ..
+
       - name: Embed libmagic db
         run: |
           apk add file
           xxd -i /usr/share/misc/magic.mgc > src/utils/lib/magic_data.c
+
       - name: Build
         run: |
           eval $(opam env --switch=musl-static)
           python autoconf.py
           opam exec -- dune build --profile=static
-      
-      - name: Set short SHA
-        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Verify architecture
+        run: |
+          file _build/default/src/mlnet.exe
+          readelf -h _build/default/src/mlnet.exe
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mlnet-static-${{ matrix.arch }}-${{ env.SHORT_SHA }}
+          name: mlnet-static-x86_64-${{ github.sha }}
           path: _build/default/src/mlnet.exe
+          retention-days: 30
 
+  # ARM static builds using QEMU
+  arm-static-build:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: armv7
+          - arch: aarch64
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Build on ${{ matrix.arch }}
+        uses: uraimo/run-on-arch-action@v3
+        with:
+          arch: ${{ matrix.arch }}
+          distro: alpine_latest
+          githubToken: ${{ github.token }}
+          run: |
+            apk add --no-cache \
+              bash git build-base pkgconfig \
+              ocaml ocaml-compiler-libs ocaml-findlib dune \
+              opam curl-dev zlib-dev bzip2-dev \
+              libidn2-dev libunistring-dev libpsl-dev \
+              brotli-dev zstd-dev c-ares-dev \
+              openssl-dev miniupnpc-dev libnatpmp-dev \
+              file-dev gd-dev libpng-dev jpeg-dev python3 m4 \
+              curl-static zlib-static bzip2-static libmagic-static \
+              libpng openssl-libs-static libpng-static libjpeg-turbo-static \
+              nghttp2-static libidn2-static brotli-static \
+              libpsl-static libunistring-static zstd-static \
+              git-lfs musl file
+
+            opam init --disable-sandboxing --bare --yes --jobs=$(nproc)
+            opam switch create musl-static ocaml-variants.5.3.0+options --no-install
+
+            eval $(opam env --switch=musl-static)
+            git config --global --add safe.directory "$GITHUB_WORKSPACE"
+            opam install . --deps-only --yes --jobs=$(nproc)
+
+            git clone https://github.com/weidai11/cryptopp.git
+            cd cryptopp
+            make static
+            make install
+            cd ..
+
+            xxd -i /usr/share/misc/magic.mgc > src/utils/lib/magic_data.c
+
+            eval $(opam env --switch=musl-static)
+            python autoconf.py
+            opam exec -- dune build --profile=static
+
+            mkdir -p dist
+            cp _build/default/src/mlnet.exe "dist/mlnet-${{ matrix.arch }}"
+
+            file "dist/mlnet-${{ matrix.arch }}"
+            readelf -h "dist/mlnet-${{ matrix.arch }}"
+
+      - name: Upload ARM binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlnet-static-${{ matrix.arch }}-${{ github.sha }}
+          path: mlnet-${{ matrix.arch }}
+          retention-days: 30
+
+  # Regular OCaml release builds
   build:
     continue-on-error: ${{ ! matrix.required }}
     strategy:
@@ -85,13 +168,6 @@ jobs:
           - true
         os:
           - ubuntu-latest
-        #include:
-          #- ocaml-version: 5.4.1
-          #  required: true
-          #  os: macos-latest
-          #- ocaml-version: 5.3.0
-          #  required: false
-          #  os: windows-latest
 
     runs-on: ${{ matrix.os }}
 
@@ -107,60 +183,56 @@ jobs:
         with:
           ocaml-compiler: ${{ matrix.ocaml-version }}
 
-      - run: |
+      - name: Install dependencies
+        run: |
           sudo apt update
-          sudo apt install libcrypto++-dev libminiupnpc-dev libnatpmp-dev libgd-dev libcurl4-gnutls-dev zlib1g-dev m4 build-essential libz-dev libbz2-dev libmagic-dev libupnp-dev librsvg2-dev libc6-dev python-is-python3 libcrypto++-dev git git-lfs libnghttp2-dev libc-ares-dev libidn2-dev libunistring-dev libpsl-dev gzip
-        if: matrix.os == 'ubuntu-latest'
+          sudo apt install libcrypto++-dev libminiupnpc-dev libnatpmp-dev libgd-dev libcurl4-gnutls-dev zlib1g-dev m4 build-essential libz-dev libbz2-dev libmagic-dev libupnp-dev librsvg2-dev libc6-dev python-is-python3 git git-lfs libnghttp2-dev libc-ares-dev libidn2-dev libunistring-dev libpsl-dev gzip
 
-      - run: brew install cryptopp miniupnpc libnatpmp gd curl zlib bzip2 libmagic librsvg nghttp2 c-ares libidn2 libunistring libpsl git git-lfs m4
-        if: matrix.os == 'macos-latest'
-
-      - run: |
-          echo "CPATH=$HOMEBREW_PREFIX/include:$CPATH" >> $GITHUB_ENV
-          echo "LIBRARY_PATH=$HOMEBREW_PREFIX/lib:$LIBRARY_PATH" >> $GITHUB_ENV
-        if: matrix.os == 'macos-latest'
-
-      # https://cygwin.com/packages/ doesn't have cryptopp and many other packages
-      # I guess should build with mingw?
-      - run: D:\\cygwin\\setup-x86_64.exe "--root" "D:\\cygwin" "--quiet-mode" "unattended" "--no-shortcuts" "--no-startmenu" "--no-desktop" "--no-admin" "--no-version-check" "--no-write-registry" "--packages" "mingw64-x86_64-gd"
-        if: matrix.os == 'windows-latest'
-
-      - run: |
-          echo $CPATH
-          echo $C_INCLUDE_PATH
-          echo $LIBRARY_PATH
+      - name: Show build environment
+        run: |
+          echo "$CPATH"
+          echo "$C_INCLUDE_PATH"
+          echo "$LIBRARY_PATH"
           which -a pkg-config
-          # ls -hlA $HOMEBREW_PREFIX/lib/pkgconfig
-          # pkg-config --list-all
-          pkg-config --cflags libcrypto++ || true # NB libcryptopp on linux :facepalm.jpg:
+          pkg-config --cflags libcrypto++ || true
           pkg-config --libs libcrypto++ || true
           echo "" | cpp -v || true
-        name: show build environment
         continue-on-error: true
-
-      # not needed, opam install will do it automatically
-      # - run: opam depext mldonkey --yes --with-doc --with-test
 
       - name: Show git status
         run: |
           git status
           git log -1
-      - run: python autoconf.py
-      - run: opam install . --deps-only --with-doc --with-test
-      - run: opam install . --deps-only --yes
-      - run: opam exec -- dune build --profile=release
+
+      - name: Configure
+        run: python autoconf.py
+
+      - name: Install dependencies
+        run: opam install . --deps-only --with-doc --with-test
+
+      - name: Install runtime dependencies
+        run: opam install . --deps-only --yes
+
+      - name: Build
+        run: opam exec -- dune build --profile=release
 
       - name: Upload the build artifact
-        if: ${{ matrix.ocaml-version == '5.4.1' }}
+        if: matrix.ocaml-version == '5.4.1'
         uses: actions/upload-artifact@v4
         with:
           name: mlnet-${{ matrix.os }}.exe
           path: mlnet
 
+  # Publish static builds on version tags
   publish-static:
-    needs: static-build
+    needs:
+      - static-build
+      - arm-static-build
+
     if: startsWith(github.ref, 'refs/tags/v')
+
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
 
@@ -170,21 +242,19 @@ jobs:
         with:
           pattern: mlnet-static-*
           path: artifacts
-          merge-multiple: false
 
       - name: Prepare release assets
         run: |
           mkdir -p release-assets
 
-          for dir in artifacts/mlnet-static-*; do
-            [ -d "$dir" ] || continue
+          cp artifacts/mlnet-static-x86_64-*/mlnet.exe \
+             release-assets/mlnet-static-x86_64
 
-            artifact=$(basename "$dir")
-            arch_sha="${artifact#mlnet-static-}"
-            arch="${arch_sha%-*}"
+          cp artifacts/mlnet-static-armv7-*/mlnet-armv7 \
+             release-assets/mlnet-static-armv7
 
-            cp "$dir/mlnet.exe" "release-assets/mlnet-static-${arch}"
-          done
+          cp artifacts/mlnet-static-aarch64-*/mlnet-aarch64 \
+             release-assets/mlnet-static-aarch64
 
           ls -lh release-assets/
 
