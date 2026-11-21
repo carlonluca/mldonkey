@@ -156,3 +156,43 @@ jobs:
         with:
           name: mlnet-${{ matrix.os }}.exe
           path: mlnet
+
+  publish-static:
+    needs: static-build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download static build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: mlnet-static-*
+          path: artifacts
+          merge-multiple: false
+
+      - name: Prepare release assets
+        run: |
+          mkdir -p release-assets
+
+          for dir in artifacts/mlnet-static-*; do
+            [ -d "$dir" ] || continue
+
+            artifact=$(basename "$dir")
+            arch_sha="${artifact#mlnet-static-}"
+            arch="${arch_sha%-*}"
+
+            cp "$dir/mlnet.exe" "release-assets/mlnet-static-${arch}"
+          done
+
+          ls -lh release-assets/
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            release-assets/* \
+            --generate-notes \
+            --title "${GITHUB_REF_NAME}"
