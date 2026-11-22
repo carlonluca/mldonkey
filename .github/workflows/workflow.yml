@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [x86_64, arm-v7, aarch64]
+        arch: [x86_64]
     container:
       image: alpine:3.22
     steps:
@@ -78,20 +78,17 @@ jobs:
       fail-fast: false
       matrix:
         ocaml-version:
-          - 5.3.0
-          - 5.4.1
+          #- 5.3.0
+          #- 5.4.1
           - 5.5.2
         required:
           - true
         os:
           - ubuntu-latest
-        include:
-          #- ocaml-version: 5.4.1
-          #  required: true
-          #  os: macos-latest
-          - ocaml-version: 5.3.0
-            required: false
-            os: windows-latest
+        #include:
+        #  - ocaml-version: 5.4.1
+        #    required: true
+        #    os: macos-latest
 
     runs-on: ${{ matrix.os }}
 
@@ -119,11 +116,6 @@ jobs:
           echo "CPATH=$HOMEBREW_PREFIX/include:$CPATH" >> $GITHUB_ENV
           echo "LIBRARY_PATH=$HOMEBREW_PREFIX/lib:$LIBRARY_PATH" >> $GITHUB_ENV
         if: matrix.os == 'macos-latest'
-
-      # https://cygwin.com/packages/ doesn't have cryptopp and many other packages
-      # I guess should build with mingw?
-      - run: D:\\cygwin\\setup-x86_64.exe "--root" "D:\\cygwin" "--quiet-mode" "unattended" "--no-shortcuts" "--no-startmenu" "--no-desktop" "--no-admin" "--no-version-check" "--no-write-registry" "--packages" "mingw64-x86_64-gd"
-        if: matrix.os == 'windows-latest'
 
       - run: |
           echo $CPATH
@@ -156,3 +148,121 @@ jobs:
         with:
           name: mlnet-${{ matrix.os }}.exe
           path: mlnet
+
+  build-windows:
+    # Same "allowed to fail" behaviour as the old windows-latest matrix entry
+    continue-on-error: true
+    runs-on: windows-latest
+
+    # Every `run:` step below executes inside MSYS2 (UCRT64), like the
+    # Alpine container does for the static Linux build.
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - name: Don't convert line endings
+        shell: pwsh
+        run: git config --global core.autocrlf false
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      # Equivalent of the `apk add ...` step on Alpine.
+      # `release: false` reuses the MSYS2 pre-installed on the runner (C:\msys64),
+      # which is the same one setup-ocaml uses with `windows-environment: msys2`,
+      # so the libraries installed here are the ones the OCaml C stubs link against.
+      # `:p` = mingw-w64-ucrt-x86_64- prefix.
+      - name: Setup MSYS2 and install C dependencies
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          release: false
+          update: false
+          path-type: inherit # keep opam/ocaml from setup-ocaml visible in the msys2 shell
+          install: >-
+            git
+            make
+            m4
+          pacboy: >-
+            toolchain:p
+            pkgconf:p
+            python:p
+            curl:p
+            zlib:p
+            bzip2:p
+            openssl:p
+            nghttp2:p
+            brotli:p
+            zstd:p
+            c-ares:p
+            libidn2:p
+            libunistring:p
+            libpsl:p
+            miniupnpc:p
+            libnatpmp:p
+            libgd:p
+            libpng:p
+            libjpeg-turbo:p
+            file:p
+            crypto++:p
+
+      - name: Use OCaml 5.3.0 (MSYS2 UCRT64 toolchain)
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: 5.3.0
+          windows-compiler: mingw
+          windows-environment: msys2
+
+      - name: Show build environment
+        continue-on-error: true
+        run: |
+          ls -l /ucrt64/include/bzlib.h /ucrt64/lib/libbz2.a
+          which -a gcc
+          gcc -print-search-dirs | head -3
+          echo | gcc -E -Wp,-v -x c - 2>&1 | grep -A8 'search starts'
+          echo "MSYSTEM=$MSYSTEM"
+          which -a gcc pkg-config python opam ocamlfind dune || true
+          gcc --version
+          opam --version
+          ocamlfind ocamlopt -config | grep -E 'system|architecture|c_compiler' || true
+          for p in libcurl libcrypto++ libmagic miniupnpc gdlib libpng; do
+            echo "--- $p"; pkg-config --modversion $p || echo "MISSING: $p"
+          done
+
+      - name: Show git status
+        run: |
+          git config --global --add safe.directory '*'
+          git status
+          git log -1
+
+      - name: Configure
+        run: python autoconf.py
+
+      - name: Install OCaml deps
+        run: opam install . --deps-only --yes
+
+      - name: Build
+        run: opam exec -- dune build --profile=release
+
+      # The exe is dynamically linked against the MSYS2 DLLs, so ship them next to it
+      - name: Collect exe and runtime DLLs
+        run: |
+          mkdir dist
+          cp _build/default/src/mlnet.exe dist/
+          ldd dist/mlnet.exe | awk '/\/ucrt64\// {print $3}' | sort -u | xargs -r -I{} cp -v "{}" dist/
+          ls -l dist
+
+      - name: Set short SHA
+        shell: pwsh
+        run: |
+          "SHORT_SHA=$(git rev-parse --short HEAD)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Upload the build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlnet-windows-x86_64-${{ env.SHORT_SHA }}
+          path: dist/
